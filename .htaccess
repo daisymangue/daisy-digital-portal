@@ -1,0 +1,12 @@
+# Only needed if the subdomain's folder is the project root (not the /public folder).
+# It sends every request into /public and blocks direct access to everything else.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^\.env|composer\.(json|lock)|package(-lock)?\.json|artisan|phpunit\.xml$">
+    Require all denied
+</FilesMatch>

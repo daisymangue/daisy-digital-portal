@@ -1,0 +1,158 @@
+[
+ {
+  "name": "Business Starter Package",
+  "price_cents": 199900,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Business Email Setup",
+   "Microsoft 365 or Google Workspace Setup (1 user)",
+   "Logo Design",
+   "Business Card Design",
+   "Email Signature",
+   "Google Business Profile Setup"
+  ]
+ },
+ {
+  "name": "Business Essentials Package",
+  "price_cents": 499900,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Professional Website (5 pages)",
+   "Business Email Setup",
+   "Microsoft 365 Setup",
+   "Basic SEO",
+   "Google Analytics",
+   "Contact Form",
+   "SSL Configuration",
+   "Google Business Profile"
+  ]
+ },
+ {
+  "name": "Business Growth Package",
+  "price_cents": 899900,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Professional Website",
+   "Microsoft 365 or Google Workspace",
+   "Complete Branding",
+   "SEO Setup",
+   "Google Ads Setup",
+   "Facebook & Instagram Setup",
+   "Social Media Graphics",
+   "Monthly Analytics Report"
+  ]
+ },
+ {
+  "name": "Digital Marketing Package",
+  "price_cents": 350000,
+  "is_from": true,
+  "unit": "month",
+  "includes": [
+   "Social Media Management",
+   "Content Creation",
+   "Facebook & Instagram Ads",
+   "Google Ads Management",
+   "Monthly Reports",
+   "Strategy Meeting"
+  ]
+ },
+ {
+  "name": "Office Productivity Package",
+  "price_cents": 250000,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Microsoft 365 Setup",
+   "Teams",
+   "Outlook",
+   "OneDrive",
+   "SharePoint",
+   "User Accounts",
+   "MFA",
+   "Staff Training"
+  ]
+ },
+ {
+  "name": "Business Productivity Package",
+  "price_cents": 299900,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Excel Templates",
+   "Invoice Templates",
+   "Quotation Templates",
+   "Business Forms",
+   "PDF Forms",
+   "Document Templates",
+   "Digital Filing System"
+  ]
+ },
+ {
+  "name": "Graphic Design Package",
+  "price_cents": 399900,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Logo",
+   "Brand Guidelines",
+   "Business Card",
+   "Letterhead",
+   "Social Media Kit",
+   "Facebook Cover",
+   "Email Signature"
+  ]
+ },
+ {
+  "name": "Website Care Package",
+  "price_cents": 75000,
+  "is_from": false,
+  "unit": "month",
+  "includes": [
+   "Website Updates",
+   "Plugin Updates",
+   "Security Monitoring",
+   "Weekly Backups",
+   "Performance Checks",
+   "Monthly Report"
+  ]
+ },
+ {
+  "name": "Managed IT Package",
+  "price_cents": 250000,
+  "is_from": true,
+  "unit": "month",
+  "includes": [
+   "Remote IT Support",
+   "Microsoft 365 Administration",
+   "User Management",
+   "Email Support",
+   "Security Monitoring",
+   "Monthly Maintenance"
+  ]
+ },
+ {
+  "name": "Complete Business Launch Package",
+  "price_cents": 1499900,
+  "is_from": true,
+  "unit": null,
+  "includes": [
+   "Brand Identity",
+   "Professional Website",
+   "Business Email",
+   "Microsoft 365",
+   "Google Business Profile",
+   "SEO",
+   "Google Analytics",
+   "Social Media Setup",
+   "10 Social Media Designs",
+   "Google Ads Setup",
+   "Facebook Ads Setup",
+   "Staff Productivity Setup",
+   "Business Templates",
+   "Initial Training"
+  ]
+ }
+]

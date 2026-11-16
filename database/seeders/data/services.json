@@ -1,0 +1,3171 @@
+[
+ {
+  "name": "Email Services",
+  "services": [
+   {
+    "name": "Professional Business Email Setup",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Business Email Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Custom Domain Email Setup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Microsoft 365 Email Setup",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Workspace Email Setup",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Gmail Setup",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft Outlook Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Apple Mail Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Account Creation",
+    "pricing_type": "fixed",
+    "price_cents": 20000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Migration (per mailbox)",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Email Backup & Restore",
+    "pricing_type": "from",
+    "price_cents": 50000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Email Troubleshooting",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Email Password Reset",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Recovery",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Email Forwarding Setup",
+    "pricing_type": "fixed",
+    "price_cents": 20000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Signature Design",
+    "pricing_type": "from",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "HTML Email Signature Setup",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Distribution Group Setup",
+    "pricing_type": "fixed",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Shared Mailbox Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Security Configuration",
+    "pricing_type": "from",
+    "price_cents": 50000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Spam Filter Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Multi-Factor Authentication (MFA) for Email",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "DKIM Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "SPF Record Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "DMARC Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "DNS Records for Email",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "IMAP & POP3 Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "SMTP Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Synchronization Across Devices",
+    "pricing_type": "fixed",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Mobile Email Setup (Android & iPhone)",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Storage Management",
+    "pricing_type": "from",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Business Email Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Website Design & Development",
+  "services": [
+   {
+    "name": "Business Website Design",
+    "pricing_type": "from",
+    "price_cents": 450000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Custom Website Design",
+    "pricing_type": "quote",
+    "price_cents": null,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Corporate Website Development",
+    "pricing_type": "from",
+    "price_cents": 850000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Small Business Website Development",
+    "pricing_type": "from",
+    "price_cents": 350000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Personal Website Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Portfolio Website Design",
+    "pricing_type": "from",
+    "price_cents": 300000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "E-commerce Website Development",
+    "pricing_type": "from",
+    "price_cents": 850000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Online Store Setup",
+    "pricing_type": "from",
+    "price_cents": 650000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "WordPress Website Development",
+    "pricing_type": "from",
+    "price_cents": 450000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Landing Page Design",
+    "pricing_type": "fixed",
+    "price_cents": 180000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "One-Page Website Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Redesign",
+    "pricing_type": "from",
+    "price_cents": 350000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Modernization",
+    "pricing_type": "from",
+    "price_cents": 350000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Responsive Website Design",
+    "pricing_type": "fixed",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Mobile-Friendly Website Design",
+    "pricing_type": "fixed",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website UI/UX Improvements",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Contact Form Creation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Blog Setup",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "News & Article Section Setup",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Image Gallery Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Portfolio Gallery Setup",
+    "pricing_type": "fixed",
+    "price_cents": 75000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "FAQ Page Creation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Services Page Creation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Product Catalog Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Online Booking System Integration",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Appointment Booking Website",
+    "pricing_type": "from",
+    "price_cents": 550000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Event Website Development",
+    "pricing_type": "from",
+    "price_cents": 550000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Restaurant Website Development",
+    "pricing_type": "from",
+    "price_cents": 550000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "School Website Development",
+    "pricing_type": "from",
+    "price_cents": 850000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Church Website Development",
+    "pricing_type": "from",
+    "price_cents": 450000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Non-Profit Website Development",
+    "pricing_type": "from",
+    "price_cents": 450000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Real Estate Website Development",
+    "pricing_type": "from",
+    "price_cents": 950000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Membership Website Setup",
+    "pricing_type": "from",
+    "price_cents": 750000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Multi-language Website Setup",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Content Upload",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Website Launch & Deployment",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Website Hosting & Domains",
+  "services": [
+   {
+    "name": "Domain Name Registration",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Domain Name Renewal",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Domain Transfer",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Domain Name Management",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "DNS Management",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "DNS Record Configuration (A, CNAME, MX, TXT)",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Subdomain Setup",
+    "pricing_type": "fixed",
+    "price_cents": 20000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Domain Redirects",
+    "pricing_type": "fixed",
+    "price_cents": 20000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Web Hosting Setup",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Web Hosting Migration",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Hosting Account Setup",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Hosting Account Management",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "cPanel Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "SSL Certificate Installation",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "SSL Certificate Renewal",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Backup Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Scheduled Website Backups",
+    "pricing_type": "monthly",
+    "price_cents": 19900,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Website Restore from Backup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Migration Between Hosting Providers",
+    "pricing_type": "from",
+    "price_cents": 125000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Email DNS Configuration (SPF, DKIM & DMARC)",
+    "pricing_type": "fixed",
+    "price_cents": 50000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Business Email Hosting Setup",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Uptime Monitoring",
+    "pricing_type": "monthly",
+    "price_cents": 14900,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Website Storage Management",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Website Support & Maintenance",
+  "services": [
+   {
+    "name": "Website Maintenance",
+    "pricing_type": "monthly",
+    "price_cents": 39900,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Monthly Website Maintenance",
+    "pricing_type": "monthly",
+    "price_cents": 39900,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Website Health Check",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Performance Monitoring",
+    "pricing_type": "monthly",
+    "price_cents": 19900,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Website Updates",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "WordPress Core Updates",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Theme Updates",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Plugin Updates",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Content Updates",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Text & Image Updates",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "New Page Creation",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Existing Page Edits",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Backup Management",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Restore from Backup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Security Monitoring",
+    "pricing_type": "monthly",
+    "price_cents": 19900,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Malware Removal",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Broken Link Repair",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Error Fixes",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Contact Form Repairs",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Bug Fixes",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Speed Optimization",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Database Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Image Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Cleanup",
+    "pricing_type": "from",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "SSL Certificate Troubleshooting",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Downtime Recovery",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Migration Support",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Technical Website Support",
+    "pricing_type": "quote",
+    "price_cents": null,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Emergency Website Support",
+    "pricing_type": "quote",
+    "price_cents": null,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Consultation",
+    "pricing_type": "quote",
+    "price_cents": null,
+    "unit": null,
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Website SEO & Analytics",
+  "services": [
+   {
+    "name": "Search Engine Optimization (SEO)",
+    "pricing_type": "monthly",
+    "price_cents": 150000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "SEO Audit",
+    "pricing_type": "fixed",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "On-Page SEO",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Technical SEO",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Keyword Research",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Meta Title & Description Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Heading Structure Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Image SEO Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Internal Link Optimization",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "XML Sitemap Creation & Submission",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Robots.txt Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Search Console Setup",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Search Console Monitoring",
+    "pricing_type": "monthly",
+    "price_cents": 35000,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Google Analytics Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Analytics Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 75000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Tag Manager Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Business Profile Integration",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Local SEO Optimization",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Performance Audit",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Core Web Vitals Optimization",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "SEO Performance Reporting",
+    "pricing_type": "monthly",
+    "price_cents": 45000,
+    "unit": "month",
+    "is_from": false
+   },
+   {
+    "name": "Search Engine Indexing Assistance",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Website Integrations",
+  "services": [
+   {
+    "name": "Contact Form Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "WhatsApp Chat Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Facebook Messenger Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Live Chat Integration",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Social Media Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Maps Integration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Business Profile Integration",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Analytics Integration",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Search Console Integration",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Tag Manager Integration",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Payment Gateway Integration",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "PayPal Integration",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Stripe Integration",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Online Booking System Integration",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Appointment Scheduling Integration",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Calendar Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Newsletter Signup Integration",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Marketing Integration",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Mailchimp Integration",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "CRM Integration",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Customer Contact Form Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Social Media Feed Integration",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "YouTube Video Integration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google reCAPTCHA Integration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cookie Consent Banner Integration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "PDF Download Integration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Click-to-Call Button Integration",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Click-to-Email Button Integration",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Reviews Integration",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Embedded Contact Forms",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Computer Setup & Repairs",
+  "services": [
+   {
+    "name": "New Laptop Setup",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "New Desktop Computer Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Computer Installation & Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Windows Installation",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Windows Reinstallation",
+    "pricing_type": "fixed",
+    "price_cents": 75000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Windows Upgrade",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Operating System Installation",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Computer Formatting",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Computer Performance Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Computer Tune-Up",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Virus Removal",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Malware Removal",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Spyware Removal",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Software Installation",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Software Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft Office Installation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft Office Activation",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Driver Installation & Updates",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Printer Installation & Setup",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Scanner Installation & Setup",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Webcam Installation",
+    "pricing_type": "fixed",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Hardware Diagnostics",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "RAM Upgrade",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "SSD Installation & Upgrade",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Hard Drive Replacement",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Data Backup",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Data Recovery",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "File Transfer to New Computer",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Computer Health Check",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Startup Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Boot Error Repair",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Blue Screen Error Troubleshooting",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Application Troubleshooting",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "General Computer Troubleshooting",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Remote Computer Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "On-Site Computer Support",
+    "pricing_type": "hourly",
+    "price_cents": 65000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Remote Desktop Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "BIOS Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Laptop Performance Upgrade",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Desktop Performance Upgrade",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   }
+  ]
+ },
+ {
+  "name": "IT Support",
+  "services": [
+   {
+    "name": "Remote IT Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "On-Site IT Support",
+    "pricing_type": "hourly",
+    "price_cents": 65000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Help Desk Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Technical Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "End-User Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "IT Consultation",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "IT Health Check",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Software Troubleshooting",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Application Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Software Updates",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Operating System Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Microsoft Windows Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Microsoft Office Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Google Workspace Support",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Microsoft 365 Support",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Printer Troubleshooting",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Scanner Troubleshooting",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Support",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Password Reset Assistance",
+    "pricing_type": "fixed",
+    "price_cents": 20000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "User Account Setup",
+    "pricing_type": "fixed",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "User Account Management",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Remote Assistance",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "System Diagnostics",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Data Backup Assistance",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Data Recovery Assistance",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Technology Consultation",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Software Recommendations",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Device Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "IT Training",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Scheduled IT Maintenance",
+    "pricing_type": "monthly",
+    "price_cents": 49900,
+    "unit": "month",
+    "is_from": true
+   }
+  ]
+ },
+ {
+  "name": "Microsoft 365 & Google Workspace",
+  "services": [
+   {
+    "name": "Microsoft 365 Setup",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Microsoft 365 Migration",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Microsoft 365 Administration",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Microsoft 365 User Management",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Microsoft Outlook Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft Teams Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft OneDrive Setup",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft SharePoint Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Microsoft Office Installation & Support",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Workspace Setup",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Workspace Migration",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Workspace Administration",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Google Workspace User Management",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Gmail for Business Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Drive Setup",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Calendar Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Meet Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Data Migration",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Multi-Factor Authentication (MFA) Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Ongoing Support & Troubleshooting",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Cloud Services",
+  "services": [
+   {
+    "name": "Cloud Storage Setup",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Backup Solutions",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Cloud File Synchronization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud File Sharing",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Data Migration",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Cloud Data Backup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Cloud Data Recovery",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Drive Cloud Storage",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Microsoft OneDrive Cloud Storage",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Dropbox Setup & Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Folder Organization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Shared Folder Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Access Management",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Secure Cloud File Sharing",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Automatic Cloud Backup Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Storage Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Storage Cleanup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "File Synchronization Across Devices",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cloud Collaboration Setup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Cloud Storage Support & Troubleshooting",
+    "pricing_type": "hourly",
+    "price_cents": 45000,
+    "unit": "hour",
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Cybersecurity",
+  "services": [
+   {
+    "name": "Antivirus Installation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Antivirus Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Antivirus Renewal",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Virus Removal",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Malware Removal",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Spyware Removal",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Ransomware Protection",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Computer Security Health Check",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Security Risk Assessment",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Firewall Configuration",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Password Management Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Password Recovery Assistance",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Multi-Factor Authentication (MFA) Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Two-Factor Authentication (2FA) Setup",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Security Configuration",
+    "pricing_type": "from",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Phishing Protection",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Spam Protection",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Safe Browsing Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Device Security Configuration",
+    "pricing_type": "from",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Data Protection & Privacy Setup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Secure File Encryption",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Secure Data Backup",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Website Security Checks",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "SSL Security Configuration",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Website Malware Removal",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Security Updates & Patch Management",
+    "pricing_type": "monthly",
+    "price_cents": 39900,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Cybersecurity Awareness Training",
+    "pricing_type": "hourly",
+    "price_cents": 65000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Security Consultation",
+    "pricing_type": "hourly",
+    "price_cents": 65000,
+    "unit": "hour",
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Digital Marketing",
+  "services": [
+   {
+    "name": "Digital Marketing Strategy",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Digital Marketing Consultation",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Google Ads Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Ads Campaign Management",
+    "pricing_type": "monthly",
+    "price_cents": 200000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Google Ads Optimization",
+    "pricing_type": "from",
+    "price_cents": 95000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Search Ads",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Display Ads",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Shopping Ads",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Performance Max Campaigns",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Facebook Ads Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Facebook Ads Management",
+    "pricing_type": "monthly",
+    "price_cents": 200000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Instagram Ads Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Instagram Ads Management",
+    "pricing_type": "monthly",
+    "price_cents": 200000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Meta Ads Campaign Management",
+    "pricing_type": "monthly",
+    "price_cents": 250000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "YouTube Ads Setup",
+    "pricing_type": "from",
+    "price_cents": 180000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "TikTok Ads Setup",
+    "pricing_type": "from",
+    "price_cents": 180000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "LinkedIn Ads Setup",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Social Media Marketing",
+    "pricing_type": "monthly",
+    "price_cents": 250000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Social Media Management",
+    "pricing_type": "monthly",
+    "price_cents": 350000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Social Media Strategy",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Social Media Account Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Social Media Profile Optimization",
+    "pricing_type": "fixed",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Content Creation",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": "post",
+    "is_from": true
+   },
+   {
+    "name": "Social Media Content Design",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": "design",
+    "is_from": true
+   },
+   {
+    "name": "Content Calendar Planning",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Google Business Profile Setup",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Google Business Profile Optimization",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Local SEO",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Search Engine Optimization (SEO)",
+    "pricing_type": "monthly",
+    "price_cents": 350000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Email Marketing",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Newsletter Campaigns",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Marketing Analytics & Reporting",
+    "pricing_type": "monthly",
+    "price_cents": 85000,
+    "unit": "month",
+    "is_from": true
+   },
+   {
+    "name": "Conversion Tracking Setup",
+    "pricing_type": "from",
+    "price_cents": 95000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Remarketing Campaign Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Lead Generation Campaigns",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Online Reputation Management",
+    "pricing_type": "monthly",
+    "price_cents": 150000,
+    "unit": "month",
+    "is_from": true
+   }
+  ]
+ },
+ {
+  "name": "Graphic Design",
+  "services": [
+   {
+    "name": "Logo Design",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Logo Redesign",
+    "pricing_type": "from",
+    "price_cents": 95000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Brand Identity Design",
+    "pricing_type": "from",
+    "price_cents": 350000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Brand Style Guide",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Business Card Design",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Letterhead Design",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Email Signature Design",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Company Profile Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Flyer Design",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Poster Design",
+    "pricing_type": "from",
+    "price_cents": 75000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Brochure Design",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Banner Design",
+    "pricing_type": "fixed",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Roll-Up Banner Design",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Billboard Design",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Social Media Post Design",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Social Media Banner Design",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Facebook Cover Design",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "YouTube Channel Art",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "YouTube Thumbnail Design",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Instagram Post Design",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Instagram Story Design",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "LinkedIn Banner Design",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Presentation Design",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Pitch Deck Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Infographic Design",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Menu Design",
+    "pricing_type": "from",
+    "price_cents": 95000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Price List Design",
+    "pricing_type": "from",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Catalogue Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Certificate Design",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Invitation Design",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Event Flyer Design",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Product Label Design",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Packaging Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Resume (CV) Design",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Digital Advertisement Design",
+    "pricing_type": "from",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Web Banner Design",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Promotional Material Design",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Image Editing & Retouching",
+    "pricing_type": "from",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Photo Background Removal",
+    "pricing_type": "fixed",
+    "price_cents": 10000,
+    "unit": "image",
+    "is_from": false
+   }
+  ]
+ },
+ {
+  "name": "Document Services",
+  "services": [
+   {
+    "name": "PDF Creation",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "PDF Editing",
+    "pricing_type": "from",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "PDF Conversion",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "PDF to Word Conversion",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Word to PDF Conversion",
+    "pricing_type": "fixed",
+    "price_cents": 10000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Excel to PDF Conversion",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "PowerPoint to PDF Conversion",
+    "pricing_type": "fixed",
+    "price_cents": 15000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Image to PDF Conversion",
+    "pricing_type": "fixed",
+    "price_cents": 10000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Scanned PDF to Editable Word (OCR)",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Document Formatting",
+    "pricing_type": "from",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Document Editing",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Document Typing",
+    "pricing_type": "from",
+    "price_cents": 20000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Document Proofreading",
+    "pricing_type": "from",
+    "price_cents": 30000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Document Scanning",
+    "pricing_type": "fixed",
+    "price_cents": 10000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Document Printing Support",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Data Entry",
+    "pricing_type": "hourly",
+    "price_cents": 35000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Spreadsheet Creation",
+    "pricing_type": "from",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Spreadsheet Formatting",
+    "pricing_type": "from",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Excel Formula Assistance",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Invoice Template Creation",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Quotation Template Creation",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Receipt Template Creation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Letterhead Creation",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Business Forms Creation",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Fillable PDF Forms",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Resume (CV) Formatting",
+    "pricing_type": "fixed",
+    "price_cents": 35000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Cover Letter Formatting",
+    "pricing_type": "fixed",
+    "price_cents": 25000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Business Document Preparation",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Report Formatting",
+    "pricing_type": "from",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Presentation Formatting",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   }
+  ]
+ },
+ {
+  "name": "Business Productivity Services",
+  "services": [
+   {
+    "name": "Business Process Consultation",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Business Workflow Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Digital Workspace Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Office Productivity Solutions",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Microsoft Excel Spreadsheet Creation",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Excel Dashboard Creation",
+    "pricing_type": "from",
+    "price_cents": 180000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Excel Formula Development",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   },
+   {
+    "name": "Business Templates Creation",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Invoice Template Design",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Quotation Template Design",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Receipt Template Design",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Purchase Order Template Design",
+    "pricing_type": "fixed",
+    "price_cents": 55000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Letterhead Design",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Company Profile Design",
+    "pricing_type": "from",
+    "price_cents": 250000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Business Proposal Design",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Business Report Design",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Digital Forms Creation",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Fillable PDF Forms",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Business Document Automation",
+    "pricing_type": "from",
+    "price_cents": 200000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Document Template Creation",
+    "pricing_type": "from",
+    "price_cents": 65000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Calendar & Appointment Setup",
+    "pricing_type": "fixed",
+    "price_cents": 45000,
+    "unit": null,
+    "is_from": false
+   },
+   {
+    "name": "Task Management Setup",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "File Organization & Management",
+    "pricing_type": "from",
+    "price_cents": 85000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Cloud Collaboration Setup",
+    "pricing_type": "from",
+    "price_cents": 120000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Digital Filing System Setup",
+    "pricing_type": "from",
+    "price_cents": 150000,
+    "unit": null,
+    "is_from": true
+   },
+   {
+    "name": "Productivity Training",
+    "pricing_type": "hourly",
+    "price_cents": 55000,
+    "unit": "hour",
+    "is_from": false
+   }
+  ]
+ }
+]

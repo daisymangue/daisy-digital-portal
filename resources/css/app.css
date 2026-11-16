@@ -1,0 +1,71 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views';
+
+/* Brand colours live here. Change them once and the whole portal follows. */
+@theme {
+    --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+
+    --color-navy: #12142b;
+    --color-navy-soft: #c9cbdd;
+    --color-brand: #db1f63;
+    --color-brand-dark: #b8154f;
+    --color-ink: #1b1d33;
+    --color-muted: #565a70;
+    --color-sand: #faf9f6;
+    --color-sand-dark: #f3f1ec;
+    --color-line: #e9e6df;
+    --color-line-strong: #c9c5bb;
+}
+
+@layer base {
+    body {
+        @apply bg-sand font-sans text-ink antialiased;
+    }
+    [x-cloak] {
+        display: none !important;
+    }
+    :focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full px-5 text-center font-semibold transition-colors;
+    }
+    .btn-primary {
+        @apply bg-brand text-white hover:bg-brand-dark;
+    }
+    .btn-dark {
+        @apply bg-navy text-white hover:bg-ink;
+    }
+    .btn-light {
+        @apply border-line-strong text-ink hover:bg-sand-dark border bg-white font-medium;
+    }
+    .card {
+        @apply border-line rounded-2xl border bg-white p-5 sm:p-6;
+    }
+    .field {
+        @apply border-line-strong text-ink min-h-11 w-full rounded-xl border bg-white px-4 py-2.5;
+    }
+    .label {
+        @apply mb-1.5 block text-sm font-medium;
+    }
+    .pill {
+        @apply inline-block rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap;
+    }
+    .h-page {
+        @apply font-display text-2xl font-bold sm:text-3xl;
+    }
+    .h-section {
+        @apply text-lg font-semibold;
+    }
+    .link {
+        @apply text-brand-dark font-medium underline-offset-2 hover:underline;
+    }
+}
