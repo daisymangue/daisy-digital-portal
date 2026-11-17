@@ -34,7 +34,7 @@
      }">
     @unless ($admin)
         <a href="#special" class="border-brand/30 flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-pink-50 px-5 py-4 text-pink-950 hover:bg-pink-100">
-            <span><span class="font-semibold">Need something that is not on our list?</span> Skip straight to a special request.</span>
+            <span><span class="font-semibold">Not on our list? If it is IT or digital, we can most likely do it.</span> Tell us about it in a special request.</span>
             <span class="font-semibold underline underline-offset-2">Make a special request</span>
         </a>
     @endunless
@@ -121,7 +121,7 @@
             </ul>
             <div x-show="!results.length" class="px-4 py-5">
                 <p class="font-medium">No service matches "<span x-text="find.trim()"></span>".</p>
-                <p class="text-muted mt-1">Describe it as a special request and we will work out the best way to do it.</p>
+                <p class="text-muted mt-1">If it is IT related, we can most likely still help. Describe it as a special request.</p>
                 <button type="button" class="btn btn-primary mt-3" @click="special = special || find.trim() + ': '; find = ''; $nextTick(() => { document.getElementById('special').scrollIntoView({ behavior: 'smooth' }); document.getElementById('special_details').focus() })">Make a special request</button>
             </div>
         </div>
@@ -145,18 +145,18 @@
 
         <p class="mt-6 text-sm font-medium">Browse by category</p>
 
-        <div class="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div class="mt-2 grid grid-cols-2 gap-2 sm:gap-3 xl:grid-cols-3">
             @foreach ($categories as $category)
                 <button type="button" @click="open = open === {{ $category->id }} ? null : {{ $category->id }}; if (open) $nextTick(() => document.getElementById('cat-{{ $category->id }}').scrollIntoView({ behavior: 'smooth', block: 'start' }))"
                         :aria-expanded="(open === {{ $category->id }}).toString()" aria-controls="cat-{{ $category->id }}"
-                        class="flex min-h-20 cursor-pointer flex-col rounded-2xl border-2 p-4 text-left"
+                        class="flex min-h-16 cursor-pointer flex-col rounded-2xl border-2 p-3 text-left text-sm sm:min-h-20 sm:p-4 sm:text-base"
                         :class="open === {{ $category->id }} ? 'border-navy bg-navy text-white' : (count({{ $category->id }}) ? 'border-navy bg-white' : 'border-line bg-white')">
-                    <span class="flex w-full items-start justify-between gap-2">
+                    <span class="flex w-full flex-wrap items-start justify-between gap-1 sm:flex-nowrap sm:gap-2">
                         <span class="font-semibold">{{ $category->name }}</span>
                         <span x-show="count({{ $category->id }})" x-cloak class="pill bg-brand text-white" x-text="count({{ $category->id }}) + ' selected'"></span>
                     </span>
                     @if ($category->description)
-                        <span class="mt-1 text-sm" :class="open === {{ $category->id }} ? 'text-navy-soft' : 'text-muted'">{{ $category->description }}</span>
+                        <span class="mt-1 hidden text-sm sm:block" :class="open === {{ $category->id }} ? 'text-navy-soft' : 'text-muted'">{{ $category->description }}</span>
                     @endif
                 </button>
             @endforeach
@@ -232,7 +232,7 @@
         <div class="flex flex-wrap items-start justify-between gap-3">
             <div>
                 <h2 class="h-section">Special request</h2>
-                <p class="text-muted mt-1">{{ $admin ? 'For work that is not in the packages or service list.' : 'Not on our list, or not sure what it is called? Describe it and we will work out the best way to do it.' }}</p>
+                <p class="text-muted mt-1">{{ $admin ? 'For work that is not in the packages or service list.' : 'Our lists cover the most common jobs, not everything we do. If it is IT related, from websites and apps to computers, networks, security and automation, describe it here and we will work out the best way to do it.' }}</p>
             </div>
             <span class="pill bg-pink-100 text-pink-900">Custom work</span>
         </div>
