@@ -49,29 +49,30 @@
                 </form>
             </div>
 
-            <form method="POST" action="{{ route('admin.requests.status', $serviceRequest) }}" class="card space-y-3">
+            <form method="POST" action="{{ route('admin.requests.status', $serviceRequest) }}" class="card space-y-2">
                 @csrf
                 @method('PATCH')
                 <label for="status" class="h-section block">Status</label>
-                <select id="status" name="status" class="field">
-                    @foreach (\App\Models\ServiceRequest::STATUSES as $key => $label)
-                        <option value="{{ $key }}" @selected($serviceRequest->status === $key)>{{ $label }}</option>
-                    @endforeach
-                </select>
-                <p class="text-muted text-sm">The client is emailed when the status changes.</p>
-                <button type="submit" class="btn btn-primary w-full">Update status</button>
+                <div class="flex gap-2">
+                    <select id="status" name="status" class="field min-w-0 flex-1">
+                        @foreach (\App\Models\ServiceRequest::STATUSES as $key => $label)
+                            <option value="{{ $key }}" @selected($serviceRequest->status === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-dark shrink-0">Update</button>
+                </div>
+                <p class="text-muted text-sm">The client is emailed when it changes.</p>
             </form>
 
-            <div class="card">
-                <h2 class="h-section">Client</h2>
-                <dl class="mt-3 space-y-2">
-                    @php
+            @php
                         $byClient = $serviceRequest->source === 'portal';
                         $client = $serviceRequest->client;
                         $cName = $byClient ? $serviceRequest->user->name : $client->contactName();
                         $cEmail = $byClient ? $serviceRequest->user->email : $client->contactEmail();
                         $cPhone = $byClient ? ($serviceRequest->user->phone ?: $client->phone) : $client->phone;
                     @endphp
+            <x-fold title="Client" :summary="collect([$cName, $cPhone])->filter()->implode(' · ')">
+                <dl class="space-y-2">
                     @if ($cName)
                         <div class="flex justify-between gap-3"><dt class="text-muted">Contact</dt><dd class="text-right">{{ $cName }}</dd></div>
                     @endif
@@ -87,18 +88,17 @@
                     @endunless
                     <div class="flex justify-between gap-3"><dt class="text-muted">Earlier requests</dt><dd>{{ $pastCount }}</dd></div>
                 </dl>
-            </div>
+                <a href="{{ route('admin.clients.show', $client) }}" class="link inline-block text-sm">Open client page</a>
+            </x-fold>
 
-            <div class="card">
-                <h2 class="h-section">Internal notes</h2>
-                <p class="text-muted mt-1 text-sm">Only your team sees these. Clients never do.</p>
-                <form method="POST" action="{{ route('admin.requests.notes', $serviceRequest) }}" class="mt-3 space-y-3">
+            <x-fold title="Internal notes" :summary="$serviceRequest->notes->isEmpty() ? 'Only your team sees these' : trans_choice(':count note|:count notes', $serviceRequest->notes->count()).', latest '.$serviceRequest->notes->first()->created_at->format('j M')" :open="$errors->has('body')">
+                <form method="POST" action="{{ route('admin.requests.notes', $serviceRequest) }}" class="space-y-3">
                     @csrf
                     <label for="body" class="sr-only">New note</label>
-                    <textarea id="body" name="body" rows="3" required maxlength="5000" class="field" placeholder="Add a note for the team">{{ old('body') }}</textarea>
+                    <textarea id="body" name="body" rows="3" required maxlength="5000" class="field" placeholder="Add a note for the team. Clients never see these.">{{ old('body') }}</textarea>
                     <button type="submit" class="btn btn-dark">Save note</button>
                 </form>
-                <ul class="mt-4 space-y-4">
+                <ul class="space-y-4">
                     @foreach ($serviceRequest->notes as $note)
                         <li class="border-line border-t pt-3">
                             <p class="whitespace-pre-line">{{ $note->body }}</p>
@@ -106,7 +106,7 @@
                         </li>
                     @endforeach
                 </ul>
-            </div>
+            </x-fold>
         </aside>
     </div>
 </x-layouts.app>

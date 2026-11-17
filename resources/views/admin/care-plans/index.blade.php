@@ -48,10 +48,10 @@
             @endforelse
         </div>
 
-        <form method="POST" action="{{ $form ? route('admin.care-plans.update', $form) : route('admin.care-plans.store') }}" class="card space-y-4 lg:col-span-2">
+        <x-fold :title="$form ? 'Edit care plan' : 'Add a care plan'" :summary="$form ? $form->name : 'Hosting, website care, social media'" :open="$form || $plans->isEmpty() || $errors->any()" class="lg:col-span-2">
+        <form method="POST" action="{{ $form ? route('admin.care-plans.update', $form) : route('admin.care-plans.store') }}" class="space-y-4">
             @csrf
             @if ($form) @method('PUT') @endif
-            <h2 class="h-section">{{ $form ? 'Edit care plan' : 'Add a care plan' }}</h2>
             @unless ($form)
                 <div>
                     <label for="client_id" class="label">Client</label>
@@ -114,5 +114,6 @@
                 @if ($form)<a href="{{ route('admin.care-plans.index') }}" class="btn btn-light">Cancel</a>@endif
             </div>
         </form>
+        </x-fold>
     </div>
 </x-layouts.app>

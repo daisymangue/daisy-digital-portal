@@ -21,12 +21,13 @@
         </div>
         <aside class="min-w-0 space-y-6">
             @if ($serviceRequest->status !== 'declined')
-                <form method="POST" action="{{ route('requests.files', $serviceRequest->id) }}" enctype="multipart/form-data" class="card space-y-4">
-                    @csrf
-                    <h2 class="h-section">Forgot something?</h2>
-                    <x-file-drop id="more-files" label="Add more files" hint="Up to 8 at a time, 10 MB each." />
-                    <button type="submit" class="btn btn-dark w-full">Add files to this request</button>
-                </form>
+                <x-fold title="Forgot something?" summary="Add more files to this request" :open="$errors->has('files') || $errors->has('files.*')">
+                    <form method="POST" action="{{ route('requests.files', $serviceRequest->id) }}" enctype="multipart/form-data" class="space-y-4">
+                        @csrf
+                        <x-file-drop id="more-files" label="Add more files" hint="Up to 8 at a time, 10 MB each." />
+                        <button type="submit" class="btn btn-dark w-full">Add files to this request</button>
+                    </form>
+                </x-fold>
             @endif
 
             <div class="card">

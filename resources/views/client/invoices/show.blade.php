@@ -58,17 +58,18 @@
                 @endif
 
                 @if ($room > 0)
-                    <form method="POST" action="{{ route('invoices.pay', $invoice->id) }}" enctype="multipart/form-data" class="card space-y-4">
+                    <x-fold title="I have paid" summary="Upload your proof of payment" :open="$errors->any()" class="border-brand/40">
+                    <form method="POST" action="{{ route('invoices.pay', $invoice->id) }}" enctype="multipart/form-data" class="space-y-4">
                         @csrf
-                        <h2 class="h-section">I have paid</h2>
-                        <p class="text-muted text-sm">Upload your proof of payment and we will confirm it.</p>
-                        <div>
-                            <label for="amount" class="label">Amount paid (R)</label>
-                            <input id="amount" name="amount" inputmode="decimal" required class="field" value="{{ old('amount', number_format($room / 100, $room % 100 === 0 ? 0 : 2, '.', '')) }}">
-                        </div>
-                        <div>
-                            <label for="paid_on" class="label">Date paid</label>
-                            <input id="paid_on" name="paid_on" type="date" required max="{{ today()->toDateString() }}" value="{{ old('paid_on', today()->toDateString()) }}" class="field">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="amount" class="label">Amount paid (R)</label>
+                                <input id="amount" name="amount" inputmode="decimal" required class="field" value="{{ old('amount', number_format($room / 100, $room % 100 === 0 ? 0 : 2, '.', '')) }}">
+                            </div>
+                            <div>
+                                <label for="paid_on" class="label">Date paid</label>
+                                <input id="paid_on" name="paid_on" type="date" required max="{{ today()->toDateString() }}" value="{{ old('paid_on', today()->toDateString()) }}" class="field">
+                            </div>
                         </div>
                         <div>
                             <label for="proof" class="label">Proof of payment</label>
@@ -77,6 +78,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary w-full">Send proof of payment</button>
                     </form>
+                    </x-fold>
                 @endif
             @elseif ($state === 'paid')
                 <div class="card"><h2 class="h-section">Paid in full</h2><p class="mt-2">Thank you. This invoice was settled on {{ $invoice->paid_at?->format('j F Y') }}.</p></div>

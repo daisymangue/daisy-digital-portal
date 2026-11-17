@@ -95,9 +95,9 @@
             </div>
 
             @if ($invoice->isOpen())
-                <form method="POST" action="{{ route('admin.invoices.payments.store', $invoice) }}" class="card space-y-4">
+                <x-fold title="Record a payment" :summary="'Balance '.\App\Support\Money::format($invoice->balanceCents())" :open="$errors->hasAny(['amount', 'method', 'paid_on', 'reference'])">
+                <form method="POST" action="{{ route('admin.invoices.payments.store', $invoice) }}" class="space-y-4">
                     @csrf
-                    <h2 class="h-section">Record a payment</h2>
                     <p class="text-muted text-sm">For money you have already seen in your account.</p>
                     <div>
                         <label for="amount" class="label">Amount received (R)</label>
@@ -123,15 +123,17 @@
                     </div>
                     <button type="submit" class="btn btn-dark w-full">Record payment</button>
                 </form>
+                </x-fold>
 
-                <form method="POST" action="{{ route('admin.invoices.cancel', $invoice) }}" class="card space-y-3" onsubmit="return confirm('Cancel this invoice?')">
+                <x-fold title="Cancel invoice" summary="Only while no payment is recorded" :open="$errors->has('cancel_reason')">
+                <form method="POST" action="{{ route('admin.invoices.cancel', $invoice) }}" class="space-y-3" onsubmit="return confirm('Cancel this invoice?')">
                     @csrf
-                    <h2 class="h-section">Cancel invoice</h2>
                     <label for="cancel_reason" class="label">Reason</label>
                     <input id="cancel_reason" name="cancel_reason" required maxlength="500" class="field">
                     <button type="submit" class="btn w-full text-red-800 hover:bg-red-50">Cancel invoice</button>
-                    <p class="text-muted text-sm">Only possible while no payment is recorded. The number is kept for your records.</p>
+                    <p class="text-muted text-sm">The number is kept for your records.</p>
                 </form>
+                </x-fold>
             @endif
 
             @if ($invoice->status === 'cancelled')

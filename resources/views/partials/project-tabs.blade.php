@@ -14,7 +14,7 @@
                 :class="tab === '{{ $key }}' ? 'border-brand text-ink' : 'border-transparent text-muted hover:text-ink'">
                 <span class="sm:hidden">{{ $short }}</span><span class="hidden sm:inline">{{ $label }}</span>
                 @if ($badge)
-                    <span class="rounded-full px-1.5 py-0.5 sm:px-2 text-xs font-semibold {{ $key === 'messages' ? 'bg-brand text-white' : 'bg-amber-100 text-amber-900' }}">{{ $badge }}</span>
+                    <span class="rounded-full px-1.5 py-0.5 sm:px-2 text-xs font-semibold {{ $key === 'messages' ? 'bg-brand text-white' : (in_array($key, ['needed', 'progress', 'handover'], true) ? 'bg-amber-100 text-amber-900' : 'bg-sand-dark text-muted') }}">{{ $badge }}</span>
                 @endif
             </button>
         @endforeach
