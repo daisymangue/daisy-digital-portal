@@ -313,21 +313,23 @@
                 </ul>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-5 hidden w-full text-lg lg:inline-flex">{{ $admin ? 'Save request' : 'Send request' }}</button>
+            @unless ($admin)
+                <button type="submit" class="btn btn-primary mt-5 hidden w-full text-lg lg:inline-flex">Send request</button>
+            @endunless
             @unless ($admin)
                 <p class="text-navy-soft mt-3 text-center text-xs">We reply with a quote, usually within one working day. Prices are a guide.</p>
             @endunless
         </section>
     </aside>
 
-    {{-- Phones: the send button stays in reach while scrolling the services. --}}
-    <div class="h-14 lg:hidden" aria-hidden="true"></div>
-    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 lg:hidden">
+    {{-- Phones: the send button stays in reach while scrolling. Admin: always, on every screen, so Save clearly saves the whole request. --}}
+    <div class="order-last h-14 lg:col-span-5 {{ $admin ? '' : 'lg:hidden' }}" aria-hidden="true"></div>
+    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 {{ $admin ? 'lg:left-60 lg:px-12' : 'lg:hidden' }}">
         <p class="min-w-0 truncate text-sm">
             <span x-show="pkg || picked.length || hasSpecial || callback" x-cloak class="font-semibold"
-                  x-text="[hasSpecial ? 'Your message' : '', callback ? 'call back' : '', pkg ? '1 package' : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
+                  x-text="[hasSpecial ? @js($admin ? 'Their words' : 'Your message') : '', callback ? 'call back' : '', pkg ? '1 package' : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
             <span x-show="!pkg && !picked.length && !hasSpecial && !callback" class="text-muted">Nothing selected yet</span>
         </p>
-        <button type="submit" class="btn btn-primary min-h-10 shrink-0 px-5">{{ $admin ? 'Save' : 'Send request' }}</button>
+        <button type="submit" class="btn btn-primary min-h-10 shrink-0 px-5">{{ $admin ? 'Save request' : 'Send request' }}</button>
     </div>
 </div>
