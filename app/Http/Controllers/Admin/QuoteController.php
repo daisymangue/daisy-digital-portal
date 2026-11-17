@@ -19,6 +19,7 @@ use App\Support\QuotePdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class QuoteController extends Controller
@@ -60,8 +61,15 @@ class QuoteController extends Controller
         $serviceRequest->load('services', 'package', 'client');
 
         $quote = DB::transaction(function () use ($serviceRequest) {
-            $title = $serviceRequest->package_name ?: ($serviceRequest->services->first()?->category_name ?? ($serviceRequest->isSpecial() ? 'Special request' : 'Services'));
+            // Their own words make a better title and scope than "Special request".
+            $words = trim(preg_replace('/^Please call me back on[^\n]*\n?/', '', (string) $serviceRequest->special_details));
+            $title = $serviceRequest->package_name ?: ($serviceRequest->services->first()?->category_name
+                ?? ($words !== '' ? Str::limit(strtok($words, "\n"), 60) : 'Services'));
             $quote = $this->newDraft($serviceRequest->client, $serviceRequest, $title);
+            if ($words !== '') {
+                $quote->scope = $words;
+                $quote->save();
+            }
             $order = 0;
 
             if ($serviceRequest->package) {

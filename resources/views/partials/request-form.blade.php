@@ -12,7 +12,7 @@
     $popular = $popular ?? collect();
     $selectedPkgIndex = $packages->search(fn ($p) => (string) $p->id === (string) old('package_id'));
 @endphp
-<div class="flex flex-col gap-10 lg:grid lg:grid-cols-5 lg:items-start lg:gap-8"
+<div class="{{ $admin ? 'flex flex-col gap-10' : 'flex flex-col gap-10 lg:grid lg:grid-cols-5 lg:items-start lg:gap-8' }}"
      x-data="{
          open: null,
          picked: @js(array_map('strval', old('services', []))),
@@ -35,14 +35,71 @@
          focusMessage() { $nextTick(() => { document.getElementById('special').scrollIntoView({ behavior: 'smooth', block: 'start' }); document.getElementById('special_details').focus() }) },
      }">
 
+    @if ($admin)
+        {{-- Admin: in the order of a phone call. Who, how it came in, what they need. Packages and services below are optional tags. --}}
+        <section class="card order-0 space-y-5">
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label for="client_id" class="label">Client</label>
+                    <select id="client_id" name="client_id" required class="field">
+                        <option value="">Choose a client</option>
+                        @foreach ($clients as $c)
+                            <option value="{{ $c->id }}" @selected(old('client_id', $selected) === $c->id)>{{ $c->business_name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-muted mt-1.5 text-sm">Not listed? <a href="{{ route('admin.clients.create') }}" class="link">Add a client</a> first.</p>
+                </div>
+                <div>
+                    <label for="source" class="label">How did it come in?</label>
+                    <select id="source" name="source" required class="field">
+                        @foreach (\App\Models\ServiceRequest::SOURCES as $key => $label)
+                            @continue($key === 'portal')
+                            <option value="{{ $key }}" @selected(old('source') === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label for="special_details" class="label">What do they need?</label>
+                <textarea id="special_details" name="special_details" x-model="special" rows="4" maxlength="5000" class="field"
+                          placeholder="What they asked for, in a sentence or two. The client sees this on their request."></textarea>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-3">
+                <div>
+                    <label for="needed_by" class="label">Needed by <span class="text-muted font-normal">(optional)</span></label>
+                    <input id="needed_by" name="needed_by" type="date" min="{{ today()->toDateString() }}" value="{{ old('needed_by') }}" class="field">
+                </div>
+                <div>
+                    <label for="budget_range" class="label">Budget <span class="text-muted font-normal">(optional)</span></label>
+                    <select id="budget_range" name="budget_range" class="field">
+                        <option value="">Not sure</option>
+                        @foreach (array_diff(\App\Models\ServiceRequest::BUDGETS, ['Not sure']) as $budget)
+                            <option value="{{ $budget }}" @selected(old('budget_range') === $budget)>{{ $budget }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="self-end">
+                    <x-file-drop id="files" :compact="true" label="Attach files" />
+                </div>
+            </div>
+
+            <div>
+                <label for="internal_note" class="label">Internal note <span class="text-muted font-normal">(only your team sees this)</span></label>
+                <textarea id="internal_note" name="internal_note" rows="2" maxlength="5000" class="field" placeholder="For example: prefers WhatsApp, price-sensitive, referred by Sipho">{{ old('internal_note') }}</textarea>
+            </div>
+        </section>
+    @endif
+
     {{-- Left on large screens. On phones "contents" lets these sit around the request box, in order. --}}
-    <div class="contents lg:col-span-3 lg:block lg:space-y-10">
+    <div class="{{ $admin ? 'contents' : 'contents lg:col-span-3 lg:block lg:space-y-10' }}">
     @if ($packages->isNotEmpty())
         <section aria-labelledby="pkg-heading" class="order-1">
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                    <h2 id="pkg-heading" class="h-section">Packages</h2>
-                    <p class="text-muted mt-1">Our most requested services, bundled for less. Optional.</p>
+                    <h2 id="pkg-heading" class="h-section">{{ $admin ? 'Add a package (optional)' : 'Packages' }}</h2>
+                    <p class="text-muted mt-1">{{ $admin ? 'If it matches a package, pick it so the quote fills itself in.' : 'Our most requested services, bundled for less. Optional.' }}</p>
                 </div>
             </div>
             <div class="mt-4 grid gap-4 sm:grid-cols-3">
@@ -94,7 +151,7 @@
     @endif
 
     <section aria-labelledby="svc-heading" class="order-3">
-        <h2 id="svc-heading" class="h-section">Individual services</h2>
+        <h2 id="svc-heading" class="h-section">{{ $admin ? 'Add services (optional)' : 'Individual services' }}</h2>
         <p class="text-muted mt-1">Search, tap a popular service, or open a category. You can choose as many as you like.</p>
 
         <div class="mt-4">
@@ -224,6 +281,7 @@
 
     </div>
 
+    @unless ($admin)
     {{-- The request box: beside the menu on large screens and always in view, after packages on phones. --}}
     <aside class="order-2 lg:col-span-2 lg:self-stretch">
         <section id="special" class="bg-navy -mx-5 scroll-mt-6 px-5 py-7 text-white sm:mx-0 sm:rounded-3xl sm:px-6 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
@@ -303,6 +361,7 @@
             @endunless
         </section>
     </aside>
+    @endunless
 
     {{--
         Admin: Save is always in this bar, so it clearly saves the whole request.
@@ -315,9 +374,16 @@
          x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full" @endif>
         <p class="min-w-0 truncate text-sm">
             <span x-show="pkg || picked.length || hasSpecial || callback" x-cloak class="font-semibold"
-                  x-text="[hasSpecial ? @js($admin ? 'Their words' : 'Your message') : '', callback ? 'call back' : '', pkg ? pkgNames[pkg] : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
+                  x-text="[hasSpecial ? @js($admin ? 'What they need' : 'Your message') : '', callback ? 'call back' : '', pkg ? pkgNames[pkg] : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
             <span x-show="!pkg && !picked.length && !hasSpecial && !callback" class="text-muted">Nothing selected yet</span>
         </p>
-        <button type="submit" class="btn btn-primary min-h-10 shrink-0 px-5">{{ $admin ? 'Save request' : 'Send request' }}</button>
+        @if ($admin)
+            <div class="flex shrink-0 gap-2">
+                <button type="submit" class="btn btn-light min-h-10 px-5">Save request</button>
+                <button type="submit" name="then" value="quote" class="btn btn-primary min-h-10 px-5">Save and create quote</button>
+            </div>
+        @else
+            <button type="submit" class="btn btn-primary min-h-10 shrink-0 px-5">Send request</button>
+        @endif
     </div>
 </div>

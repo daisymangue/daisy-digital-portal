@@ -46,13 +46,25 @@ class RequestController extends Controller
         $data = $request->validate(RequestBuilder::rules() + [
             'client_id' => ['required', 'uuid', 'exists:clients,id'],
             'source' => ['required', Rule::in($sources)],
-        ], RequestBuilder::messages());
+            'internal_note' => ['nullable', 'string', 'max:5000'],
+            'then' => ['nullable', Rule::in(['quote'])],
+        ], RequestBuilder::messages() + ['special_details.min' => 'Write down what they need.']);
 
         $serviceRequest = RequestBuilder::create(
             Client::findOrFail($data['client_id']), $request->user(), $data, $request->file('files', []), false, $data['source'], 'reviewing',
         );
 
         AuditLog::record('request.captured', $serviceRequest, ['number' => $serviceRequest->number, 'source' => $data['source']]);
+
+        // Only the team ever sees this, never the client.
+        if (trim($data['internal_note'] ?? '') !== '') {
+            $serviceRequest->notes()->create(['user_id' => $request->user()->id, 'body' => trim($data['internal_note'])]);
+        }
+
+        // "Save and create quote": straight into the draft quote, services already filled in.
+        if (($data['then'] ?? null) === 'quote') {
+            return app(QuoteController::class)->storeFromRequest($serviceRequest);
+        }
 
         return redirect()->route('admin.requests.show', $serviceRequest)->with('status', "Request {$serviceRequest->number} saved. You can create the quote from here.");
     }

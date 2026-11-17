@@ -58,7 +58,7 @@ class SpecialRequestTest extends TestCase
         $this->actingAs($this->admin)->get("/admin/requests/{$request->id}")->assertOk()->assertSee('A booking system for my salon');
 
         $this->actingAs($this->admin)->post("/admin/requests/{$request->id}/quotes");
-        $this->assertSame('Special request', Quote::firstOrFail()->title);
+        $this->assertSame('A booking system for my salon where clients pay a deposit.', Quote::firstOrFail()->title);
     }
 
     public function test_special_request_validation(): void

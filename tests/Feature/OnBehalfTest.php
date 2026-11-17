@@ -209,4 +209,30 @@ class OnBehalfTest extends TestCase
             'password' => 'a-long-password', 'password_confirmation' => 'a-long-password', 'accept_terms' => '1',
         ])->assertSessionHasErrors(['email' => 'This email already has an account. Sign in instead, and choose "Email me a link" if you do not have a password.']);
     }
+
+    public function test_admin_request_keeps_an_internal_note_and_can_go_straight_to_a_quote(): void
+    {
+        $client = $this->addClient();
+
+        $this->actingAs($this->admin)->post('/admin/requests', [
+            'client_id' => $client->id, 'source' => 'phone',
+            'special_details' => 'Translate a 3-page company profile into French.',
+            'internal_note' => 'Prefers WhatsApp, price-sensitive.',
+            'then' => 'quote',
+        ])->assertRedirect();
+
+        $request = ServiceRequest::latest('id')->firstOrFail();
+        $this->assertSame('Prefers WhatsApp, price-sensitive.', $request->notes()->value('body'));
+        $quote = Quote::where('service_request_id', $request->id)->firstOrFail();
+        $this->assertSame('draft', $quote->status);
+        $this->assertSame('Translate a 3-page company profile into French.', $quote->title);
+        $this->assertSame('Translate a 3-page company profile into French.', $quote->scope);
+
+        // The note is never shown to the client.
+        $user = User::factory()->make();
+        $user->role = User::ROLE_CLIENT;
+        $user->client_id = $client->id;
+        $user->save();
+        $this->actingAs($user)->get("/requests/{$request->id}")->assertOk()->assertDontSee('price-sensitive');
+    }
 }
