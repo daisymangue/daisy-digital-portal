@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Package extends Model
 {
-    protected $fillable = ['name', 'price_cents', 'is_from', 'unit', 'includes', 'sort_order', 'is_active'];
+    protected $fillable = ['name', 'price_cents', 'is_from', 'unit', 'includes', 'sort_order', 'is_active', 'is_featured'];
 
     protected function casts(): array
     {
-        return ['includes' => 'array', 'is_from' => 'boolean', 'is_active' => 'boolean', 'price_cents' => 'integer'];
+        return ['includes' => 'array', 'is_from' => 'boolean', 'is_active' => 'boolean', 'is_featured' => 'boolean', 'price_cents' => 'integer'];
     }
 
     public function priceLabel(): string

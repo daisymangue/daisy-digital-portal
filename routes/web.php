@@ -36,6 +36,7 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/requests/new', [ClientRequestController::class, 'create'])->name('requests.create');
     Route::post('/requests', [ClientRequestController::class, 'store'])->middleware('throttle:10,60')->name('requests.store');
     Route::get('/requests/{id}', [ClientRequestController::class, 'show'])->whereUuid('id')->name('requests.show');
+    Route::post('/requests/{id}/files', [ClientRequestController::class, 'addFiles'])->whereUuid('id')->middleware('throttle:20,60')->name('requests.files');
 
     Route::get('/quotes', [ClientQuoteController::class, 'index'])->name('quotes.index');
     Route::get('/quotes/{id}', [ClientQuoteController::class, 'show'])->whereUuid('id')->name('quotes.show');
@@ -98,6 +99,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/clients/{client}/access', [Admin\ClientController::class, 'grantAccess'])->whereUuid('client')->name('clients.access');
 
     Route::get('/services', [Admin\CatalogueController::class, 'index'])->name('services.index');
+    Route::get('/services/export', [Admin\ServiceImportController::class, 'export'])->name('services.export');
+    Route::get('/services/import', [Admin\ServiceImportController::class, 'create'])->name('services.import');
+    Route::post('/services/import', [Admin\ServiceImportController::class, 'preview'])->name('services.import.preview');
+    Route::post('/services/import/apply', [Admin\ServiceImportController::class, 'apply'])->name('services.import.apply');
     Route::post('/services/categories', [Admin\CatalogueController::class, 'storeCategory'])->name('categories.store');
     Route::get('/services/categories/{category}', [Admin\CatalogueController::class, 'show'])->name('categories.show');
     Route::put('/services/categories/{category}', [Admin\CatalogueController::class, 'updateCategory'])->name('categories.update');

@@ -59,7 +59,7 @@ class QuoteController extends Controller
         $serviceRequest->load('services', 'package', 'client');
 
         $quote = DB::transaction(function () use ($serviceRequest) {
-            $title = $serviceRequest->package_name ?: ($serviceRequest->services->first()?->category_name ?? 'Services');
+            $title = $serviceRequest->package_name ?: ($serviceRequest->services->first()?->category_name ?? ($serviceRequest->isSpecial() ? 'Special request' : 'Services'));
             $quote = $this->newDraft($serviceRequest->client, $serviceRequest, $title);
             $order = 0;
 

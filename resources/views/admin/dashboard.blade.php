@@ -25,7 +25,11 @@
                 @forelse ($requests as $r)
                     <a href="{{ route('admin.requests.show', $r) }}" class="card hover:border-line-strong flex flex-wrap items-center justify-between gap-3">
                         <div>
-                            <p class="font-semibold">{{ $r->number }} · {{ $r->client->business_name }}</p>
+                            <p class="font-semibold">{{ $r->number }} · {{ $r->client->business_name }}
+                                @if ($r->isSpecial())
+                                    <span class="pill ml-1 bg-pink-100 text-pink-900">Special</span>
+                                @endif
+                            </p>
                             <p class="text-muted text-sm">
                                 {{ $r->package_name ?: trans_choice(':count service|:count services', $r->services_count) }}
                                 · {{ $r->submitted_at->diffForHumans() }}

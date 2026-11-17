@@ -1,5 +1,11 @@
 <x-layouts.app title="Services">
-    <h1 class="h-page">Services</h1>
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <h1 class="h-page">Services</h1>
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ route('admin.services.export') }}" class="btn btn-light">Download as Excel</a>
+            <a href="{{ route('admin.services.import') }}" class="btn btn-primary">Import from Excel</a>
+        </div>
+    </div>
     <p class="text-muted mt-1">These categories are the cards clients see when they start a request. Open one to edit its services, prices and questions.</p>
 
     <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">

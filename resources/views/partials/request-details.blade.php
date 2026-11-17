@@ -1,4 +1,24 @@
 {{-- Shared by the client and admin request pages. Contains nothing internal. --}}
+@if ($serviceRequest->isSpecial())
+    <section class="rounded-2xl border-2 border-dashed border-pink-300 bg-white p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="h-section">Special request</h2>
+            <span class="pill bg-pink-100 text-pink-900">Custom work</span>
+        </div>
+        <p class="mt-3 whitespace-pre-line">{{ $serviceRequest->special_details }}</p>
+        @if ($serviceRequest->budget_range || $serviceRequest->needed_by)
+            <dl class="border-line mt-4 grid gap-3 border-t pt-4 sm:grid-cols-2">
+                @if ($serviceRequest->budget_range)
+                    <div><dt class="text-muted text-sm">Rough budget</dt><dd class="font-medium">{{ $serviceRequest->budget_range }}</dd></div>
+                @endif
+                @if ($serviceRequest->needed_by)
+                    <div><dt class="text-muted text-sm">Needed by</dt><dd class="font-medium">{{ $serviceRequest->needed_by->format('j F Y') }}</dd></div>
+                @endif
+            </dl>
+        @endif
+    </section>
+@endif
+
 @if ($serviceRequest->package_name)
     <section class="card">
         <h2 class="h-section">Package</h2>

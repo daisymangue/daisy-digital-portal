@@ -39,10 +39,13 @@
                     <tr>
                         <td class="px-5 py-4">
                             <a href="{{ route('admin.requests.show', $r) }}" class="link font-semibold">{{ $r->number }}</a>
+                            @if ($r->isSpecial())
+                                <span class="pill ml-1 bg-pink-100 text-pink-900">Special</span>
+                            @endif
                             <div class="text-muted text-sm">{{ $r->submitted_at->format('j M Y, H:i') }}</div>
                         </td>
                         <td class="px-5 py-4">{{ $r->client->business_name }}<div class="text-muted text-sm">{{ $r->user->name }}</div></td>
-                        <td class="px-5 py-4">{{ $r->package_name ?: trans_choice(':count service|:count services', $r->services_count) }}</td>
+                        <td class="px-5 py-4">{{ $r->package_name ?: ($r->services_count ? trans_choice(':count service|:count services', $r->services_count) : ($r->isSpecial() ? Str::limit($r->special_details, 50) : 'Described in notes')) }}</td>
                         <td class="px-5 py-4"><x-status :status="$r->status" :label="$r->statusLabel()" /></td>
                     </tr>
                 @empty

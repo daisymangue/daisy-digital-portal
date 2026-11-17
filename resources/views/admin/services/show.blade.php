@@ -28,7 +28,7 @@
 
     <section class="mt-10">
         <h2 class="h-section">Services <span class="text-muted font-normal">({{ $category->services->count() }})</span></h2>
-        <p class="text-muted mt-1 text-sm">Leave the price empty for "quote on request". Untick "Shown" to hide a service without losing past requests.</p>
+        <p class="text-muted mt-1 text-sm">Leave the price empty for "quote on request". Untick "Shown" to hide a service without losing past requests. Tick "Popular" to show it as a quick pick at the top of the request page.</p>
 
         <div class="mt-4 space-y-2">
             @foreach ($category->services as $service)
@@ -53,10 +53,11 @@
                     </div>
                     <input type="hidden" name="unit" value="{{ $service->unit }}">
                     @if ($service->is_from)<input type="hidden" name="is_from" value="1">@endif
-                    <label class="flex min-h-11 items-center gap-2 sm:col-span-1">
-                        <input type="checkbox" name="is_active" value="1" class="accent-navy size-5" @checked($service->is_active)> Shown
-                    </label>
-                    <div class="sm:col-span-2 sm:text-right"><button type="submit" class="btn btn-light w-full sm:w-auto">Save</button></div>
+                    <div class="flex flex-col justify-center sm:col-span-2">
+                        <label class="flex min-h-8 items-center gap-2"><input type="checkbox" name="is_active" value="1" class="accent-navy size-5" @checked($service->is_active)> Shown</label>
+                        <label class="flex min-h-8 items-center gap-2"><input type="checkbox" name="is_popular" value="1" class="accent-navy size-5" @checked($service->is_popular)> Popular</label>
+                    </div>
+                    <div class="sm:col-span-1 sm:text-right"><button type="submit" class="btn btn-light w-full sm:w-auto">Save</button></div>
                 </form>
             @endforeach
         </div>

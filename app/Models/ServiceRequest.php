@@ -35,6 +35,8 @@ class ServiceRequest extends Model
         'other' => 'Other',
     ];
 
+    public const BUDGETS = ['Not sure', 'Under R2 000', 'R2 000 to R5 000', 'R5 000 to R15 000', 'R15 000 to R50 000', 'R50 000 plus'];
+
     /** Plain wording shown to clients. */
     public const CLIENT_LABELS = [
         'new' => 'Received',
@@ -50,7 +52,7 @@ class ServiceRequest extends Model
 
     protected function casts(): array
     {
-        return ['submitted_at' => 'datetime'];
+        return ['submitted_at' => 'datetime', 'needed_by' => 'date'];
     }
 
     public function client(): BelongsTo
@@ -86,6 +88,11 @@ class ServiceRequest extends Model
     public function files(): MorphMany
     {
         return $this->morphMany(File::class, 'fileable');
+    }
+
+    public function isSpecial(): bool
+    {
+        return filled($this->special_details);
     }
 
     public function sourceLabel(): string

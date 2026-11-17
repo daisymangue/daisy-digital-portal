@@ -65,7 +65,7 @@ class CatalogueController extends Controller
 
     public function updateService(Request $request, Service $service)
     {
-        $service->update($this->serviceData($request) + ['is_active' => $request->boolean('is_active')]);
+        $service->update($this->serviceData($request) + ['is_active' => $request->boolean('is_active'), 'is_popular' => $request->boolean('is_popular')]);
         AuditLog::record('catalogue.service_updated', $service, ['name' => $service->name]);
 
         return back()->with('status', "Saved: {$service->name}");

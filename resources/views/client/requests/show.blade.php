@@ -20,6 +20,15 @@
             @include('partials.request-details', ['serviceRequest' => $serviceRequest])
         </div>
         <aside class="min-w-0 space-y-6">
+            @if ($serviceRequest->status !== 'declined')
+                <form method="POST" action="{{ route('requests.files', $serviceRequest->id) }}" enctype="multipart/form-data" class="card space-y-4">
+                    @csrf
+                    <h2 class="h-section">Forgot something?</h2>
+                    <x-file-drop id="more-files" label="Add more files" hint="Up to 8 at a time, 10 MB each." />
+                    <button type="submit" class="btn btn-dark w-full">Add files to this request</button>
+                </form>
+            @endif
+
             <div class="card">
                 <h2 class="h-section">What happens next</h2>
                 <ol class="mt-3 list-decimal space-y-2 pl-5">

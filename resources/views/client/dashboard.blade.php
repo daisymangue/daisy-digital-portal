@@ -41,7 +41,7 @@
                         <div>
                             <p class="font-semibold">{{ $r->number }}</p>
                             <p class="text-muted text-sm">
-                                {{ $r->package_name ?: trans_choice(':count service|:count services', $r->services_count) }}
+                                {{ $r->package_name ?: ($r->services_count ? trans_choice(':count service|:count services', $r->services_count) : ($r->isSpecial() ? 'Special request' : 'Your message')) }}
                                 · Sent {{ $r->submitted_at->format('j M Y') }}
                             </p>
                         </div>

@@ -1,6 +1,6 @@
 <x-layouts.app title="Packages">
     <h1 class="h-page">Packages</h1>
-    <p class="text-muted mt-1">Bundles shown at the top of the request form. Put each included item on its own line.</p>
+    <p class="text-muted mt-1">Only packages switched to "Show to clients" appear on the request page. The first 3 are shown, with "Most popular" always first, and any others sit behind "See all packages". Put each included item on its own line.</p>
 
     <div class="mt-8 grid gap-4 lg:grid-cols-2">
         @foreach ($packages as $package)
@@ -11,10 +11,14 @@
                     <label for="p-name-{{ $package->id }}" class="label">Package name</label>
                     <input id="p-name-{{ $package->id }}" name="name" value="{{ $package->name }}" required class="field">
                 </div>
-                <div class="grid gap-3 sm:grid-cols-2">
+                <div class="grid gap-3 sm:grid-cols-3">
                     <div>
                         <label for="p-price-{{ $package->id }}" class="label">Price (R)</label>
                         <input id="p-price-{{ $package->id }}" name="price" inputmode="decimal" value="{{ $package->price_cents !== null ? rtrim(rtrim(number_format($package->price_cents / 100, 2, '.', ''), '0'), '.') : '' }}" class="field">
+                    </div>
+                    <div>
+                        <label for="p-order-{{ $package->id }}" class="label">Order</label>
+                        <input id="p-order-{{ $package->id }}" name="sort_order" type="number" min="0" value="{{ $package->sort_order }}" class="field">
                     </div>
                     <div>
                         <label for="p-unit-{{ $package->id }}" class="label">Billing</label>
@@ -31,7 +35,8 @@
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div class="flex flex-wrap gap-x-5">
                         <label class="flex min-h-11 items-center gap-2"><input type="checkbox" name="is_from" value="1" class="accent-navy size-5" @checked($package->is_from)> Show as "From"</label>
-                        <label class="flex min-h-11 items-center gap-2"><input type="checkbox" name="is_active" value="1" class="accent-navy size-5" @checked($package->is_active)> Shown</label>
+                        <label class="flex min-h-11 items-center gap-2"><input type="checkbox" name="is_active" value="1" class="accent-navy size-5" @checked($package->is_active)> Show to clients</label>
+                        <label class="flex min-h-11 items-center gap-2"><input type="checkbox" name="is_featured" value="1" class="accent-navy size-5" @checked($package->is_featured)> Most popular</label>
                     </div>
                     <button type="submit" class="btn btn-light">Save</button>
                 </div>
