@@ -47,9 +47,10 @@
                     $logo = \App\Support\Brand::logoDataUri();
                 @endphp
                 @if ($logo)
-                    <img src="{{ $logo }}" alt="" style="max-height: 48px; max-width: 200px; margin-bottom: 6px">
+                    <img src="{{ $logo }}" alt="{{ $settings['business_name'] }}" style="height: 44px; margin-bottom: 8px">
+                @else
+                    <div class="brand">{{ strtoupper($settings['business_name']) }}</div>
                 @endif
-                <div class="brand">{{ strtoupper($settings['business_name']) }}</div>
                 <div class="muted pre">{{ $settings['business_address'] }}</div>
                 <div class="muted">{{ collect([$settings['business_email'], $settings['business_phone']])->filter()->implode(' · ') }}</div>
             </td>

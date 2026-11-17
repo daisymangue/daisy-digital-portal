@@ -24,7 +24,10 @@ class Brand
     public static function logoDataUri(): ?string
     {
         if (! self::hasLogo()) {
-            return null;
+            // The built-in navy version, which reads on white paper.
+            $default = public_path('images/logo-dark.png');
+
+            return is_file($default) ? 'data:image/png;base64,'.base64_encode(file_get_contents($default)) : null;
         }
         $path = Setting::get('logo_path');
 

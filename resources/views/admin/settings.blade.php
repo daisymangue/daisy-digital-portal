@@ -80,7 +80,7 @@
                     <div class="bg-navy rounded-xl p-4"><x-logo /></div>
                     <label class="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="remove_logo" value="1" class="size-5"> Remove logo</label>
                 @else
-                    <p class="text-muted text-sm">No logo yet, so the menu shows the business name in text.</p>
+                    <p class="text-muted text-sm">The Daisy Digital logo is built in. Upload a different one here only if you want to replace it in the menu and on PDFs.</p>
                 @endif
             </div>
             <div class="sm:max-w-md">

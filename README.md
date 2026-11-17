@@ -181,7 +181,7 @@ After changing `.env` or uploading new code, run `php artisan config:cache && ph
 ## Things to set before real clients use it
 
 - **Terms and privacy policy.** The registration form links to `/terms` and `/privacy` on the main website. Those pages need to exist, or change the links in `.env`.
-- **Logo.** Upload it under Admin > Settings > Logo (PNG, JPG or WebP). It shows in the menu, on the sign-in page and on PDFs.
+- **Logo.** The Daisy Digital logo is built in (`public/images`): a white version for the menu, a navy one for PDFs, and the icon for browser tabs. Upload a different one under Admin > Settings only to replace it.
 - **Settings.** Business email, phone, address, VAT number (only if registered), bank details and your Google review link.
 - **Brand colours.** All in one place at the top of `resources/css/app.css`.
 - **Questions.** The questions per category are a first draft. Edit them under Admin > Services.
