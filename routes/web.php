@@ -56,6 +56,7 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/quotes/{id}/pdf', [ClientQuoteController::class, 'pdf'])->whereUuid('id')->name('quotes.pdf');
     Route::post('/quotes/{id}/accept', [ClientQuoteController::class, 'accept'])->whereUuid('id')->name('quotes.accept');
     Route::post('/quotes/{id}/decline', [ClientQuoteController::class, 'decline'])->whereUuid('id')->name('quotes.decline');
+    Route::post('/quotes/{id}/renew', [ClientQuoteController::class, 'renew'])->whereUuid('id')->middleware('throttle:3,60')->name('quotes.renew');
     Route::post('/quotes/{id}/changes', [ClientQuoteController::class, 'changes'])->whereUuid('id')->name('quotes.changes');
 
     Route::get('/invoices', [ClientInvoiceController::class, 'index'])->name('invoices.index');
@@ -122,6 +123,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::put('/quotes/{quote}', [Admin\QuoteController::class, 'update'])->name('quotes.update');
     Route::post('/quotes/{quote}/revise', [Admin\QuoteController::class, 'revise'])->name('quotes.revise');
     Route::post('/quotes/{quote}/answer', [Admin\QuoteController::class, 'recordAnswer'])->name('quotes.answer');
+    Route::post('/quotes/{quote}/extend', [Admin\QuoteController::class, 'extend'])->name('quotes.extend');
     Route::delete('/quotes/{quote}', [Admin\QuoteController::class, 'destroy'])->name('quotes.destroy');
     Route::get('/quotes/{quote}/pdf', [Admin\QuoteController::class, 'pdf'])->name('quotes.pdf');
 

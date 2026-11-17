@@ -221,7 +221,7 @@ class QuoteController extends Controller
         ]);
 
         if (! $quote->canBeAnswered()) {
-            return back()->withErrors(['answer' => 'Only a sent quote that has not expired can be answered. Revise it to make a new version.']);
+            return back()->withErrors(['answer' => 'This quote has expired or been replaced. Use "Extend and send again", or revise it.']);
         }
 
         if ($data['answer'] === 'accepted') {
@@ -331,5 +331,26 @@ class QuoteController extends Controller
             'line_total_cents' => (int) round($quantity * $priceCents),
             'sort_order' => $order,
         ];
+    }
+
+    /** Give an expired quote a new valid-until date and send it to the client again. Same number, same prices. */
+    public function extend(Quote $quote)
+    {
+        abort_unless($quote->canBeExtended(), 409, 'This quote has not expired.');
+
+        $quote->valid_until = now()->addDays((int) Setting::get('quote_valid_days'))->toDateString();
+        if ($quote->status === 'expired') {
+            $quote->status = 'sent';
+        }
+        $quote->save();
+
+        AuditLog::record('quote.extended', $quote, ['number' => $quote->reference(), 'valid_until' => $quote->valid_until->toDateString()]);
+        try {
+            Notification::send($quote->client->users, new QuoteSent($quote));
+        } catch (\Throwable $e) {
+            report($e);
+        }
+
+        return back()->with('status', 'Quote extended to '.$quote->valid_until->format('j F Y').'. The client can accept it now.');
     }
 }

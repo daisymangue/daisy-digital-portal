@@ -201,10 +201,11 @@ class ProjectTest extends TestCase
         $this->actingAs($this->client)->post("/projects/{$project->id}/milestones/{$design->id}/changes", ['client_feedback' => 'Make the logo bigger please'])->assertSessionHasNoErrors();
         $this->assertSame('changes_requested', $design->fresh()->status);
 
-        // Cannot approve something that is not waiting.
-        $this->actingAs($this->client)->post("/projects/{$project->id}/milestones/{$design->id}/approve", ['approved_name' => 'Lerato'])->assertStatus(409);
+        // Cannot approve a step that was never sent for approval.
+        $build = $project->milestones()->where('title', 'Build')->first();
+        $this->actingAs($this->client)->post("/projects/{$project->id}/milestones/{$build->id}/approve", ['approved_name' => 'Lerato'])->assertStatus(409);
 
-        $this->actingAs($this->admin)->put("/admin/projects/{$project->id}/milestones/{$design->id}", ['title' => $design->title, 'status' => 'awaiting_approval', 'needs_approval' => '1']);
+        // After asking for changes, the client may approve it as it is after all.
         $this->actingAs($this->client)->post("/projects/{$project->id}/milestones/{$design->id}/approve", ['approved_name' => 'Lerato'])->assertSessionHasNoErrors();
 
         $design->refresh();

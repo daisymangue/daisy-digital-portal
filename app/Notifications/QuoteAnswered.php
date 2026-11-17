@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 /** Sent to admins when a client accepts, declines or asks for changes. */
 class QuoteAnswered extends Notification
 {
-    private const WORDS = ['accepted' => 'accepted', 'declined' => 'declined', 'changes_requested' => 'asked for changes to'];
+    private const WORDS = ['accepted' => 'accepted', 'declined' => 'declined', 'changes_requested' => 'asked for changes to', 'renewal' => 'wants to accept expired'];
 
     public function __construct(private Quote $quote, private string $answer) {}
 

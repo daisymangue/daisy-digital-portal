@@ -18,7 +18,22 @@
         </div>
 
         <aside class="min-w-0 space-y-6" x-data="{ panel: '{{ $errors->has('message') ? 'changes' : '' }}' }">
-            @if ($state === 'sent')
+            @php
+                $open = $quote->canBeAnswered();
+            @endphp
+            @if ($open && $state === 'changes_requested')
+                <div class="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-950">
+                    <p class="font-semibold">You asked for changes</p>
+                    <p class="mt-1 whitespace-pre-line">{{ $quote->client_message }}</p>
+                    <p class="mt-2 text-sm">We will send a revised quote. Changed your mind? You can still accept this one as it is.</p>
+                </div>
+            @elseif ($open && $state === 'declined')
+                <div class="rounded-2xl border border-line bg-sand-dark px-5 py-4">
+                    <p class="font-semibold">You declined this quote</p>
+                    <p class="mt-1 text-sm">Changed your mind? You can still accept it until {{ $quote->valid_until->format('j F Y') }}.</p>
+                </div>
+            @endif
+            @if ($open)
                 <form method="POST" action="{{ route('quotes.accept', $quote->id) }}" class="card space-y-4">
                     @csrf
                     <h2 class="h-section">Accept this quote</h2>
@@ -38,6 +53,7 @@
                     <button type="submit" class="btn btn-primary w-full">Accept quote</button>
                 </form>
 
+                @if ($state === 'sent')
                 <div class="card space-y-3">
                     <h2 class="h-section">Not quite right?</h2>
                     <button type="button" class="btn btn-light w-full" @click="panel = panel === 'changes' ? '' : 'changes'" :aria-expanded="(panel === 'changes').toString()">Ask for changes</button>
@@ -56,24 +72,28 @@
                         <button type="submit" class="btn btn-dark w-full">Confirm decline</button>
                     </form>
                 </div>
+                @endif
             @elseif ($state === 'accepted')
                 <div class="card">
                     <h2 class="h-section">Accepted</h2>
                     <p class="mt-2">Accepted by {{ $quote->acceptance?->accepted_name }} on {{ $quote->acceptance?->accepted_at->format('j F Y \a\t H:i') }}@if ($quote->acceptance?->isRecordedByTeam()), recorded by our team ({{ $quote->acceptance->methodLabel() }})@endif.</p>
                     <p class="text-muted mt-2 text-sm">These terms are now locked. Any change needs a new quote that you approve.</p>
                 </div>
-            @elseif ($state === 'changes_requested')
-                <div class="card">
-                    <h2 class="h-section">Changes requested</h2>
-                    <p class="mt-2 whitespace-pre-line">{{ $quote->client_message }}</p>
-                    <p class="text-muted mt-2 text-sm">We will send a revised quote.</p>
+            @elseif ($quote->canBeExtended())
+                <div class="card space-y-3">
+                    <h2 class="h-section">This quote has expired</h2>
+                    <p>It was valid until {{ $quote->valid_until->format('j F Y') }}. Still keen? Ask us and we will renew it, usually at the same price.</p>
+                    @if (session('renew_asked'))
+                        <p class="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-900">Thanks, we have been told and will get back to you.</p>
+                    @else
+                        <form method="POST" action="{{ route('quotes.renew', $quote->id) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-primary w-full">Ask for this quote to be renewed</button>
+                        </form>
+                    @endif
                 </div>
-            @elseif ($state === 'expired')
-                <div class="card"><h2 class="h-section">Expired</h2><p class="mt-2">This quote has passed its valid-until date. Contact us and we will send an updated one.</p></div>
             @elseif ($state === 'superseded')
                 <div class="card"><h2 class="h-section">Replaced</h2><p class="mt-2">A newer version of this quote has been sent. <a href="{{ route('quotes.index') }}" class="link">See your quotes</a>.</p></div>
-            @elseif ($state === 'declined')
-                <div class="card"><h2 class="h-section">Declined</h2><p class="mt-2">You declined this quote. If you change your mind, contact us.</p></div>
             @endif
 
             <a href="{{ route('quotes.pdf', $quote->id) }}" class="btn btn-light w-full">Download PDF</a>

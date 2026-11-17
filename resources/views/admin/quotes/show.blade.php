@@ -37,6 +37,17 @@
                 <a href="{{ route('admin.quotes.pdf', $quote) }}" class="btn btn-light w-full">Download PDF</a>
             </div>
 
+            @if ($quote->canBeExtended())
+                <div class="card space-y-3 border-amber-200 bg-amber-50">
+                    <h2 class="h-section">Expired {{ $quote->valid_until->format('j M Y') }}</h2>
+                    <p class="text-sm">Client still keen? Extend it by {{ \App\Models\Setting::get('quote_valid_days') }} days at the same price. They are emailed and can accept straight away. To change prices, revise it instead.</p>
+                    <form method="POST" action="{{ route('admin.quotes.extend', $quote) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-dark w-full">Extend and send again</button>
+                    </form>
+                </div>
+            @endif
+
             @if ($quote->canBeAnswered())
                 <div class="card space-y-4" x-data="{ answer: '{{ old('answer', 'accepted') }}' }">
                     <div>

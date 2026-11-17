@@ -70,7 +70,8 @@ class ClientProjectController extends Controller
             'approved_name.required' => 'Type your name to approve.',
         ]);
 
-        abort_unless($m->status === 'awaiting_approval', 409, 'This step is not waiting for approval.');
+        // After asking for changes, the client may decide it is fine as it is.
+        abort_unless(in_array($m->status, ['awaiting_approval', 'changes_requested'], true), 409, 'This step is not waiting for approval.');
 
         $m->status = 'done';
         $m->approved_name = $data['approved_name'];

@@ -40,7 +40,7 @@ class ClientQuoteController extends Controller
         ], ['confirm.accepted' => 'Please tick the box to confirm you accept this quote.']);
 
         if (! $quote->canBeAnswered()) {
-            return back()->withErrors(['quote' => 'This quote can no longer be accepted. It may have expired or been replaced. Please contact us for an updated quote.']);
+            return back()->withErrors(['quote' => 'This quote can no longer be accepted. It may have expired or been replaced by a newer version. See your quotes, or ask us to renew it.']);
         }
 
         $accepted = $quote->accept($request->user(), $data['accepted_name'], [
@@ -67,6 +67,18 @@ class ClientQuoteController extends Controller
         $request->validate(['message' => ['required', 'string', 'min:5', 'max:3000']], ['message.required' => 'Please tell us what you would like changed.']);
 
         return $this->respond($request, $id, 'changes_requested', 'Thank you. We have your notes and will send a revised quote.');
+    }
+
+    /** An expired quote the client still wants: tell the team, who can extend it in one click. */
+    public function renew(Request $request, string $id)
+    {
+        $quote = $this->find($request, $id);
+        abort_unless($quote->canBeExtended(), 409, 'This quote does not need renewing.');
+
+        AuditLog::record('quote.renewal_requested', $quote, ['number' => $quote->reference()]);
+        $this->tellAdmins($quote, 'renewal');
+
+        return back()->with('renew_asked', true);
     }
 
     private function respond(Request $request, string $id, string $status, string $flash)

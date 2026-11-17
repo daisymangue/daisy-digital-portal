@@ -89,14 +89,32 @@ class Quote extends Model
     }
 
     /** A sent quote past its valid-until date counts as expired even before the nightly job marks it. */
-    public function effectiveStatus(): string
+    /** Statuses a client can still move on from: they may accept after asking for changes or declining. */
+    public const OPEN_STATUSES = ['sent', 'changes_requested', 'declined'];
+
+    public function isPastValidity(): bool
     {
-        return $this->status === 'sent' && $this->valid_until && $this->valid_until->endOfDay()->isPast() ? 'expired' : $this->status;
+        return $this->valid_until && $this->valid_until->endOfDay()->isPast();
     }
 
+    public function effectiveStatus(): string
+    {
+        return $this->status === 'sent' && $this->isPastValidity() ? 'expired' : $this->status;
+    }
+
+    /**
+     * Can still be accepted (or answered again): sent, or the client asked for changes or declined
+     * and has changed their mind, as long as it is still valid and no newer version replaced it.
+     */
     public function canBeAnswered(): bool
     {
-        return $this->effectiveStatus() === 'sent';
+        return in_array($this->status, self::OPEN_STATUSES, true) && ! $this->isPastValidity();
+    }
+
+    /** Valid date passed without a yes: the team can extend it, and the client can ask them to. */
+    public function canBeExtended(): bool
+    {
+        return in_array($this->status, ['sent', 'expired', 'changes_requested', 'declined'], true) && $this->isPastValidity();
     }
 
     public function canBeRevised(): bool

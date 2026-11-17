@@ -128,8 +128,16 @@ class OnBehalfTest extends TestCase
         $this->assertSame('declined', $quote->fresh()->status);
         $this->assertStringContainsString('Budget is tight', $quote->fresh()->client_message);
 
+        // Past its valid date, nothing can be recorded until the team extends it.
+        $quote->valid_until = now()->subDay()->toDateString();
+        $quote->save();
         $this->actingAs($this->admin)->post("/admin/quotes/{$quote->id}/answer", ['answer' => 'accepted', 'accepted_name' => 'Sipho', 'method' => 'email', 'confirm' => '1'])->assertSessionHasErrors('answer');
         $this->assertNull($quote->fresh()->acceptance);
+
+        // Client changed their mind: extend, then record the yes.
+        $this->actingAs($this->admin)->post("/admin/quotes/{$quote->id}/extend")->assertSessionHasNoErrors();
+        $this->actingAs($this->admin)->post("/admin/quotes/{$quote->id}/answer", ['answer' => 'accepted', 'accepted_name' => 'Sipho', 'method' => 'email', 'confirm' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame('accepted', $quote->fresh()->status);
     }
 
     public function test_giving_portal_access_invites_the_client_who_then_sees_everything(): void

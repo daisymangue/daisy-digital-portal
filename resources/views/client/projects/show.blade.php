@@ -15,7 +15,7 @@
         $tabs['handover'] = ['Handover', $handoverWaiting ? 1 : 0, 'Handover'];
     }
     $default = $handoverWaiting ? 'handover' : ($openCount ? 'needed' : 'messages');
-    $toApprove = $project->milestones->where('status', 'awaiting_approval');
+    $toApprove = $project->milestones->whereIn('status', ['awaiting_approval', 'changes_requested']);
 @endphp
 <x-layouts.app :title="$project->number.' '.$project->title">
     <a href="{{ route('projects.index') }}" class="link text-sm">Back to projects</a>
@@ -37,13 +37,22 @@
         <section class="mt-8 space-y-4">
             @foreach ($toApprove as $m)
                 <div class="rounded-2xl border border-violet-200 bg-violet-50 p-5 sm:p-6" x-data="{ mode: '' }">
-                    <p class="text-sm font-semibold text-violet-900">Ready for you to review</p>
-                    <h2 class="mt-1 text-lg font-semibold">{{ $m->title }}</h2>
-                    <p class="mt-1 text-violet-950">Look at what we sent in messages or files, then approve it or tell us what to change.</p>
-                    <div class="mt-4 flex flex-wrap gap-3" x-show="!mode">
-                        <button type="button" class="btn btn-primary" @click="mode = 'approve'">Approve</button>
-                        <button type="button" class="btn btn-light" @click="mode = 'changes'">Ask for changes</button>
-                    </div>
+                    @if ($m->status === 'changes_requested')
+                        <p class="text-sm font-semibold text-violet-900">You asked for changes</p>
+                        <h2 class="mt-1 text-lg font-semibold">{{ $m->title }}</h2>
+                        <p class="mt-1 text-violet-950">"{{ $m->client_feedback }}" We are working on it. Happy with it as it is after all? You can still approve it.</p>
+                        <div class="mt-4 flex flex-wrap gap-3" x-show="!mode">
+                            <button type="button" class="btn btn-light" @click="mode = 'approve'">Approve as it is</button>
+                        </div>
+                    @else
+                        <p class="text-sm font-semibold text-violet-900">Ready for you to review</p>
+                        <h2 class="mt-1 text-lg font-semibold">{{ $m->title }}</h2>
+                        <p class="mt-1 text-violet-950">Look at what we sent in messages or files, then approve it or tell us what to change.</p>
+                        <div class="mt-4 flex flex-wrap gap-3" x-show="!mode">
+                            <button type="button" class="btn btn-primary" @click="mode = 'approve'">Approve</button>
+                            <button type="button" class="btn btn-light" @click="mode = 'changes'">Ask for changes</button>
+                        </div>
+                    @endif
                     <form x-show="mode === 'approve'" x-cloak method="POST" action="{{ route('projects.milestones.approve', [$project->id, $m->id]) }}" class="mt-4 max-w-md space-y-3">
                         @csrf
                         <label for="approve-{{ $m->id }}" class="label">Type your name to approve</label>

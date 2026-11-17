@@ -256,4 +256,50 @@ class QuoteTest extends TestCase
         $this->actingAs($this->admin)->delete("/admin/quotes/{$draft->id}")->assertRedirect();
         $this->assertSoftDeleted('quotes', ['id' => $draft->id]);
     }
+
+    public function test_client_can_still_accept_after_asking_for_changes_or_declining(): void
+    {
+        $quote = $this->quote();
+        $this->actingAs($this->client)->post("/quotes/{$quote->id}/changes", ['message' => 'Can I get a discount?'])->assertSessionHasNoErrors();
+        $this->actingAs($this->client)->get("/quotes/{$quote->id}")->assertSee('You asked for changes')->assertSee('Accept quote');
+
+        $this->actingAs($this->client)->post("/quotes/{$quote->id}/accept", ['accepted_name' => 'Lerato', 'confirm' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame('accepted', $quote->fresh()->status);
+
+        $declined = $this->quote();
+        $this->actingAs($this->client)->post("/quotes/{$declined->id}/decline", ['message' => 'Not now']);
+        $this->actingAs($this->client)->get("/quotes/{$declined->id}")->assertSee('Changed your mind?');
+        $this->actingAs($this->client)->post("/quotes/{$declined->id}/accept", ['accepted_name' => 'Lerato', 'confirm' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame('accepted', $declined->fresh()->status);
+
+        // The team can record a yes after the client asked for changes, too.
+        $third = $this->quote();
+        $this->actingAs($this->client)->post("/quotes/{$third->id}/changes", ['message' => 'Change the colour']);
+        $this->actingAs($this->admin)->post("/admin/quotes/{$third->id}/answer", ['answer' => 'accepted', 'accepted_name' => 'Lerato', 'method' => 'phone', 'confirm' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame('accepted', $third->fresh()->status);
+    }
+
+    public function test_expired_quote_can_be_renewal_requested_and_extended(): void
+    {
+        $quote = $this->quote();
+        $quote->valid_until = now()->subDays(3)->toDateString();
+        $quote->status = 'expired';
+        $quote->save();
+
+        $this->actingAs($this->client)->get("/quotes/{$quote->id}")->assertSee('Ask for this quote to be renewed')->assertDontSee('Accept quote');
+        $this->actingAs($this->client)->post("/quotes/{$quote->id}/renew")->assertSessionHas('renew_asked');
+        Notification::assertSentTo($this->admin, QuoteAnswered::class);
+
+        $this->actingAs($this->admin)->post("/admin/quotes/{$quote->id}/extend")->assertSessionHasNoErrors();
+        $quote->refresh();
+        $this->assertSame('sent', $quote->status);
+        $this->assertTrue($quote->valid_until->isFuture());
+        Notification::assertSentTo($this->client, QuoteSent::class);
+
+        $this->actingAs($this->client)->post("/quotes/{$quote->id}/accept", ['accepted_name' => 'Lerato', 'confirm' => '1'])->assertSessionHasNoErrors();
+        $this->assertSame('accepted', $quote->fresh()->status);
+
+        // Nothing to extend on a valid quote.
+        $this->actingAs($this->admin)->post("/admin/quotes/{$this->quote()->id}/extend")->assertStatus(409);
+    }
 }
