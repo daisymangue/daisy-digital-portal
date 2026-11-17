@@ -3,7 +3,7 @@
     10 seconds while the tab is visible. Sending works without JavaScript too (normal form post).
     Needs: $project, $messages, $feedUrl, $postUrl, $closed
 --}}
-<section id="chat" class="card flex flex-col p-0 sm:p-0"
+<section id="chat" class="card flex flex-col p-0 sm:p-0" @chat-shown.window="scroll()"
     x-data="{
         messages: @js($messages),
         body: '',
@@ -61,7 +61,7 @@
                         <p class="break-words whitespace-pre-line" x-show="m.body" x-text="m.body"></p>
                         <template x-for="f in m.files">
                             <a :href="f.url" class="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm underline-offset-2 hover:underline" :class="m.mine ? 'bg-white/10' : 'bg-white'">
-                                <span aria-hidden="true">📎</span><span class="break-all" x-text="f.name"></span><span class="opacity-70" x-text="'(' + f.size + ')'"></span>
+                                <span aria-hidden="true">📎</span><span class="break-all" x-text="f.name"></span><span class="shrink-0 whitespace-nowrap opacity-70" x-text="f.size"></span>
                             </a>
                         </template>
                     </div>

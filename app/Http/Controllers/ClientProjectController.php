@@ -34,6 +34,7 @@ class ClientProjectController extends Controller
 
         return view('client.projects.show', [
             'project' => $project,
+            'unread' => $project->unreadFor($request->user()),
             'messages' => ProjectWork::feed($project, $request->user()),
             'files' => $project->allFiles(),
         ]);

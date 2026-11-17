@@ -76,6 +76,7 @@ class ProjectController extends Controller
 
         return view('admin.projects.show', [
             'project' => $project,
+            'unread' => $project->unreadFor($request->user()),
             'messages' => ProjectWork::feed($project, $request->user()),
             'files' => $project->allFiles(),
         ]);

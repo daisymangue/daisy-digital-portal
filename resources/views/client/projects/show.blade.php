@@ -1,5 +1,13 @@
 @php
     $needed = $project->checklist->where('status', '!=', 'accepted');
+    $openCount = $project->checklist->where('status', 'open')->count();
+    $tabs = [
+        'messages' => ['Messages', $unread, 'Chat'],
+        'progress' => ['Progress', 0, 'Progress'],
+        'needed' => ['What we need', $openCount, 'Needed'],
+        'files' => ['Files', 0, 'Files'],
+    ];
+    $default = $openCount ? 'needed' : 'messages';
     $toApprove = $project->milestones->where('status', 'awaiting_approval');
 @endphp
 <x-layouts.app :title="$project->number.' '.$project->title">
@@ -52,93 +60,126 @@
         </section>
     @endif
 
-    @if ($needed->isNotEmpty())
-        <section class="mt-8 rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6">
-            <h2 class="h-section text-amber-950">What we need from you</h2>
-            <p class="mt-1 text-amber-950">We can move faster once we have these. Send each one when it is ready.</p>
-            <ul class="mt-4 space-y-3">
-                @foreach ($needed as $item)
-                    <li class="rounded-xl border border-amber-200 bg-white p-4" x-data="{ open: {{ $loop->first && $item->status === 'open' ? 'true' : 'false' }} }">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <div class="min-w-0">
-                                <p class="font-semibold">{{ $item->title }}</p>
-                                @if ($item->note)<p class="text-muted text-sm">{{ $item->note }}</p>@endif
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <x-status :status="$item->status" :label="$item->statusLabel()" />
-                                <button type="button" class="link min-h-11 cursor-pointer" @click="open = !open" :aria-expanded="open.toString()">{{ $item->status === 'submitted' ? 'Send more' : 'Send it' }}</button>
-                            </div>
+
+    <div x-data="{
+            tab: '{{ $default }}',
+            keys: @js(array_keys($tabs)),
+            show(k) {
+                this.tab = k;
+                try { localStorage.setItem('ptab-{{ $project->id }}', k) } catch (e) {}
+                history.replaceState(null, '', '#' + k);
+                if (k === 'messages') this.$dispatch('chat-shown');
+            },
+            move(d) {
+                const i = (this.keys.indexOf(this.tab) + d + this.keys.length) % this.keys.length;
+                this.show(this.keys[i]);
+                this.$nextTick(() => document.getElementById('tab-' + this.tab).focus());
+            },
+            init() {
+                let saved = null;
+                try { saved = localStorage.getItem('ptab-{{ $project->id }}') } catch (e) {}
+                const h = location.hash.slice(1) === 'chat' ? 'messages' : location.hash.slice(1);
+                if (this.keys.includes(h)) this.tab = h; else if (saved && this.keys.includes(saved)) this.tab = saved;
+                if (this.tab === 'messages') this.$nextTick(() => this.$dispatch('chat-shown'));
+            },
+        }">
+        @include('partials.project-tabs')
+
+        <div class="mt-6">
+            <div id="panel-messages" role="tabpanel" aria-labelledby="tab-messages" x-show="tab === 'messages'">
+                @include('partials.project-chat', [
+                    'feedUrl' => route('projects.messages', $project->id),
+                    'postUrl' => route('projects.messages.store', $project->id),
+                    'closed' => $project->status === 'cancelled',
+                ])
+            </div>
+
+            <div id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" x-show="tab === 'progress'" x-cloak class="grid gap-6 lg:grid-cols-5">
+                <section class="card lg:col-span-2">
+                    <h2 class="h-section">Steps</h2>
+                    @include('partials.project-steps')
+                    @if ($project->quote)
+                        <div class="border-line mt-5 border-t pt-4 text-sm">
+                            <a href="{{ route('quotes.show', $project->quote_id) }}" class="link">Quote {{ $project->quote->reference() }}</a>
+                            · <a href="{{ route('invoices.index') }}" class="link">Your invoices</a>
                         </div>
-                        @if ($item->client_reply || $item->files->isNotEmpty())
-                            <div class="bg-sand mt-3 rounded-xl p-3 text-sm">
-                                @if ($item->client_reply)<p class="whitespace-pre-line">{{ $item->client_reply }}</p>@endif
-                                @foreach ($item->files as $f)
-                                    <a href="{{ route('files.download', $f) }}" class="link mt-1 block break-all">{{ $f->original_name }}</a>
-                                @endforeach
-                            </div>
-                        @endif
-                        <form x-show="open" x-cloak method="POST" action="{{ route('projects.checklist.submit', [$project->id, $item->id]) }}" enctype="multipart/form-data" class="mt-4 space-y-3">
-                            @csrf
-                            <div>
-                                <label for="reply-{{ $item->id }}" class="label">Reply or link <span class="text-muted font-normal">(optional if you add a file)</span></label>
-                                <textarea id="reply-{{ $item->id }}" name="client_reply" rows="2" maxlength="3000" class="field" placeholder="For example a Google Drive link, a login, or a note"></textarea>
-                            </div>
-                            <x-file-drop :id="'item-files-'.$item->id" />
-                            <button type="submit" class="btn btn-dark">Send "{{ Str::limit($item->title, 30) }}"</button>
-                        </form>
-                    </li>
-                @endforeach
-            </ul>
-            <p class="mt-3 text-sm text-amber-950">Please do not send passwords in plain text. Ask us for a safe way to share logins.</p>
-        </section>
-    @endif
+                    @endif
+                </section>
+                <section class="card lg:col-span-3">
+                    <h2 class="h-section">Progress updates</h2>
+                    @forelse ($project->updates as $u)
+                        <article class="border-line mt-4 border-t pt-4 first-of-type:mt-3 first-of-type:border-0 first-of-type:pt-0">
+                            <p class="text-muted text-sm">{{ $u->created_at->format('j F Y') }} · {{ $u->user->name }}</p>
+                            <p class="mt-1 whitespace-pre-line">{{ $u->body }}</p>
+                        </article>
+                    @empty
+                        <p class="text-muted mt-2">We will post progress updates here as the work moves along.</p>
+                    @endforelse
+                </section>
+            </div>
 
-    <div class="mt-8 grid gap-6 lg:grid-cols-3">
-        <div class="min-w-0 space-y-6 lg:col-span-2">
-            @include('partials.project-chat', [
-                'feedUrl' => route('projects.messages', $project->id),
-                'postUrl' => route('projects.messages.store', $project->id),
-                'closed' => $project->status === 'cancelled',
-            ])
+            <div id="panel-needed" role="tabpanel" aria-labelledby="tab-needed" x-show="tab === 'needed'" x-cloak>
+            @if ($needed->isNotEmpty())
+                <section class="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6">
+                    <h2 class="h-section text-amber-950">What we need from you</h2>
+                    <p class="mt-1 text-amber-950">We can move faster once we have these. Send each one when it is ready.</p>
+                    <ul class="mt-4 space-y-3">
+                        @foreach ($needed as $item)
+                            <li class="rounded-xl border border-amber-200 bg-white p-4" x-data="{ open: {{ $loop->first && $item->status === 'open' ? 'true' : 'false' }} }">
+                                <div class="flex flex-wrap items-center justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="font-semibold">{{ $item->title }}</p>
+                                        @if ($item->note)<p class="text-muted text-sm">{{ $item->note }}</p>@endif
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <x-status :status="$item->status" :label="$item->statusLabel()" />
+                                        <button type="button" class="link min-h-11 cursor-pointer" @click="open = !open" :aria-expanded="open.toString()">{{ $item->status === 'submitted' ? 'Send more' : 'Send it' }}</button>
+                                    </div>
+                                </div>
+                                @if ($item->client_reply || $item->files->isNotEmpty())
+                                    <div class="bg-sand mt-3 rounded-xl p-3 text-sm">
+                                        @if ($item->client_reply)<p class="whitespace-pre-line">{{ $item->client_reply }}</p>@endif
+                                        @foreach ($item->files as $f)
+                                            <a href="{{ route('files.download', $f) }}" class="link mt-1 block break-all">{{ $f->original_name }}</a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                <form x-show="open" x-cloak method="POST" action="{{ route('projects.checklist.submit', [$project->id, $item->id]) }}" enctype="multipart/form-data" class="mt-4 space-y-3">
+                                    @csrf
+                                    <div>
+                                        <label for="reply-{{ $item->id }}" class="label">Reply or link <span class="text-muted font-normal">(optional if you add a file)</span></label>
+                                        <textarea id="reply-{{ $item->id }}" name="client_reply" rows="2" maxlength="3000" class="field" placeholder="For example a Google Drive link, a login, or a note"></textarea>
+                                    </div>
+                                    <x-file-drop :id="'item-files-'.$item->id" />
+                                    <button type="submit" class="btn btn-dark">Send "{{ Str::limit($item->title, 30) }}"</button>
+                                </form>
+                            </li>
+                        @endforeach
+                    </ul>
+                    <p class="mt-3 text-sm text-amber-950">Please do not send passwords in plain text. Ask us for a safe way to share logins.</p>
+                </section>
+            @else
+                <div class="card text-center">
+                    <p class="font-medium">Nothing needed from you right now.</p>
+                    <p class="text-muted mt-1">When we need content, logins or approvals, they will show here.</p>
+                </div>
+            @endif
+            </div>
 
-            <section class="card">
-                <h2 class="h-section">Progress updates</h2>
-                @forelse ($project->updates as $u)
-                    <article class="border-line mt-4 border-t pt-4 first-of-type:mt-3 first-of-type:border-0 first-of-type:pt-0">
-                        <p class="text-muted text-sm">{{ $u->created_at->format('j F Y') }} · {{ $u->user->name }}</p>
-                        <p class="mt-1 whitespace-pre-line">{{ $u->body }}</p>
-                    </article>
-                @empty
-                    <p class="text-muted mt-2">We will post progress updates here as the work moves along.</p>
-                @endforelse
-            </section>
-        </div>
-
-        <aside class="min-w-0 space-y-6">
-            <section class="card">
-                <h2 class="h-section">Steps</h2>
-                @include('partials.project-steps')
-            </section>
-
-            <section class="card space-y-4">
-                <h2 class="h-section">Files</h2>
-                @include('partials.project-files')
+            <div id="panel-files" role="tabpanel" aria-labelledby="tab-files" x-show="tab === 'files'" x-cloak class="grid gap-6 lg:grid-cols-5">
+                <section class="card lg:col-span-3">
+                    <h2 class="h-section">All files</h2>
+                    <p class="text-muted mt-1 mb-3 text-sm">Everything shared in messages, in "What we need" and uploaded here.</p>
+                    @include('partials.project-files')
+                </section>
                 @unless ($project->isClosed())
-                    <form method="POST" action="{{ route('projects.files', $project->id) }}" enctype="multipart/form-data" class="border-line space-y-3 border-t pt-4">
+                    <form method="POST" action="{{ route('projects.files', $project->id) }}" enctype="multipart/form-data" class="card space-y-3 lg:col-span-2">
                         @csrf
                         <x-file-drop id="project-files" label="Share files with us" />
                         <button type="submit" class="btn btn-dark w-full">Upload</button>
                     </form>
                 @endunless
-            </section>
-
-            @if ($project->quote)
-                <section class="card">
-                    <h2 class="h-section">Paperwork</h2>
-                    <p class="mt-2"><a href="{{ route('quotes.show', $project->quote_id) }}" class="link">Quote {{ $project->quote->reference() }}</a></p>
-                    <p class="mt-1"><a href="{{ route('invoices.index') }}" class="link">Your invoices</a></p>
-                </section>
-            @endif
-        </aside>
+            </div>
+        </div>
     </div>
 </x-layouts.app>
