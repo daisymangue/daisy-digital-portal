@@ -23,6 +23,14 @@
         'pending' => 'bg-amber-100 text-amber-900',
         'confirmed' => 'bg-green-100 text-green-900',
         'rejected' => 'bg-red-100 text-red-900',
+        'active' => 'bg-blue-100 text-blue-900',
+        'on_hold' => 'bg-sand-dark text-ink',
+        'completed' => 'bg-green-100 text-green-900',
+        'in_progress' => 'bg-blue-100 text-blue-900',
+        'awaiting_approval' => 'bg-violet-100 text-violet-900',
+        'done' => 'bg-green-100 text-green-900',
+        'open' => 'bg-amber-100 text-amber-900',
+        'submitted' => 'bg-blue-100 text-blue-900',
     ];
 @endphp
 <span class="pill {{ $styles[$status] ?? 'bg-sand-dark text-ink' }}">{{ $label }}</span>

@@ -111,6 +111,27 @@
                 </div>
             @endif
 
+            @if ($quote->status === 'accepted')
+                <div class="card space-y-3">
+                    <h2 class="h-section">Project</h2>
+                    @if ($project)
+                        <a href="{{ route('admin.projects.show', $project) }}" class="flex items-center justify-between gap-3">
+                            <span class="link">{{ $project->number }} · {{ $project->title }}</span>
+                            <x-status :status="$project->status" :label="$project->statusLabel()" />
+                        </a>
+                    @else
+                        <p class="text-muted text-sm">The project opens by itself when the deposit or full invoice is paid. To start before then, give a reason.</p>
+                        <form method="POST" action="{{ route('admin.projects.store') }}" class="space-y-3">
+                            @csrf
+                            <input type="hidden" name="quote_id" value="{{ $quote->id }}">
+                            <label for="start_reason" class="label">Reason for starting now</label>
+                            <input id="start_reason" name="start_reason" required maxlength="500" class="field" placeholder="For example deposit waived, trusted client">
+                            <button type="submit" class="btn btn-light w-full">Start project now</button>
+                        </form>
+                    @endif
+                </div>
+            @endif
+
             @if ($quote->acceptance)
                 <div class="card">
                     <h2 class="h-section">Acceptance record</h2>

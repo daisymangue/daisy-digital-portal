@@ -7,6 +7,14 @@
         <a href="{{ route('requests.create') }}" class="btn btn-primary">Start a new request</a>
     </div>
 
+    @foreach ($projects->filter(fn ($p) => $p->approve_count || $p->needed_count) as $p)
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-200 bg-violet-50 px-5 py-4 text-violet-950">
+            <p><span class="font-semibold">{{ $p->title }}:</span>
+                {{ collect([$p->approve_count ? trans_choice(':count step to approve|:count steps to approve', $p->approve_count) : null, $p->needed_count ? trans_choice(':count thing we need from you|:count things we need from you', $p->needed_count) : null])->filter()->implode(' and ') }}.</p>
+            <a href="{{ route('projects.show', $p->id) }}" class="btn btn-dark">Open project</a>
+        </div>
+    @endforeach
+
     @foreach ($quotesWaiting as $q)
         <div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-blue-950">
             <p><span class="font-semibold">Quote {{ $q->reference() }} is ready.</span> {{ \App\Support\Money::format($q->total_cents) }}, valid until {{ $q->valid_until->format('j M Y') }}.</p>
@@ -29,6 +37,20 @@
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <section class="lg:col-span-2">
+            @if ($projects->isNotEmpty())
+                <h2 class="h-section">Your projects</h2>
+                <div class="mt-4 mb-8 grid gap-3 sm:grid-cols-2">
+                    @foreach ($projects as $p)
+                        <a href="{{ route('projects.show', $p->id) }}" class="card hover:border-line-strong space-y-3">
+                            <div class="flex items-start justify-between gap-2">
+                                <p class="min-w-0 font-semibold">{{ $p->title }}</p>
+                                @if ($p->unread_count)<span class="bg-brand shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold text-white">{{ $p->unread_count }} new</span>@endif
+                            </div>
+                            @include('partials.project-progress', ['project' => $p])
+                        </a>
+                    @endforeach
+                </div>
+            @endif
             <div class="flex items-center justify-between gap-3">
                 <h2 class="h-section">Recent requests</h2>
                 @if ($totalCount > 0)

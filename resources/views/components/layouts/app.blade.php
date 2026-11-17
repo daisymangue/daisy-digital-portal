@@ -1,10 +1,15 @@
 @props(['title' => 'Dashboard'])
 @php
     $user = auth()->user();
+    // Unread chat messages from the other side, shown as a count next to Projects.
+    $unread = \App\Models\ProjectMessage::whereNull('read_at')->where('from_team', $user->isClient())
+        ->when($user->isClient(), fn ($q) => $q->whereHas('project', fn ($p) => $p->where('client_id', $user->client_id)))
+        ->count();
     $nav = $user->isAdmin()
         ? [
             ['Dashboard', route('admin.dashboard'), request()->routeIs('admin.dashboard')],
             ['Requests', route('admin.requests.index'), request()->routeIs('admin.requests.*')],
+            ['Projects', route('admin.projects.index'), request()->routeIs('admin.projects.*'), $unread],
             ['Quotes', route('admin.quotes.index'), request()->routeIs('admin.quotes.*')],
             ['Invoices', route('admin.invoices.index'), request()->routeIs('admin.invoices.*')],
             ['Clients', route('admin.clients.index'), request()->routeIs('admin.clients.*')],
@@ -15,6 +20,7 @@
         ]
         : [
             ['Dashboard', route('dashboard'), request()->routeIs('dashboard')],
+            ['Projects', route('projects.index'), request()->routeIs('projects.*'), $unread],
             ['My Requests', route('requests.index'), request()->routeIs('requests.index', 'requests.show')],
             ['Quotes', route('quotes.index'), request()->routeIs('quotes.*')],
             ['Invoices', route('invoices.index'), request()->routeIs('invoices.*')],
@@ -47,10 +53,19 @@
                 @endif
             </div>
             <ul class="flex flex-col gap-1">
-                @foreach ($nav as [$label, $url, $active])
+                @foreach ($nav as $item)
+                    @php
+                        [$label, $url, $active] = $item;
+                        $badge = $item[3] ?? 0;
+                    @endphp
                     <li>
                         <a href="{{ $url }}" @if ($active) aria-current="page" @endif
-                           class="flex min-h-11 items-center rounded-xl px-3 {{ $active ? 'bg-white/10 font-medium text-white' : 'text-navy-soft hover:bg-white/5 hover:text-white' }}">{{ $label }}</a>
+                           class="flex min-h-11 items-center justify-between gap-2 rounded-xl px-3 {{ $active ? 'bg-white/10 font-medium text-white' : 'text-navy-soft hover:bg-white/5 hover:text-white' }}">
+                            <span>{{ $label }}</span>
+                            @if ($badge > 0)
+                                <span class="bg-brand rounded-full px-2 py-0.5 text-xs font-semibold text-white">{{ $badge }}<span class="sr-only"> unread {{ $badge === 1 ? 'message' : 'messages' }}</span></span>
+                            @endif
+                        </a>
                     </li>
                 @endforeach
             </ul>

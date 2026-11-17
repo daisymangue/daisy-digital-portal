@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClientInvoiceController;
+use App\Http\Controllers\ClientProjectController;
 use App\Http\Controllers\ClientQuoteController;
 use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\FileController;
@@ -49,10 +50,34 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/invoices/{id}', [ClientInvoiceController::class, 'show'])->whereUuid('id')->name('invoices.show');
     Route::get('/invoices/{id}/pdf', [ClientInvoiceController::class, 'pdf'])->whereUuid('id')->name('invoices.pdf');
     Route::post('/invoices/{id}/pay', [ClientInvoiceController::class, 'pay'])->whereUuid('id')->middleware('throttle:10,60')->name('invoices.pay');
+
+    Route::get('/projects', [ClientProjectController::class, 'index'])->name('projects.index');
+    Route::get('/projects/{id}', [ClientProjectController::class, 'show'])->whereUuid('id')->name('projects.show');
+    Route::get('/projects/{id}/messages', [ClientProjectController::class, 'messages'])->whereUuid('id')->middleware('throttle:120,1')->name('projects.messages');
+    Route::post('/projects/{id}/messages', [ClientProjectController::class, 'postMessage'])->whereUuid('id')->middleware('throttle:30,1')->name('projects.messages.store');
+    Route::post('/projects/{id}/milestones/{milestone}/approve', [ClientProjectController::class, 'approve'])->whereUuid('id')->name('projects.milestones.approve');
+    Route::post('/projects/{id}/milestones/{milestone}/changes', [ClientProjectController::class, 'changes'])->whereUuid('id')->name('projects.milestones.changes');
+    Route::post('/projects/{id}/checklist/{item}', [ClientProjectController::class, 'submitItem'])->whereUuid('id')->middleware('throttle:30,60')->name('projects.checklist.submit');
+    Route::post('/projects/{id}/files', [ClientProjectController::class, 'uploadFiles'])->whereUuid('id')->middleware('throttle:20,60')->name('projects.files');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', Admin\DashboardController::class)->name('dashboard');
+
+    Route::get('/projects', [Admin\ProjectController::class, 'index'])->name('projects.index');
+    Route::post('/projects', [Admin\ProjectController::class, 'store'])->name('projects.store');
+    Route::get('/projects/{project}', [Admin\ProjectController::class, 'show'])->name('projects.show');
+    Route::put('/projects/{project}', [Admin\ProjectController::class, 'update'])->name('projects.update');
+    Route::get('/projects/{project}/messages', [Admin\ProjectController::class, 'messages'])->name('projects.messages');
+    Route::post('/projects/{project}/messages', [Admin\ProjectController::class, 'postMessage'])->name('projects.messages.store');
+    Route::post('/projects/{project}/updates', [Admin\ProjectController::class, 'postUpdate'])->name('projects.updates.store');
+    Route::post('/projects/{project}/milestones', [Admin\ProjectController::class, 'addMilestone'])->name('projects.milestones.store');
+    Route::put('/projects/{project}/milestones/{milestone}', [Admin\ProjectController::class, 'updateMilestone'])->name('projects.milestones.update');
+    Route::delete('/projects/{project}/milestones/{milestone}', [Admin\ProjectController::class, 'destroyMilestone'])->name('projects.milestones.destroy');
+    Route::post('/projects/{project}/checklist', [Admin\ProjectController::class, 'addChecklist'])->name('projects.checklist.store');
+    Route::patch('/projects/{project}/checklist/{item}', [Admin\ProjectController::class, 'checklistStatus'])->name('projects.checklist.status');
+    Route::delete('/projects/{project}/checklist/{item}', [Admin\ProjectController::class, 'destroyChecklist'])->name('projects.checklist.destroy');
+    Route::post('/projects/{project}/files', [Admin\ProjectController::class, 'uploadFiles'])->name('projects.files');
 
     Route::get('/requests', [Admin\RequestController::class, 'index'])->name('requests.index');
     Route::get('/requests/new', [Admin\RequestController::class, 'create'])->name('requests.create');

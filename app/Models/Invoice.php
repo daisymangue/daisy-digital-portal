@@ -165,6 +165,7 @@ class Invoice extends Model
         if ($paid >= $this->total_cents && $this->total_cents > 0) {
             $this->status = 'paid';
             $this->paid_at ??= now();
+            $startsProject = $this->quote_id && in_array($this->type, ['deposit', 'full'], true);
         } elseif ($paid > 0) {
             $this->status = 'partially_paid';
             $this->paid_at = null;
@@ -173,5 +174,10 @@ class Invoice extends Model
             $this->paid_at = null;
         }
         $this->save();
+
+        // A paid deposit (or a paid full invoice) is the go-ahead: the project opens by itself.
+        if (! empty($startsProject) && $this->quote) {
+            Project::startForQuote($this->quote, auth()->user(), null);
+        }
     }
 }

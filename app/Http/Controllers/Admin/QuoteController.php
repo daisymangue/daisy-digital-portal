@@ -7,6 +7,7 @@ use App\Models\AuditLog;
 use App\Models\Client;
 use App\Models\Counter;
 use App\Models\Invoice;
+use App\Models\Project;
 use App\Models\Quote;
 use App\Models\QuoteAcceptance;
 use App\Models\ServiceCategory;
@@ -91,6 +92,7 @@ class QuoteController extends Controller
             'quote' => $quote,
             'invoices' => $invoices,
             'invoiced' => (int) $invoices->sum('total_cents'),
+            'project' => Project::where('quote_id', $quote->id)->first(),
             'versions' => Quote::where('number', $quote->number)->orderByDesc('version')->get(['id', 'version', 'status', 'valid_until', 'total_cents', 'created_at']),
         ]);
     }

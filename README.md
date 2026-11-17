@@ -78,6 +78,15 @@ Laravel 13, MySQL, Blade, Tailwind CSS 4 and Alpine.js. Built to run on Hostinge
 - Credit notes and refunds. For now a wrong invoice is cancelled and reissued.
 - Automatic recurring invoices and overdue reminder emails. These come with care plans in milestone 5.
 
+## What milestone 4 adds: projects
+
+- A project opens by itself when a deposit invoice, or a full invoice, for an accepted quote is fully paid (recorded by you, or proof of payment you confirm). It gets a number like P-0001 and the client is emailed.
+- You can start one early from the accepted quote, or with no quote at all from the Projects page. Both need a reason, which is kept on the project.
+- Each project has: chat with file attachments (new messages appear within 10 seconds), progress updates, steps with optional client approval, a "what we need from you" list, and a shared file list.
+- Steps marked "Client must approve" go to the client when you set them to Done. Only the client can approve, by typing their name, or they can ask for changes with feedback.
+- Progress follows the steps. With no steps you set it by hand.
+- Unread messages show as a count next to Projects in the menu, on both sides. Only the first unread message sends an email, so a burst of messages is one email.
+
 ## Working for clients who do not log in
 
 Not every client will use the portal. The admin can run the whole flow for them:
@@ -168,6 +177,6 @@ After changing `.env` or uploading new code, run `php artisan config:cache && ph
 
 ## Roadmap
 
-4. Projects: workspace, chat, files, updates, milestones, approvals, "what we need from you" checklist.
+4. Projects (done).
 5. Change requests, care plans and recurring billing, handover, testimonial request.
 6. Archiving, retention and a security review before launch.

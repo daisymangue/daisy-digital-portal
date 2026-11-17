@@ -1,4 +1,4 @@
-@props(['id', 'max' => 8, 'label' => 'Add files', 'hint' => 'Images, PDFs, Word, Excel, PowerPoint or zip. Up to 8 files, 10 MB each.'])
+@props(['id', 'max' => 8, 'compact' => false, 'label' => 'Add files', 'hint' => 'Images, PDFs, Word, Excel, PowerPoint or zip. Up to 8 files, 10 MB each.'])
 {{--
     Drag-and-drop file picker with previews. It keeps a real <input type="file" name="files[]">
     in sync, so the form posts normally. Several of these on one form post into the same files[] list.
@@ -24,7 +24,14 @@
         remove(i) { if (this.files[i].url) URL.revokeObjectURL(this.files[i].url); this.files.splice(i, 1); this.sync() },
         sync() { const dt = new DataTransfer(); this.files.forEach(x => dt.items.add(x.file)); this.$refs.input.files = dt.files },
         size(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB' },
-     }">
+     }"
+     @files-cleared.window="if ($event.detail === $el.closest('form')) { files = []; sync() }">
+    @if ($compact)
+    <label for="{{ $id }}" class="btn btn-light min-h-10 gap-2 px-4 text-sm"
+           @dragover.prevent="over = true" @dragleave.prevent="over = false" @drop.prevent="over = false; add($event.dataTransfer.files)">
+        <span aria-hidden="true">📎</span> {{ $label }}
+    </label>
+    @else
     <span class="label">{{ $label }} <span class="text-muted font-normal">(optional)</span></span>
     <label for="{{ $id }}"
            class="flex min-h-28 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed px-4 py-5 text-center transition-colors"
@@ -34,9 +41,12 @@
         <span class="font-semibold">Drop files here or tap to choose</span>
         <span class="text-muted text-sm">On a phone you can also take a photo.</span>
     </label>
+    @endif
     <input id="{{ $id }}" x-ref="input" type="file" name="files[]" multiple class="sr-only" @change="add([...$event.target.files])"
            accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,image/*">
-    <p class="text-muted mt-1.5 text-sm">{{ $hint }}</p>
+    @unless ($compact)
+        <p class="text-muted mt-1.5 text-sm">{{ $hint }}</p>
+    @endunless
     <p x-show="error" x-cloak x-text="error" role="alert" class="mt-1.5 text-sm text-red-800"></p>
 
     <ul x-show="files.length" x-cloak class="mt-3 grid gap-2 sm:grid-cols-2">

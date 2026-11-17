@@ -45,6 +45,11 @@ class Client extends Model
         return $this->users->first()?->email ?? $this->email;
     }
 
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
     public function serviceRequests(): HasMany
     {
         return $this->hasMany(ServiceRequest::class);
