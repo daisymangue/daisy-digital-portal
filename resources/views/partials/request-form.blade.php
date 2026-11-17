@@ -59,7 +59,6 @@
                         @endif
                         <span class="flex items-start justify-between gap-3">
                             <span class="font-semibold">{{ $package->name }}</span>
-                            <span x-show="pkg === '{{ $package->id }}'" x-cloak class="bg-brand rounded-full px-2.5 py-0.5 text-xs font-semibold text-white">Selected</span>
                         </span>
                         <span class="text-brand-dark mt-1 font-semibold">{{ $package->priceLabel() }}</span>
                         @if ($includes)
@@ -299,17 +298,24 @@
             @endif
 
             @unless ($admin)
+                <button type="submit" class="btn btn-primary mt-5 w-full text-lg">Send request</button>
                 <p class="text-navy-soft mt-3 text-center text-xs">We reply with a quote, usually within one working day. Prices are a guide.</p>
             @endunless
         </section>
     </aside>
 
-    {{-- Summary and Send stay in reach while scrolling, on every screen, and clearly cover the whole request. --}}
-    <div class="order-last h-14 lg:col-span-5" aria-hidden="true"></div>
-    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 lg:left-60 lg:px-12">
+    {{--
+        Admin: Save is always in this bar, so it clearly saves the whole request.
+        Clients: the bar slides up once they pick a package or service, so they can send without scrolling back.
+    --}}
+    <div class="order-last h-14 lg:col-span-5" aria-hidden="true" @if (! $admin) x-show="pkg || picked.length" x-cloak @endif></div>
+    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 shadow-[0_-8px_24px_rgba(18,20,43,0.08)] lg:left-60 lg:px-12"
+         @if (! $admin) x-show="pkg || picked.length" x-cloak
+         x-transition:enter="transition duration-200 ease-out" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0"
+         x-transition:leave="transition duration-150 ease-in" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full" @endif>
         <p class="min-w-0 truncate text-sm">
             <span x-show="pkg || picked.length || hasSpecial || callback" x-cloak class="font-semibold"
-                  x-text="[hasSpecial ? @js($admin ? 'Their words' : 'Your message') : '', callback ? 'call back' : '', pkg ? '1 package' : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
+                  x-text="[hasSpecial ? @js($admin ? 'Their words' : 'Your message') : '', callback ? 'call back' : '', pkg ? pkgNames[pkg] : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
             <span x-show="!pkg && !picked.length && !hasSpecial && !callback" class="text-muted">Nothing selected yet</span>
         </p>
         <button type="submit" class="btn btn-primary min-h-10 shrink-0 px-5">{{ $admin ? 'Save request' : 'Send request' }}</button>
