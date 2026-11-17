@@ -242,15 +242,14 @@
                       placeholder="For example: Translate my 12-page booklet from English to isiZulu by Friday"></textarea>
 
             @unless ($admin)
-                {{-- Phones: one row to swipe sideways. Larger screens: wrapped. --}}
-                <div class="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" aria-label="Ideas">
-                    @foreach (['Convert a PDF to Word', 'Translate a document', 'Type up my handwritten notes', 'Create an invoice for me', 'Fix my slow laptop', 'Recover deleted photos', 'Help with an online application'] as $example)
-                        <button type="button" class="min-h-9 shrink-0 cursor-pointer rounded-full border border-white/25 px-3 text-xs whitespace-nowrap text-white hover:bg-white/10"
-                                @click="special = special ? special : @js($example.': '); $nextTick(() => $refs.special.focus())">{{ $example }}</button>
+                <div class="mt-3 grid grid-cols-2 gap-2" aria-label="Ideas">
+                    {{-- The odd-jobs invitation first, so nobody feels their request is too strange to ask. --}}
+                    <button type="button" class="border-brand bg-brand/20 hover:bg-brand/30 min-h-10 cursor-pointer rounded-full border px-3 text-sm font-semibold text-white"
+                            @click="special = special ? special : 'This might be an unusual one, but '; $nextTick(() => $refs.special.focus())">✨ Unusual job?</button>
+                    @foreach (['PDF to Word' => 'Convert a PDF to Word: ', 'Translation' => 'Translate a document: ', 'Fix my laptop' => 'Fix my laptop: '] as $label => $start)
+                        <button type="button" class="min-h-10 cursor-pointer rounded-full border border-white/25 px-3 text-sm text-white hover:bg-white/10"
+                                @click="special = special ? special : @js($start); $nextTick(() => $refs.special.focus())">{{ $label }}</button>
                     @endforeach
-                    {{-- An open invitation for the odd jobs, so nobody feels their request is too strange to ask. --}}
-                    <button type="button" class="border-brand bg-brand/20 hover:bg-brand/30 order-first min-h-9 shrink-0 cursor-pointer rounded-full border px-3 text-xs font-semibold whitespace-nowrap text-white sm:order-none"
-                            @click="special = special ? special : 'This might be an unusual one, but '; $nextTick(() => $refs.special.focus())">✨ Something unusual? Try us</button>
                 </div>
             @endunless
 
@@ -299,32 +298,15 @@
                 </div>
             @endif
 
-            {{-- Phones show the summary and Send in the bar at the bottom of the screen instead. --}}
-            <div class="mt-5 hidden rounded-2xl bg-white/10 p-4 lg:block">
-                <p class="text-navy-soft text-xs font-semibold tracking-widest">{{ $admin ? 'THIS REQUEST' : 'YOUR REQUEST' }}</p>
-                <ul class="mt-2 space-y-1 text-sm">
-                    <li x-show="hasSpecial" x-cloak>✓ {{ $admin ? 'Their words' : 'Your message' }}</li>
-                    <li x-show="callback" x-cloak>✓ A call back</li>
-                    <li x-show="pkg" x-cloak>✓ <span x-text="pkgNames[pkg]"></span></li>
-                    <template x-for="id in picked" :key="id">
-                        <li>✓ <span x-text="(all.find(s => s.id === id) || {}).name"></span> <span class="text-navy-soft" x-text="'· ' + ((all.find(s => s.id === id) || {}).price || '')"></span></li>
-                    </template>
-                    <li x-show="!pkg && !picked.length && !hasSpecial && !callback" class="text-navy-soft">Nothing yet. Write above, or tap a package or service.</li>
-                </ul>
-            </div>
-
-            @unless ($admin)
-                <button type="submit" class="btn btn-primary mt-5 hidden w-full text-lg lg:inline-flex">Send request</button>
-            @endunless
             @unless ($admin)
                 <p class="text-navy-soft mt-3 text-center text-xs">We reply with a quote, usually within one working day. Prices are a guide.</p>
             @endunless
         </section>
     </aside>
 
-    {{-- Phones: the send button stays in reach while scrolling. Admin: always, on every screen, so Save clearly saves the whole request. --}}
-    <div class="order-last h-14 lg:col-span-5 {{ $admin ? '' : 'lg:hidden' }}" aria-hidden="true"></div>
-    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 {{ $admin ? 'lg:left-60 lg:px-12' : 'lg:hidden' }}">
+    {{-- Summary and Send stay in reach while scrolling, on every screen, and clearly cover the whole request. --}}
+    <div class="order-last h-14 lg:col-span-5" aria-hidden="true"></div>
+    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 lg:left-60 lg:px-12">
         <p class="min-w-0 truncate text-sm">
             <span x-show="pkg || picked.length || hasSpecial || callback" x-cloak class="font-semibold"
                   x-text="[hasSpecial ? @js($admin ? 'Their words' : 'Your message') : '', callback ? 'call back' : '', pkg ? '1 package' : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
