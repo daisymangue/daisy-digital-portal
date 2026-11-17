@@ -28,11 +28,11 @@ Route::get('/brand/logo', function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1,login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
-    Route::post('/login/link', [MagicLinkController::class, 'send'])->middleware('throttle:4,1')->name('login.link.send');
-    Route::get('/login/link/{token}', [MagicLinkController::class, 'consume'])->middleware('throttle:10,1')->name('login.link');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1,register');
+    Route::post('/login/link', [MagicLinkController::class, 'send'])->middleware('throttle:4,1,login.link.send')->name('login.link.send');
+    Route::get('/login/link/{token}', [MagicLinkController::class, 'consume'])->middleware('throttle:10,1,login.link')->name('login.link');
 });
 
 Route::middleware('auth')->group(function () {
@@ -47,34 +47,34 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/dashboard', ClientDashboardController::class)->name('dashboard');
     Route::get('/requests', [ClientRequestController::class, 'index'])->name('requests.index');
     Route::get('/requests/new', [ClientRequestController::class, 'create'])->name('requests.create');
-    Route::post('/requests', [ClientRequestController::class, 'store'])->middleware('throttle:10,60')->name('requests.store');
+    Route::post('/requests', [ClientRequestController::class, 'store'])->middleware('throttle:10,60,requests.store')->name('requests.store');
     Route::get('/requests/{id}', [ClientRequestController::class, 'show'])->whereUuid('id')->name('requests.show');
-    Route::post('/requests/{id}/files', [ClientRequestController::class, 'addFiles'])->whereUuid('id')->middleware('throttle:20,60')->name('requests.files');
+    Route::post('/requests/{id}/files', [ClientRequestController::class, 'addFiles'])->whereUuid('id')->middleware('throttle:20,60,requests.files')->name('requests.files');
 
     Route::get('/quotes', [ClientQuoteController::class, 'index'])->name('quotes.index');
     Route::get('/quotes/{id}', [ClientQuoteController::class, 'show'])->whereUuid('id')->name('quotes.show');
     Route::get('/quotes/{id}/pdf', [ClientQuoteController::class, 'pdf'])->whereUuid('id')->name('quotes.pdf');
     Route::post('/quotes/{id}/accept', [ClientQuoteController::class, 'accept'])->whereUuid('id')->name('quotes.accept');
     Route::post('/quotes/{id}/decline', [ClientQuoteController::class, 'decline'])->whereUuid('id')->name('quotes.decline');
-    Route::post('/quotes/{id}/renew', [ClientQuoteController::class, 'renew'])->whereUuid('id')->middleware('throttle:3,60')->name('quotes.renew');
+    Route::post('/quotes/{id}/renew', [ClientQuoteController::class, 'renew'])->whereUuid('id')->middleware('throttle:3,60,quotes.renew')->name('quotes.renew');
     Route::post('/quotes/{id}/changes', [ClientQuoteController::class, 'changes'])->whereUuid('id')->name('quotes.changes');
 
     Route::get('/invoices', [ClientInvoiceController::class, 'index'])->name('invoices.index');
     Route::get('/invoices/{id}', [ClientInvoiceController::class, 'show'])->whereUuid('id')->name('invoices.show');
     Route::get('/invoices/{id}/pdf', [ClientInvoiceController::class, 'pdf'])->whereUuid('id')->name('invoices.pdf');
-    Route::post('/invoices/{id}/pay', [ClientInvoiceController::class, 'pay'])->whereUuid('id')->middleware('throttle:10,60')->name('invoices.pay');
+    Route::post('/invoices/{id}/pay', [ClientInvoiceController::class, 'pay'])->whereUuid('id')->middleware('throttle:10,60,invoices.pay')->name('invoices.pay');
 
     Route::get('/projects', [ClientProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/{id}', [ClientProjectController::class, 'show'])->whereUuid('id')->name('projects.show');
-    Route::get('/projects/{id}/messages', [ClientProjectController::class, 'messages'])->whereUuid('id')->middleware('throttle:120,1')->name('projects.messages');
-    Route::post('/projects/{id}/messages', [ClientProjectController::class, 'postMessage'])->whereUuid('id')->middleware('throttle:30,1')->name('projects.messages.store');
+    Route::get('/projects/{id}/messages', [ClientProjectController::class, 'messages'])->whereUuid('id')->middleware('throttle:120,1,projects.messages')->name('projects.messages');
+    Route::post('/projects/{id}/messages', [ClientProjectController::class, 'postMessage'])->whereUuid('id')->middleware('throttle:30,1,projects.messages.store')->name('projects.messages.store');
     Route::post('/projects/{id}/milestones/{milestone}/approve', [ClientProjectController::class, 'approve'])->whereUuid('id')->name('projects.milestones.approve');
     Route::post('/projects/{id}/milestones/{milestone}/changes', [ClientProjectController::class, 'changes'])->whereUuid('id')->name('projects.milestones.changes');
-    Route::post('/projects/{id}/checklist/{item}', [ClientProjectController::class, 'submitItem'])->whereUuid('id')->middleware('throttle:30,60')->name('projects.checklist.submit');
-    Route::post('/projects/{id}/changes', [ClientProjectController::class, 'requestChange'])->whereUuid('id')->middleware('throttle:10,60')->name('projects.changes.store');
+    Route::post('/projects/{id}/checklist/{item}', [ClientProjectController::class, 'submitItem'])->whereUuid('id')->middleware('throttle:30,60,projects.checklist.submit')->name('projects.checklist.submit');
+    Route::post('/projects/{id}/changes', [ClientProjectController::class, 'requestChange'])->whereUuid('id')->middleware('throttle:10,60,projects.changes.store')->name('projects.changes.store');
     Route::post('/projects/{id}/handover', [ClientProjectController::class, 'confirmHandover'])->whereUuid('id')->name('projects.handover.confirm');
-    Route::post('/projects/{id}/testimonial', [ClientProjectController::class, 'testimonial'])->whereUuid('id')->middleware('throttle:5,60')->name('projects.testimonial');
-    Route::post('/projects/{id}/files', [ClientProjectController::class, 'uploadFiles'])->whereUuid('id')->middleware('throttle:20,60')->name('projects.files');
+    Route::post('/projects/{id}/testimonial', [ClientProjectController::class, 'testimonial'])->whereUuid('id')->middleware('throttle:5,60,projects.testimonial')->name('projects.testimonial');
+    Route::post('/projects/{id}/files', [ClientProjectController::class, 'uploadFiles'])->whereUuid('id')->middleware('throttle:20,60,projects.files')->name('projects.files');
 });
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -154,7 +154,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/clients/{client}/access', [Admin\ClientController::class, 'grantAccess'])->whereUuid('client')->name('clients.access');
     Route::post('/clients/{client}/archive', [Admin\ClientController::class, 'archive'])->name('clients.archive');
     Route::post('/clients/{client}/restore', [Admin\ClientController::class, 'restore'])->name('clients.restore');
-    Route::get('/clients/{client}/export', [Admin\ClientController::class, 'export'])->middleware('throttle:10,1')->name('clients.export');
+    Route::get('/clients/{client}/export', [Admin\ClientController::class, 'export'])->middleware('throttle:10,1,clients.export')->name('clients.export');
 
     Route::get('/services', [Admin\CatalogueController::class, 'index'])->name('services.index');
     Route::get('/services/export', [Admin\ServiceImportController::class, 'export'])->name('services.export');

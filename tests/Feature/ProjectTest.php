@@ -252,4 +252,28 @@ class ProjectTest extends TestCase
         $this->assertSame(100, $project->progress);
         $this->assertNotNull($project->completed_at);
     }
+
+    public function test_checking_for_new_messages_never_blocks_sending(): void
+    {
+        $project = $this->projectFor($this->acceptedQuote());
+
+        // An hour-long limit elsewhere used to start a shared counter that the 10-second chat check then filled up.
+        $this->actingAs($this->client)->post("/projects/{$project->id}/files", ['files' => [UploadedFile::fake()->create('brief.pdf', 10, 'application/pdf')]]);
+        for ($i = 0; $i < 60; $i++) {
+            $this->actingAs($this->client)->getJson("/projects/{$project->id}/messages")->assertOk();
+        }
+        $this->actingAs($this->client)->postJson("/projects/{$project->id}/messages", ['body' => 'Thanks Daisy'])->assertOk();
+    }
+
+    public function test_too_many_tries_gives_a_friendly_message(): void
+    {
+        $project = $this->projectFor($this->acceptedQuote());
+        for ($i = 0; $i < 30; $i++) {
+            $this->actingAs($this->client)->postJson("/projects/{$project->id}/messages", ['body' => "Message {$i}"])->assertOk();
+        }
+        $this->actingAs($this->client)->postJson("/projects/{$project->id}/messages", ['body' => 'One too many'])
+            ->assertStatus(429)->assertJsonPath('message', fn ($m) => str_contains($m, 'Please wait'));
+        $this->actingAs($this->client)->post("/projects/{$project->id}/messages", ['body' => 'One too many'])
+            ->assertRedirect()->assertSessionHasErrors('throttle');
+    }
 }
