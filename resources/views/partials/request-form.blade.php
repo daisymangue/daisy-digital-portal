@@ -243,10 +243,13 @@
 
             @unless ($admin)
                 <div class="mt-3 flex flex-wrap gap-2" aria-label="Ideas">
-                    @foreach (['Create an invoice for me', 'Translate my booklet', 'Set up my laptop', 'Convert a PDF to Word', 'Type up my handwritten notes', 'Design my CV'] as $example)
+                    @foreach (['Convert a PDF to Word', 'Translate a document', 'Type up my handwritten notes', 'Create an invoice for me', 'Fix my slow laptop', 'Recover deleted photos', 'Help with an online application'] as $example)
                         <button type="button" class="min-h-9 cursor-pointer rounded-full border border-white/25 px-3 text-xs text-white hover:bg-white/10"
                                 @click="special = special ? special : @js($example.': '); $nextTick(() => $refs.special.focus())">{{ $example }}</button>
                     @endforeach
+                    {{-- An open invitation for the odd jobs, so nobody feels their request is too strange to ask. --}}
+                    <button type="button" class="border-brand bg-brand/20 hover:bg-brand/30 min-h-9 cursor-pointer rounded-full border px-3 text-xs font-semibold text-white"
+                            @click="special = special ? special : 'This might be an unusual one, but '; $nextTick(() => $refs.special.focus())">✨ Something unusual? Try us</button>
                 </div>
             @endunless
 
