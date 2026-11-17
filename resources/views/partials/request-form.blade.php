@@ -242,13 +242,14 @@
                       placeholder="For example: Translate my 12-page booklet from English to isiZulu by Friday"></textarea>
 
             @unless ($admin)
-                <div class="mt-3 flex flex-wrap gap-2" aria-label="Ideas">
+                {{-- Phones: one row to swipe sideways. Larger screens: wrapped. --}}
+                <div class="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" aria-label="Ideas">
                     @foreach (['Convert a PDF to Word', 'Translate a document', 'Type up my handwritten notes', 'Create an invoice for me', 'Fix my slow laptop', 'Recover deleted photos', 'Help with an online application'] as $example)
-                        <button type="button" class="min-h-9 cursor-pointer rounded-full border border-white/25 px-3 text-xs text-white hover:bg-white/10"
+                        <button type="button" class="min-h-9 shrink-0 cursor-pointer rounded-full border border-white/25 px-3 text-xs whitespace-nowrap text-white hover:bg-white/10"
                                 @click="special = special ? special : @js($example.': '); $nextTick(() => $refs.special.focus())">{{ $example }}</button>
                     @endforeach
                     {{-- An open invitation for the odd jobs, so nobody feels their request is too strange to ask. --}}
-                    <button type="button" class="border-brand bg-brand/20 hover:bg-brand/30 min-h-9 cursor-pointer rounded-full border px-3 text-xs font-semibold text-white"
+                    <button type="button" class="border-brand bg-brand/20 hover:bg-brand/30 order-first min-h-9 shrink-0 cursor-pointer rounded-full border px-3 text-xs font-semibold whitespace-nowrap text-white sm:order-none"
                             @click="special = special ? special : 'This might be an unusual one, but '; $nextTick(() => $refs.special.focus())">✨ Something unusual? Try us</button>
                 </div>
             @endunless
@@ -298,7 +299,8 @@
                 </div>
             @endif
 
-            <div class="mt-5 rounded-2xl bg-white/10 p-4">
+            {{-- Phones show the summary and Send in the bar at the bottom of the screen instead. --}}
+            <div class="mt-5 hidden rounded-2xl bg-white/10 p-4 lg:block">
                 <p class="text-navy-soft text-xs font-semibold tracking-widest">{{ $admin ? 'THIS REQUEST' : 'YOUR REQUEST' }}</p>
                 <ul class="mt-2 space-y-1 text-sm">
                     <li x-show="hasSpecial" x-cloak>✓ {{ $admin ? 'Their words' : 'Your message' }}</li>
@@ -311,7 +313,7 @@
                 </ul>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-5 w-full text-lg">{{ $admin ? 'Save request' : 'Send request' }}</button>
+            <button type="submit" class="btn btn-primary mt-5 hidden w-full text-lg lg:inline-flex">{{ $admin ? 'Save request' : 'Send request' }}</button>
             @unless ($admin)
                 <p class="text-navy-soft mt-3 text-center text-xs">We reply with a quote, usually within one working day. Prices are a guide.</p>
             @endunless
