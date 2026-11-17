@@ -94,7 +94,17 @@ Laravel 13, MySQL, Blade, Tailwind CSS 4 and Alpine.js. Built to run on Hostinge
 - **Overdue reminders**: emailed 1, 7 and 14 days after the due date, then they stop. Switch off in Settings. You can also send one by hand from any unpaid invoice (once a day).
 - **Handover**: on the project's Handover tab, write notes and attach guides. Save as a draft, then send. The client confirms they have everything by typing their name.
 - **Testimonials**: after confirming the handover, the client is asked for a 1 to 5 star rating and a few words, and whether you may publish it. 4 and 5 star clients are offered your Google review link (set it in Settings). See them all under Testimonials.
-- The sign-in page now says clearly that the username is the client's email address.
+- The email box on the sign-in page says "Your email is your username".
+
+## What milestone 6 adds: ready for launch
+
+- **Needs your attention** at the top of the admin dashboard: payments to check, new requests, unread messages, change requests, client uploads, care plan drafts and overdue invoices. Each one links straight to the work.
+- **Archive a client** (client page > Records). They cannot sign in any more, even if they were signed in at the time, and their care plans pause. Nothing is deleted. Restore any time. Archived clients are hidden from lists and dropdowns.
+- **Download all records** for a client as a zip (data.json plus every file). Use it for a POPIA access request, or when a client leaves.
+- **Automatic clean-up** every night at 03:20 (`php artisan portal:prune`): old read notifications, sign-in links, sessions older than 30 days, activity log over 3 years, and temporary files. Quotes, invoices and payments are never removed, because SARS expects five years of records.
+- **Security:** browser protection headers on every page (no framing, no content sniffing, strict referrer, HSTS on https), signed-in pages are never cached, the logo upload refuses SVG, and every client page and file is checked against the signed-in client. 81 automated tests cover access between clients, roles and archived accounts.
+- **Logo upload** in Settings.
+- **Launch check:** `php artisan portal:check`.
 
 ## Working for clients who do not log in
 
@@ -159,14 +169,20 @@ Run the tests with `php artisan test`.
    * * * * * cd /home/USERNAME/domains/daisydigitalagency.com/public_html/portal && php artisan schedule:run >> /dev/null 2>&1
    ```
    Use the real path shown in hPanel.
-10. **Check.** Open the portal, sign in as admin, register a test client in a private window, submit a request and confirm both emails arrive.
+10. **Run the launch check.** It lists anything still missing (debug mode, email, https, cron, bank details) and how to fix it:
+    ```bash
+    php artisan portal:check
+    ```
+    Wait 5 minutes after adding the cron job before trusting the scheduler line.
+11. **Test it end to end.** Sign in as admin, register a test client in a private window, submit a request, quote it, accept it, issue the deposit invoice, record payment, and check the project opens and every email arrives. Then archive the test client.
 
 After changing `.env` or uploading new code, run `php artisan config:cache && php artisan route:cache && php artisan view:cache` again. After changing anything in `resources/`, run `npm run build` on your computer and upload `public/build`.
 
 ## Things to set before real clients use it
 
 - **Terms and privacy policy.** The registration form links to `/terms` and `/privacy` on the main website. Those pages need to exist, or change the links in `.env`.
-- **Logo.** `resources/views/components/logo.blade.php` is a text logo. Replace it with the real logo file.
+- **Logo.** Upload it under Admin > Settings > Logo (PNG, JPG or WebP). It shows in the menu, on the sign-in page and on PDFs.
+- **Settings.** Business email, phone, address, VAT number (only if registered), bank details and your Google review link.
 - **Brand colours.** All in one place at the top of `resources/css/app.css`.
 - **Questions.** The questions per category are a first draft. Edit them under Admin > Services.
 - **Backups.** Turn on Hostinger backups and also export the database on a schedule to somewhere off the server.
@@ -188,4 +204,4 @@ After changing `.env` or uploading new code, run `php artisan config:cache && ph
 
 4. Projects (done).
 5. After-care (done).
-6. Archiving, retention and a security review before launch.
+6. Launch readiness (done).

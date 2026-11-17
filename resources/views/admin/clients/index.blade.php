@@ -9,7 +9,13 @@
             <label for="q" class="label">Search</label>
             <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Business, name or email" class="field">
         </div>
+        @if ($archived)<input type="hidden" name="archived" value="1">@endif
         <button type="submit" class="btn btn-dark">Search</button>
+        @if ($archived)
+            <a href="{{ route('admin.clients.index') }}" class="link flex min-h-11 items-center">Back to active clients</a>
+        @elseif ($archivedCount)
+            <a href="{{ route('admin.clients.index', ['archived' => 1]) }}" class="link flex min-h-11 items-center">Archived ({{ $archivedCount }})</a>
+        @endif
     </form>
 
     <div class="card mt-6 overflow-x-auto p-0 sm:p-0">

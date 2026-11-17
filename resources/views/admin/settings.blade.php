@@ -2,7 +2,7 @@
     <h1 class="h-page">Settings</h1>
     <p class="text-muted mt-1">These details appear on quotes and invoices.</p>
 
-    <form method="POST" action="{{ route('admin.settings') }}" class="mt-8 grid gap-6 lg:grid-cols-2">
+    <form method="POST" action="{{ route('admin.settings') }}" enctype="multipart/form-data" class="mt-8 grid gap-6 lg:grid-cols-2">
         @csrf
         @method('PUT')
 
@@ -70,6 +70,24 @@
             <div>
                 <label for="bank_details" class="label">Bank details for EFT <span class="text-muted font-normal">(shown on invoices)</span></label>
                 <textarea id="bank_details" name="bank_details" rows="4" class="field" placeholder="Bank, account name, account number, branch code">{{ old('bank_details', $settings['bank_details']) }}</textarea>
+            </div>
+        </section>
+
+        <section class="card space-y-4 lg:col-span-2">
+            <h2 class="h-section">Logo</h2>
+            <div class="flex flex-wrap items-center gap-6">
+                @if (\App\Support\Brand::hasLogo())
+                    <div class="bg-navy rounded-xl p-4"><x-logo /></div>
+                    <label class="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="remove_logo" value="1" class="size-5"> Remove logo</label>
+                @else
+                    <p class="text-muted text-sm">No logo yet, so the menu shows the business name in text.</p>
+                @endif
+            </div>
+            <div class="sm:max-w-md">
+                <label for="logo" class="label">Upload a logo <span class="text-muted font-normal">(PNG, JPG or WebP, up to 1 MB)</span></label>
+                <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.webp" class="field file:mr-3 file:rounded-full file:border-0 file:bg-sand-dark file:px-3 file:py-1">
+                <p class="text-muted mt-1 text-sm">Shown in the menu, on the sign-in page and on quote and invoice PDFs. A wide logo on a transparent background works best.</p>
+                @error('logo')<p class="mt-1 text-sm text-red-800">{{ $message }}</p>@enderror
             </div>
         </section>
 

@@ -36,7 +36,7 @@ class InvoiceController extends Controller
             'invoices' => $invoices,
             'status' => $status,
             'search' => $search,
-            'clients' => Client::orderBy('business_name')->get(['id', 'business_name']),
+            'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
             'outstanding' => (int) Invoice::open()->sum(DB::raw('total_cents - paid_cents')),
             'overdueCount' => Invoice::overdue()->count(),
         ]);

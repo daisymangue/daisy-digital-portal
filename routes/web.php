@@ -10,9 +10,21 @@ use App\Http\Controllers\ClientQuoteController;
 use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\MagicLinkController;
+use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', fn () => auth()->check() ? redirect(auth()->user()->homeRoute()) : redirect()->route('login'));
+
+// The uploaded logo. Public, because it shows on the sign-in page and in emails.
+Route::get('/brand/logo', function () {
+    abort_unless(Brand::hasLogo(), 404);
+
+    return Storage::disk('local')->response(Setting::get('logo_path'), null, [
+        'Cache-Control' => 'public, max-age=604800',
+    ]);
+})->name('brand.logo');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -137,6 +149,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/clients/{client}', [Admin\ClientController::class, 'show'])->whereUuid('client')->name('clients.show');
     Route::put('/clients/{client}', [Admin\ClientController::class, 'update'])->whereUuid('client')->name('clients.update');
     Route::post('/clients/{client}/access', [Admin\ClientController::class, 'grantAccess'])->whereUuid('client')->name('clients.access');
+    Route::post('/clients/{client}/archive', [Admin\ClientController::class, 'archive'])->name('clients.archive');
+    Route::post('/clients/{client}/restore', [Admin\ClientController::class, 'restore'])->name('clients.restore');
+    Route::get('/clients/{client}/export', [Admin\ClientController::class, 'export'])->middleware('throttle:10,1')->name('clients.export');
 
     Route::get('/services', [Admin\CatalogueController::class, 'index'])->name('services.index');
     Route::get('/services/export', [Admin\ServiceImportController::class, 'export'])->name('services.export');

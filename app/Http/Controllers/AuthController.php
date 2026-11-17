@@ -30,6 +30,12 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Those details do not match our records.'])->onlyInput('email');
         }
 
+        if (! $request->user()->canSignIn()) {
+            Auth::logout();
+
+            return back()->withErrors(['email' => 'This account is closed. Please contact us if you need access again.'])->onlyInput('email');
+        }
+
         $request->session()->regenerate();
         AuditLog::record('login.password', $request->user());
 

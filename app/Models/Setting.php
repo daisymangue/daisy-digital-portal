@@ -31,6 +31,8 @@ class Setting extends Model
         'overdue_reminders' => '1',
         'ask_for_testimonial' => '1',
         'google_review_url' => '',
+        'logo_path' => '',
+        'scheduler_last_run' => '',
         'quote_terms' => "This quote is valid until the date shown above.\nWork starts once the quote is accepted and the deposit is received.\nWork outside the scope above is quoted separately.",
     ];
 

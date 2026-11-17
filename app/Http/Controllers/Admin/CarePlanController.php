@@ -29,7 +29,7 @@ class CarePlanController extends Controller
         return view('admin.care-plans.index', [
             'plans' => $plans,
             'monthly' => $monthly,
-            'clients' => Client::orderBy('business_name')->get(['id', 'business_name']),
+            'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
             'editing' => $request->query('edit') ? $plans->firstWhere('id', (int) $request->query('edit')) : null,
         ]);
     }

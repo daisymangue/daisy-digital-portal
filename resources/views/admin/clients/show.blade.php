@@ -8,8 +8,18 @@
             <h1 class="h-page">{{ $client->business_name }}</h1>
             <p class="text-muted mt-1">Client since {{ $client->created_at->format('j F Y') }}</p>
         </div>
+        @if ($client->isArchived())
+            <span class="pill bg-sand-dark text-ink">Archived</span>
+        @endif
         <span class="pill {{ $client->users->isNotEmpty() ? 'bg-green-100 text-green-900' : 'bg-sand-dark text-muted' }}">{{ $client->users->isNotEmpty() ? 'Has portal access' : 'No portal login' }}</span>
     </div>
+
+    @if ($client->isArchived())
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-950">
+            <p>Archived {{ $client->archived_at->format('j M Y') }}@if ($client->archived_reason): {{ $client->archived_reason }}@endif. They cannot sign in.</p>
+            <form method="POST" action="{{ route('admin.clients.restore', $client) }}">@csrf<button class="btn btn-dark">Restore client</button></form>
+        </div>
+    @endif
 
     <div class="mt-6 flex flex-wrap gap-3">
         <a href="{{ route('admin.requests.create', ['client' => $client->id]) }}" class="btn btn-primary">New request</a>
@@ -126,6 +136,24 @@
                 @include('admin.clients.fields', ['client' => $client, 'narrow' => true])
                 <button type="submit" class="btn btn-light w-full">Save details</button>
             </form>
+
+            <div class="card space-y-3">
+                <h2 class="h-section">Records</h2>
+                <a href="{{ route('admin.clients.export', $client) }}" class="btn btn-light w-full">Download all their records (zip)</a>
+                <p class="text-muted text-sm">Everything held about this client: requests, quotes, invoices, projects, messages and files. Use it for a POPIA access request or when a client leaves.</p>
+                @unless ($client->isArchived())
+                    <details class="border-line border-t pt-3">
+                        <summary class="link min-h-11 cursor-pointer py-2">Archive this client</summary>
+                        <form method="POST" action="{{ route('admin.clients.archive', $client) }}" class="mt-2 space-y-3" onsubmit="return confirm('Archive {{ addslashes($client->business_name) }}? They will not be able to sign in.')">
+                            @csrf
+                            <label for="archived_reason" class="label">Reason <span class="text-muted font-normal">(for your records)</span></label>
+                            <input id="archived_reason" name="archived_reason" maxlength="300" class="field" placeholder="For example project finished, no ongoing work">
+                            <button type="submit" class="btn btn-light w-full text-red-800">Archive client</button>
+                            <p class="text-muted text-sm">Nothing is deleted. Their invoices and history stay for your books, their care plans are paused, and you can restore them any time.</p>
+                        </form>
+                    </details>
+                @endunless
+            </div>
         </aside>
     </div>
 </x-layouts.app>

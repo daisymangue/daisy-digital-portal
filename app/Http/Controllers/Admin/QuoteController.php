@@ -40,7 +40,7 @@ class QuoteController extends Controller
             'quotes' => $quotes,
             'status' => $status,
             'search' => $search,
-            'clients' => Client::orderBy('business_name')->get(['id', 'business_name']),
+            'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
         ]);
     }
 

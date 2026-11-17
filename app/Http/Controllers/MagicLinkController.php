@@ -21,7 +21,7 @@ class MagicLinkController extends Controller
 
         $user = User::where('email', strtolower($data['email']))->first();
 
-        if ($user) {
+        if ($user && $user->canSignIn()) {
             $user->notify(new MagicLoginLink(self::linkFor($user, self::MINUTES), self::MINUTES));
         }
 
@@ -54,6 +54,9 @@ class MagicLinkController extends Controller
         }
 
         $record->update(['used_at' => now()]);
+        if (! $record->user->canSignIn()) {
+            return redirect()->route('login')->withErrors(['email' => 'This account is closed. Please contact us if you need access again.']);
+        }
         Auth::login($record->user);
         $request->session()->regenerate();
         AuditLog::record('login.link', $record->user);

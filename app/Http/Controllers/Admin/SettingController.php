@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
@@ -31,7 +32,20 @@ class SettingController extends Controller
             'bank_details' => ['nullable', 'string', 'max:1000'],
             'quote_terms' => ['nullable', 'string', 'max:5000'],
             'google_review_url' => ['nullable', 'url:https', 'max:300'],
-        ]);
+            // No SVG: an SVG can carry script.
+            'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
+        ], ['logo.mimes' => 'Upload the logo as a PNG, JPG or WebP image.', 'logo.max' => 'The logo can be up to 1 MB.']);
+        unset($data['logo']);
+
+        $old = Setting::get('logo_path');
+        if ($request->file('logo')) {
+            $data['logo_path'] = $request->file('logo')->store('branding', 'local');
+        } elseif ($request->boolean('remove_logo')) {
+            $data['logo_path'] = '';
+        }
+        if (isset($data['logo_path']) && $old !== '' && $old !== $data['logo_path']) {
+            Storage::disk('local')->delete($old);
+        }
         $data['overdue_reminders'] = $request->boolean('overdue_reminders') ? '1' : '0';
         $data['ask_for_testimonial'] = $request->boolean('ask_for_testimonial') ? '1' : '0';
 

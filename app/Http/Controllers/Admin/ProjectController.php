@@ -42,7 +42,7 @@ class ProjectController extends Controller
             'projects' => $projects,
             'status' => $status,
             'search' => $search,
-            'clients' => Client::orderBy('business_name')->get(['id', 'business_name']),
+            'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
         ]);
     }
 

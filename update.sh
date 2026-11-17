@@ -38,3 +38,8 @@ echo ""
 echo "Up to date. Latest change:"
 git log -1 --pretty=format:"  %s (%cr)%n"
 echo ""
+
+# On the live server, show anything still missing for launch (does not stop the update).
+if grep -q "^APP_ENV=production" .env 2>/dev/null; then
+    php artisan portal:check || true
+fi

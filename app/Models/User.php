@@ -53,4 +53,10 @@ class User extends Authenticatable
     {
         return $this->isAdmin() ? route('admin.dashboard') : route('dashboard');
     }
+
+    /** Admins always; client users only while their business is not archived. */
+    public function canSignIn(): bool
+    {
+        return $this->isAdmin() || ($this->client && ! $this->client->isArchived());
+    }
 }

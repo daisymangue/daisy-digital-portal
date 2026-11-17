@@ -35,7 +35,7 @@ class RequestController extends Controller
     public function create(Request $request)
     {
         return view('admin.requests.create', RequestBuilder::formData() + [
-            'clients' => Client::orderBy('business_name')->get(['id', 'business_name']),
+            'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
             'selected' => (string) $request->query('client', ''),
         ]);
     }

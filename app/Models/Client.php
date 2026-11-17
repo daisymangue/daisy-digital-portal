@@ -14,6 +14,16 @@ class Client extends Model
 
     protected $fillable = ['business_name', 'phone', 'contact_name', 'email', 'address', 'notes'];
 
+    protected function casts(): array
+    {
+        return ['archived_at' => 'datetime'];
+    }
+
+    public function isArchived(): bool
+    {
+        return $this->archived_at !== null;
+    }
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

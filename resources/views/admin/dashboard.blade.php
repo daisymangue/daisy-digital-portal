@@ -2,7 +2,27 @@
     <h1 class="h-page">Agency overview</h1>
     <p class="text-muted mt-1">{{ now()->format('l j F Y') }}</p>
 
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <section class="mt-8" aria-labelledby="attention">
+        <h2 id="attention" class="h-section">Needs your attention</h2>
+        @if ($attention->isEmpty())
+            <p class="card mt-3 text-center">You are all caught up. Nothing is waiting on you.</p>
+        @else
+            <div class="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                @foreach ($attention as [$label, $count, $url, $hint])
+                    <a href="{{ $url }}" class="card hover:border-line-strong flex items-start gap-4">
+                        <span class="bg-brand flex size-11 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white">{{ $count }}</span>
+                        <span class="min-w-0">
+                            <span class="block font-semibold">{{ $label }}</span>
+                            <span class="text-muted block text-sm">{{ $hint }}</span>
+                        </span>
+                    </a>
+                @endforeach
+            </div>
+        @endif
+    </section>
+
+    <h2 class="h-section mt-10">At a glance</h2>
+    <div class="mt-3 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach ($stats as $label => $value)
             <div class="card"><p class="text-muted text-sm">{{ $label }}</p><p class="mt-1 text-3xl font-semibold">{{ $value }}</p></div>
         @endforeach

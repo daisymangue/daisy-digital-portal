@@ -44,6 +44,12 @@
     <table class="head">
         <tr>
             <td>
+                @php
+                    $logo = \App\Support\Brand::logoDataUri();
+                @endphp
+                @if ($logo)
+                    <img src="{{ $logo }}" alt="" style="max-height: 48px; max-width: 200px; margin-bottom: 6px">
+                @endif
                 <div class="brand">{{ strtoupper($settings['business_name']) }}</div>
                 <div class="muted pre">{{ $settings['business_address'] }}</div>
                 <div class="muted">{{ collect([$settings['business_email'], $settings['business_phone']])->filter()->implode(' · ') }}</div>
