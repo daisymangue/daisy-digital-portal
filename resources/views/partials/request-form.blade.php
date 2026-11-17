@@ -246,7 +246,7 @@
                     {{-- The odd-jobs invitation first, so nobody feels their request is too strange to ask. --}}
                     <button type="button" class="border-brand bg-brand/20 hover:bg-brand/30 min-h-10 cursor-pointer rounded-full border px-3 text-sm font-semibold text-white"
                             @click="special = special ? special : 'This might be an unusual one, but '; $nextTick(() => $refs.special.focus())">✨ Unusual job?</button>
-                    @foreach (['PDF to Word' => 'Convert a PDF to Word: ', 'Translation' => 'Translate a document: ', 'Fix my laptop' => 'Fix my laptop: '] as $label => $start)
+                    @foreach (['PDF to Word' => 'Convert a PDF to Word: ', 'Online application' => 'Help me with an online application: ', 'Fix my laptop' => 'Fix my laptop: '] as $label => $start)
                         <button type="button" class="min-h-10 cursor-pointer rounded-full border border-white/25 px-3 text-sm text-white hover:bg-white/10"
                                 @click="special = special ? special : @js($start); $nextTick(() => $refs.special.focus())">{{ $label }}</button>
                     @endforeach

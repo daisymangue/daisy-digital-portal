@@ -94,7 +94,7 @@ class SpecialRequestTest extends TestCase
     public function test_request_page_offers_everyday_gigs(): void
     {
         $this->actingAs($this->client)->get('/requests/new')->assertOk()
-            ->assertSee('ANYTHING GOES')->assertSee('PDF to Word')->assertSee('Translation')->assertSee('Unusual job?')
+            ->assertSee('ANYTHING GOES')->assertSee('PDF to Word')->assertSee('Online application')->assertSee('Unusual job?')
             ->assertDontSee('If it is IT related');
     }
 
