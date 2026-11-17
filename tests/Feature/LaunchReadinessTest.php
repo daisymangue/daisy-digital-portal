@@ -9,6 +9,7 @@ use App\Models\File;
 use App\Models\Project;
 use App\Models\Setting;
 use App\Models\User;
+use App\Notifications\PortalInvite;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -189,5 +190,22 @@ class LaunchReadinessTest extends TestCase
     public function test_launch_check_runs(): void
     {
         $this->artisan('portal:check')->assertFailed()->expectsOutputToContain('APP_ENV is production');
+    }
+
+    public function test_registering_with_the_email_of_a_profile_you_made_sends_the_invite_instead(): void
+    {
+        $profile = Client::create(['business_name' => 'Mayinga Electrical', 'contact_name' => 'Sipho', 'email' => 'Sipho@Example.com']);
+
+        $this->post('/register', [
+            'name' => 'Sipho M', 'business_name' => 'Mayinga Electric', 'email' => 'sipho@example.com',
+            'password' => 'a-long-password-1', 'password_confirmation' => 'a-long-password-1', 'accept_terms' => '1',
+        ])->assertRedirect('/login');
+
+        $this->assertGuest();
+        $this->assertSame(1, Client::where('business_name', 'like', 'Mayinga%')->count());
+        $user = User::where('email', 'sipho@example.com')->sole();
+        $this->assertSame($profile->id, $user->client_id);
+        $this->assertFalse((bool) $user->has_password);
+        Notification::assertSentTo($user, PortalInvite::class);
     }
 }

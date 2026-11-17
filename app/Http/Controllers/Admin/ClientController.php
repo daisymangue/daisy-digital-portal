@@ -108,6 +108,12 @@ class ClientController extends Controller
 
     private function createPortalUser(Client $client): User
     {
+        return self::invite($client);
+    }
+
+    /** Creates the login for a client profile and emails a 7-day sign-in link. Also used when they try to register. */
+    public static function invite(Client $client): User
+    {
         $user = new User([
             'name' => $client->contact_name ?: $client->business_name,
             'email' => strtolower($client->email),

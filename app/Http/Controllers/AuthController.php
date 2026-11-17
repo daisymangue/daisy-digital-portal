@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\ClientController;
 use App\Models\AuditLog;
 use App\Models\Client;
 use App\Models\User;
@@ -79,6 +80,16 @@ class AuthController extends Controller
             'accept_terms.accepted' => 'Please accept the terms and privacy policy to continue.',
             'email.unique' => 'This email already has an account. Sign in instead, and choose "Email me a link" if you do not have a password.',
         ]);
+
+        // You may already have set this business up without a login. Do not make a second, empty
+        // profile: email the invite instead. Only the owner of the inbox can use it, and the
+        // password typed here is not used, because the email is not proven yet.
+        $profile = Client::whereNull('archived_at')->whereRaw('lower(email) = ?', [strtolower($data['email'])])->whereDoesntHave('users')->first();
+        if ($profile) {
+            ClientController::invite($profile);
+
+            return redirect()->route('login')->with('status', "We already have {$profile->business_name} on file, with your quotes and projects. We have emailed you a sign-in link to finish setting up. After signing in you can set a password under Account.");
+        }
 
         $user = DB::transaction(function () use ($data) {
             $client = Client::create(['business_name' => $data['business_name'], 'phone' => $data['phone'] ?? null]);
