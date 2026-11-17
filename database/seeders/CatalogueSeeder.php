@@ -17,6 +17,27 @@ class CatalogueSeeder extends Seeder
 {
     public function run(): void
     {
+        // The starting catalogue is loaded once. After that the admin owns it (portal and Excel import),
+        // so running the seeder again never re-adds services or packages that were renamed or removed.
+        if (! ServiceCategory::exists()) {
+            $this->loadCatalogue();
+        }
+        if (! Package::exists()) {
+            $this->loadPackages();
+        }
+
+        // Defaults for features added later, applied only if the admin has not set them yet.
+        if (! Service::where('is_popular', true)->exists()) {
+            Service::whereIn('name', ['Logo Design', 'Professional Business Email Setup', 'Website Redesign', 'Online Store Setup', 'Google Business Profile Setup', 'Website Health Check', 'Social Media Post Design', 'Microsoft 365 Setup'])
+                ->update(['is_popular' => true]);
+        }
+        if (! Package::where('is_featured', true)->exists()) {
+            Package::where('name', 'Business Essentials Package')->update(['is_featured' => true]);
+        }
+    }
+
+    private function loadCatalogue(): void
+    {
         $catalogue = json_decode(file_get_contents(__DIR__.'/data/services.json'), true);
         $questions = $this->questions();
 
@@ -47,20 +68,16 @@ class CatalogueSeeder extends Seeder
             }
         }
 
+    }
+
+    private function loadPackages(): void
+    {
         $packages = json_decode(file_get_contents(__DIR__.'/data/packages.json'), true);
-        $markFeatured = ! Package::where('is_featured', true)->exists();
         foreach ($packages as $i => $p) {
-            Package::firstOrCreate(
-                ['name' => $p['name']],
-                ['price_cents' => $p['price_cents'], 'is_from' => $p['is_from'], 'unit' => $p['unit'], 'includes' => $p['includes'], 'sort_order' => $i + 1],
-            );
-        }
-        if (! Service::where('is_popular', true)->exists()) {
-            Service::whereIn('name', ['Logo Design', 'Professional Business Email Setup', 'Website Redesign', 'Online Store Setup', 'Google Business Profile Setup', 'Website Health Check', 'Social Media Post Design', 'Microsoft 365 Setup'])
-                ->update(['is_popular' => true]);
-        }
-        if ($markFeatured) {
-            Package::where('name', 'Business Essentials Package')->update(['is_featured' => true]);
+            Package::create([
+                'name' => $p['name'], 'price_cents' => $p['price_cents'], 'is_from' => $p['is_from'],
+                'unit' => $p['unit'], 'includes' => $p['includes'], 'sort_order' => $i + 1,
+            ]);
         }
     }
 

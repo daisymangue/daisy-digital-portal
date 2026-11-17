@@ -300,9 +300,11 @@ class PortalTest extends TestCase
         $this->assertSame(10, Package::count());
         $this->assertSame('R450 / hour', Service::where('name', 'Email Troubleshooting')->firstOrFail()->priceLabel());
 
-        // Running it again must not duplicate anything.
+        // Running it again must not duplicate anything, or bring back what the admin renamed.
+        Service::where('name', 'Email Troubleshooting')->update(['name' => 'Email Fixes']);
         $this->seed();
         $this->assertSame(442, Service::count());
+        $this->assertSame(0, Service::where('name', 'Email Troubleshooting')->count());
 
         $this->actingAs($this->client())->get('/requests/new')->assertOk()->assertSee('Business Starter Package')->assertSee('Graphic Design');
     }

@@ -28,7 +28,7 @@ fi
 echo "3/5 Updating the database..."
 php artisan migrate --force
 
-echo "4/5 Loading any new services and packages..."
+echo "4/5 Applying defaults for new features..."
 php artisan db:seed --force
 
 echo "5/5 Clearing old cached files..."
