@@ -69,6 +69,8 @@ class ClientController extends Controller
             'requests' => $client->serviceRequests()->withCount('services')->latest('submitted_at')->get(),
             'quotes' => Quote::where('client_id', $client->id)->latest()->get(),
             'invoices' => Invoice::where('client_id', $client->id)->latest()->get(),
+            'projects' => $client->projects()->latest()->get(),
+            'plans' => $client->carePlans()->where('status', '!=', 'cancelled')->get(),
         ]);
     }
 

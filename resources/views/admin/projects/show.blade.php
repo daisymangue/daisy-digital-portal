@@ -3,9 +3,10 @@
     $toCheck = $project->checklist->where('status', 'submitted')->count();
     $tabs = [
         'messages' => ['Messages', $unread, 'Chat'],
-        'progress' => ['Steps and updates', $project->milestones->where('status', 'changes_requested')->count(), 'Steps'],
+        'progress' => ['Steps and changes', $project->milestones->where('status', 'changes_requested')->count() + $project->changeRequests->where('status', 'new')->count(), 'Steps'],
         'needed' => ['What we need', $toCheck, 'Needed'],
         'files' => ['Files', 0, 'Files'],
+        'handover' => ['Handover', 0, 'Handover'],
         'details' => ['Details', 0, 'Details'],
     ];
     $default = 'messages';
@@ -147,6 +148,53 @@
                         @endforeach
                     </section>
                 </div>
+
+                <section class="card lg:col-span-5">
+                    <h2 class="h-section">Change requests</h2>
+                    <p class="text-muted mt-1 text-sm">Extra work the client asked for. Quote it, include it free, or decline with a reason.</p>
+                    @forelse ($project->changeRequests as $c)
+                        <div class="border-line mt-4 border-t pt-4" x-data="{ reply: false }">
+                            <div class="flex flex-wrap items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-semibold">{{ $c->title }}</p>
+                                    <p class="text-muted text-sm">{{ $c->requester->name }} · {{ $c->created_at->format('j M Y') }}</p>
+                                </div>
+                                <x-status :status="$c->status === 'new' ? 'new' : ($c->status === 'included' ? 'accepted' : $c->status)" :label="$c->statusLabel()" />
+                            </div>
+                            <p class="mt-2 whitespace-pre-line">{{ $c->details }}</p>
+                            @foreach ($c->files as $f)
+                                <a href="{{ route('files.download', $f) }}" class="link mt-1 block text-sm break-all">{{ $f->original_name }}</a>
+                            @endforeach
+                            @if ($c->team_reply)<p class="bg-sand mt-2 rounded-lg px-3 py-2 text-sm">Your note: {{ $c->team_reply }}</p>@endif
+                            @if ($c->quote)
+                                <p class="mt-2 text-sm">Quote <a href="{{ route('admin.quotes.show', $c->quote) }}" class="link">{{ $c->quote->reference() }}</a> · {{ $c->quote->statusLabel() }}</p>
+                            @endif
+                            <form method="POST" action="{{ route('admin.projects.changes.answer', [$project, $c]) }}" class="mt-3 space-y-3">
+                                @csrf
+                                <div x-show="reply" x-cloak>
+                                    <label for="reply-{{ $c->id }}" class="label">Note to the client <span class="text-muted font-normal">(needed when declining)</span></label>
+                                    <textarea id="reply-{{ $c->id }}" name="team_reply" rows="2" maxlength="3000" class="field">{{ $c->team_reply }}</textarea>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    @if (! $c->quote_id && $c->status === 'new')
+                                        <button name="action" value="quote" class="btn btn-primary min-h-10 text-sm">Quote it</button>
+                                    @elseif ($c->quote && $c->quote->status === 'draft')
+                                        <a href="{{ route('admin.quotes.edit', $c->quote) }}" class="btn btn-primary min-h-10 text-sm">Finish the quote</a>
+                                    @endif
+                                    @if (in_array($c->status, ['new', 'quoted'], true))
+                                        <button name="action" value="included" class="btn btn-light min-h-10 text-sm" @click="if (!reply) { reply = true; $event.preventDefault() }">Include free</button>
+                                        <button name="action" value="declined" class="btn btn-light min-h-10 text-sm text-red-800" @click="if (!reply) { reply = true; $event.preventDefault() }">Decline</button>
+                                    @endif
+                                    @if (in_array($c->status, ['included', 'quoted'], true))
+                                        <button name="action" value="done" class="btn btn-light min-h-10 text-sm">Mark done</button>
+                                    @endif
+                                </div>
+                            </form>
+                        </div>
+                    @empty
+                        <p class="text-muted mt-3">No change requests. Clients can ask for one from their project page.</p>
+                    @endforelse
+                </section>
             </div>
 
             <div id="panel-needed" role="tabpanel" aria-labelledby="tab-needed" x-show="tab === 'needed'" x-cloak class="max-w-3xl">
@@ -193,6 +241,55 @@
                         <x-file-drop id="project-files" label="Share files with the client" />
                         <button type="submit" class="btn btn-dark w-full">Upload</button>
                     </form>
+                </section>
+            </div>
+
+            <div id="panel-handover" role="tabpanel" aria-labelledby="tab-handover" x-show="tab === 'handover'" x-cloak class="grid items-start gap-6 lg:grid-cols-5">
+                <form method="POST" action="{{ route('admin.projects.handover', $project) }}" enctype="multipart/form-data" class="card space-y-4 lg:col-span-3">
+                    @csrf
+                    <div>
+                        <h2 class="h-section">Handover pack</h2>
+                        <p class="text-muted mt-1 text-sm">What the client needs to run things without you: how to log in, where things live, how to make small changes, renewal dates, and who to call. Do not put passwords here; share those another safe way.</p>
+                    </div>
+                    @if ($project->handover_sent_at)
+                        <p class="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-900">
+                            Sent {{ $project->handover_sent_at->format('j M Y') }}.
+                            {{ $project->handover_confirmed_at ? 'Confirmed by '.$project->handover_confirmed_name.' on '.$project->handover_confirmed_at->format('j M Y').'.' : 'Waiting for the client to confirm.' }}
+                        </p>
+                    @endif
+                    <div>
+                        <label for="handover_notes" class="label">Notes</label>
+                        <textarea id="handover_notes" name="handover_notes" rows="10" maxlength="10000" class="field" placeholder="Website: log in at yoursite.co.za/wp-admin&#10;Domain renews: 12 March each year&#10;Email: set up on Microsoft 365, guide attached&#10;Support: message us in the portal">{{ old('handover_notes', $project->handover_notes) }}</textarea>
+                    </div>
+                    @if ($project->handoverFiles->isNotEmpty())
+                        <ul class="divide-line divide-y text-sm">
+                            @foreach ($project->handoverFiles as $f)
+                                <li class="py-2"><a href="{{ route('files.download', $f) }}" class="link break-all">{{ $f->original_name }}</a></li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    <x-file-drop id="handover-files" label="Guides, brand files, final designs" />
+                    <div class="flex flex-wrap gap-3">
+                        <button type="submit" name="send" value="0" class="btn btn-light">Save draft</button>
+                        <button type="submit" name="send" value="1" class="btn btn-primary">{{ $project->handover_sent_at ? 'Save and send again' : 'Send to client' }}</button>
+                    </div>
+                </form>
+
+                <section class="card space-y-3 lg:col-span-2">
+                    <h2 class="h-section">Testimonial</h2>
+                    @if ($project->testimonial && $project->testimonial->status !== 'requested')
+                        <p class="text-2xl text-amber-500" aria-label="{{ $project->testimonial->rating }} out of 5 stars">{{ str_repeat('★', $project->testimonial->rating) }}<span class="text-line-strong">{{ str_repeat('★', 5 - $project->testimonial->rating) }}</span></p>
+                        @if ($project->testimonial->body)<blockquote class="bg-sand rounded-xl p-4 italic">"{{ $project->testimonial->body }}"</blockquote>@endif
+                        <p class="text-muted text-sm">{{ $project->testimonial->display_name }} · {{ $project->testimonial->can_publish ? 'OK to publish' : 'Not for publishing' }}</p>
+                    @else
+                        <p class="text-muted text-sm">
+                            {{ $project->testimonial ? 'Asked on '.$project->testimonial->requested_at?->format('j M Y').'. No answer yet.' : 'The client is asked automatically after confirming the handover, if that is switched on in Settings.' }}
+                        </p>
+                        <form method="POST" action="{{ route('admin.projects.testimonial', $project) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-light w-full">{{ $project->testimonial ? 'Ask again' : 'Ask for a testimonial now' }}</button>
+                        </form>
+                    @endif
                 </section>
             </div>
 

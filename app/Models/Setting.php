@@ -28,6 +28,9 @@ class Setting extends Model
         'deposit_percent' => '50',
         'invoice_due_days' => '7',
         'bank_details' => '',
+        'overdue_reminders' => '1',
+        'ask_for_testimonial' => '1',
+        'google_review_url' => '',
         'quote_terms' => "This quote is valid until the date shown above.\nWork starts once the quote is accepted and the deposit is received.\nWork outside the scope above is quoted separately.",
     ];
 

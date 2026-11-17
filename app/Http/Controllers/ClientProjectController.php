@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
+use App\Models\ChangeRequest;
 use App\Models\Project;
+use App\Models\Setting;
+use App\Models\Testimonial;
 use App\Notifications\ProjectNotice;
 use App\Support\ProjectWork;
 use App\Support\RequestBuilder;
@@ -30,7 +33,7 @@ class ClientProjectController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $project = $this->find($request, $id)->load(['milestones', 'updates.user', 'checklist.files', 'quote']);
+        $project = $this->find($request, $id)->load(['milestones', 'updates.user', 'checklist.files', 'quote', 'changeRequests.quote', 'changeRequests.files', 'handoverFiles', 'testimonial']);
 
         return view('client.projects.show', [
             'project' => $project,
@@ -136,5 +139,85 @@ class ClientProjectController extends Controller
         AuditLog::record('project.files_added', $project, ['count' => $count]);
 
         return back()->with('status', $count === 1 ? 'File shared with our team.' : "{$count} files shared with our team.");
+    }
+
+    public function requestChange(Request $request, string $id)
+    {
+        $project = $this->find($request, $id);
+        abort_if($project->status === 'cancelled', 409, 'This project is closed.');
+
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:200'],
+            'details' => ['required', 'string', 'min:10', 'max:5000'],
+        ] + ProjectWork::fileRules(), [
+            'title.required' => 'Give the change a short name.',
+            'details.required' => 'Describe the change you would like.',
+            'details.min' => 'Tell us a bit more so we can quote it properly.',
+        ] + RequestBuilder::messages());
+
+        $change = new ChangeRequest(['title' => $data['title'], 'details' => $data['details']]);
+        $change->project_id = $project->id;
+        $change->requested_by = $request->user()->id;
+        $change->status = 'new';
+        $change->save();
+        ProjectWork::storeFiles($request, $project, $change);
+
+        AuditLog::record('change.requested', $project, ['title' => $change->title]);
+        $project->notifyTeam(ProjectNotice::changeRequested($change->setRelation('project', $project)));
+
+        return back()->with('status', 'Change request sent. We will reply with a quote, or let you know if it is included.');
+    }
+
+    public function confirmHandover(Request $request, string $id)
+    {
+        $project = $this->find($request, $id);
+        abort_unless($project->handover_sent_at && ! $project->handover_confirmed_at, 409, 'There is no handover waiting for you.');
+
+        $data = $request->validate(['confirmed_name' => ['required', 'string', 'min:2', 'max:120']], ['confirmed_name.required' => 'Type your name to confirm.']);
+
+        $project->handover_confirmed_at = now();
+        $project->handover_confirmed_name = $data['confirmed_name'];
+        $project->save();
+
+        AuditLog::record('project.handover_confirmed', $project, ['name' => $data['confirmed_name']]);
+        $project->notifyTeam(ProjectNotice::handoverConfirmed($project));
+
+        if (Setting::get('ask_for_testimonial') === '1' && ! $project->testimonial()->exists()) {
+            $t = new Testimonial;
+            $t->client_id = $project->client_id;
+            $t->project_id = $project->id;
+            $t->status = 'requested';
+            $t->requested_at = now();
+            $t->save();
+
+            return back()->with('status', 'Thank you for confirming. If you have a minute, tell us how we did.');
+        }
+
+        return back()->with('status', 'Thank you for confirming.');
+    }
+
+    public function testimonial(Request $request, string $id)
+    {
+        $project = $this->find($request, $id);
+        $t = $project->testimonial;
+        abort_unless($t && $t->status === 'requested', 409, 'Thank you, we already have your feedback.');
+
+        $data = $request->validate([
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'body' => ['nullable', 'string', 'max:2000'],
+            'display_name' => ['nullable', 'string', 'max:120'],
+            'can_publish' => ['nullable', 'boolean'],
+        ], ['rating.required' => 'Choose a rating from 1 to 5 stars.']);
+
+        $t->fill($data + ['can_publish' => false]);
+        $t->can_publish = $request->boolean('can_publish');
+        $t->status = 'received';
+        $t->received_at = now();
+        $t->save();
+
+        AuditLog::record('testimonial.received', $project, ['rating' => $t->rating]);
+        $project->notifyTeam(ProjectNotice::testimonialReceived($t->setRelation('project', $project)));
+
+        return back()->with('status', 'Thank you so much for the feedback.')->with('review_prompt', $t->rating >= 4 && Setting::get('google_review_url') !== '');
     }
 }

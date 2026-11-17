@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Notifications\InvoiceIssued;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class Invoice extends Model
 {
@@ -30,7 +33,7 @@ class Invoice extends Model
         'cancelled' => 'Cancelled',
     ];
 
-    public const TYPES = ['deposit' => 'Deposit', 'balance' => 'Balance', 'full' => 'Full amount', 'custom' => 'Invoice'];
+    public const TYPES = ['deposit' => 'Deposit', 'balance' => 'Balance', 'full' => 'Full amount', 'custom' => 'Invoice', 'recurring' => 'Care plan'];
 
     protected $fillable = ['title', 'notes', 'due_date', 'discount_cents', 'vat_rate'];
 
@@ -41,6 +44,8 @@ class Invoice extends Model
             'due_date' => 'date',
             'issued_at' => 'datetime',
             'paid_at' => 'datetime',
+            'period_start' => 'date',
+            'last_reminded_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'vat_rate' => 'float',
             'subtotal_cents' => 'integer',
@@ -85,6 +90,34 @@ class Invoice extends Model
     public function scopeOverdue(Builder $query): Builder
     {
         return $query->open()->whereDate('due_date', '<', today());
+    }
+
+    public function carePlan(): BelongsTo
+    {
+        return $this->belongsTo(CarePlan::class);
+    }
+
+    /** Gives the draft its number, dates it and emails the client. Used by the admin and by care plan billing. */
+    public function issueNow(): void
+    {
+        DB::transaction(function () {
+            $this->number = 'INV-'.str_pad((string) Counter::next('invoice'), 4, '0', STR_PAD_LEFT);
+            $this->status = 'issued';
+            $this->issue_date = today();
+            $this->issued_at = now();
+            if (! $this->due_date || $this->due_date->isPast()) {
+                $this->due_date = today()->addDays((int) Setting::get('invoice_due_days'));
+            }
+            $this->save();
+        });
+
+        AuditLog::record('invoice.issued', $this, ['number' => $this->number, 'total_cents' => $this->total_cents]);
+
+        try {
+            Notification::send($this->client->users, new InvoiceIssued($this));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     public function reference(): string

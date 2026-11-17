@@ -7,7 +7,14 @@
         'needed' => ['What we need', $openCount, 'Needed'],
         'files' => ['Files', 0, 'Files'],
     ];
-    $default = $openCount ? 'needed' : 'messages';
+    $handoverWaiting = $project->handover_sent_at && (! $project->handover_confirmed_at || $project->testimonial?->status === 'requested');
+    if ($project->handover_sent_at) {
+        if (! $openCount && $needed->isEmpty()) {
+            unset($tabs['needed']);
+        }
+        $tabs['handover'] = ['Handover', $handoverWaiting ? 1 : 0, 'Handover'];
+    }
+    $default = $handoverWaiting ? 'handover' : ($openCount ? 'needed' : 'messages');
     $toApprove = $project->milestones->where('status', 'awaiting_approval');
 @endphp
 <x-layouts.app :title="$project->number.' '.$project->title">
@@ -116,6 +123,50 @@
                         <p class="text-muted mt-2">We will post progress updates here as the work moves along.</p>
                     @endforelse
                 </section>
+
+                <section class="card lg:col-span-5" x-data="{ asking: {{ $errors->has('details') || $errors->has('title') ? 'true' : 'false' }} }">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <h2 class="h-section">Changes and extras</h2>
+                            <p class="text-muted text-sm">Need something that was not in the original quote? Ask here and we will quote it, or tell you if it is included.</p>
+                        </div>
+                        @unless ($project->status === 'cancelled')
+                            <button type="button" class="btn btn-light" @click="asking = !asking" x-show="!asking">Ask for a change</button>
+                        @endunless
+                    </div>
+                    <form x-show="asking" x-cloak method="POST" action="{{ route('projects.changes.store', $project->id) }}" enctype="multipart/form-data" class="bg-sand mt-4 space-y-3 rounded-xl p-4">
+                        @csrf
+                        <div>
+                            <label for="change-title" class="label">What is the change?</label>
+                            <input id="change-title" name="title" required maxlength="200" value="{{ old('title') }}" class="field" placeholder="For example Add a booking page">
+                        </div>
+                        <div>
+                            <label for="change-details" class="label">Details</label>
+                            <textarea id="change-details" name="details" rows="4" required minlength="10" maxlength="5000" class="field" placeholder="What should it do, and is there a deadline?">{{ old('details') }}</textarea>
+                        </div>
+                        <x-file-drop id="change-files" label="Examples or files" />
+                        <div class="flex flex-wrap gap-3">
+                            <button type="submit" class="btn btn-dark">Send change request</button>
+                            <button type="button" class="btn btn-light" @click="asking = false">Cancel</button>
+                        </div>
+                    </form>
+                    @if ($project->changeRequests->isNotEmpty())
+                        <ul class="divide-line mt-4 divide-y">
+                            @foreach ($project->changeRequests as $c)
+                                <li class="py-3">
+                                    <div class="flex flex-wrap items-center justify-between gap-3">
+                                        <p class="font-medium">{{ $c->title }} <span class="text-muted text-sm font-normal">· {{ $c->created_at->format('j M') }}</span></p>
+                                        <x-status :status="$c->status === 'new' ? 'reviewing' : ($c->status === 'included' ? 'accepted' : $c->status)" :label="$c->clientStatusLabel()" />
+                                    </div>
+                                    @if ($c->team_reply)<p class="text-muted mt-1 text-sm">Our note: {{ $c->team_reply }}</p>@endif
+                                    @if ($c->quote && $c->quote->status !== 'draft')
+                                        <a href="{{ route('quotes.show', $c->quote_id) }}" class="link mt-1 inline-block text-sm">View quote {{ $c->quote->reference() }}</a>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </section>
             </div>
 
             <div id="panel-needed" role="tabpanel" aria-labelledby="tab-needed" x-show="tab === 'needed'" x-cloak>
@@ -180,6 +231,86 @@
                     </form>
                 @endunless
             </div>
+
+            @if ($project->handover_sent_at)
+                <div id="panel-handover" role="tabpanel" aria-labelledby="tab-handover" x-show="tab === 'handover'" x-cloak class="grid items-start gap-6 lg:grid-cols-5">
+                    <section class="card lg:col-span-3">
+                        <h2 class="h-section">Your handover pack</h2>
+                        <p class="text-muted mt-1 text-sm">Everything you need to look after your work. Keep a copy somewhere safe.</p>
+                        @if ($project->handover_notes)
+                            <div class="bg-sand mt-4 rounded-xl p-4 whitespace-pre-line">{{ $project->handover_notes }}</div>
+                        @endif
+                        @if ($project->handoverFiles->isNotEmpty())
+                            <ul class="divide-line mt-4 divide-y">
+                                @foreach ($project->handoverFiles as $f)
+                                    <li class="py-2.5"><a href="{{ route('files.download', $f) }}" class="link break-all">{{ $f->original_name }}</a> <span class="text-muted text-xs">{{ $f->sizeLabel() }}</span></li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </section>
+
+                    <div class="space-y-6 lg:col-span-2">
+                        @if (! $project->handover_confirmed_at)
+                            <form method="POST" action="{{ route('projects.handover.confirm', $project->id) }}" class="card space-y-3 border-violet-200 bg-violet-50">
+                                @csrf
+                                <h2 class="h-section">Got everything?</h2>
+                                <p class="text-violet-950">Look through the pack. If anything is missing, tell us in Messages. Otherwise confirm below.</p>
+                                <label for="confirmed_name" class="label">Type your name to confirm</label>
+                                <input id="confirmed_name" name="confirmed_name" required maxlength="120" value="{{ auth()->user()->name }}" class="field">
+                                <button type="submit" class="btn btn-primary w-full">I have received everything</button>
+                            </form>
+                        @else
+                            <div class="card">
+                                <p class="font-medium">Handover confirmed</p>
+                                <p class="text-muted text-sm">By {{ $project->handover_confirmed_name }} on {{ $project->handover_confirmed_at->format('j F Y') }}.</p>
+                            </div>
+                        @endif
+
+                        @if ($project->testimonial?->status === 'requested')
+                            <form method="POST" action="{{ route('projects.testimonial', $project->id) }}" class="card space-y-4" x-data="{ rating: {{ (int) old('rating', 0) }} }">
+                                @csrf
+                                <h2 class="h-section">How did we do?</h2>
+                                <fieldset>
+                                    <legend class="label">Your rating</legend>
+                                    <div class="flex gap-1">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="rating" value="{{ $i }}" x-model.number="rating" class="peer sr-only" required>
+                                                <span class="flex size-11 items-center justify-center rounded-lg text-3xl peer-focus-visible:outline-2 peer-focus-visible:outline-[var(--color-brand)]"
+                                                      :class="rating >= {{ $i }} ? 'text-amber-500' : 'text-line-strong'" aria-hidden="true">★</span>
+                                                <span class="sr-only">{{ $i }} {{ $i === 1 ? 'star' : 'stars' }}</span>
+                                            </label>
+                                        @endfor
+                                    </div>
+                                    @error('rating')<p class="mt-1 text-sm text-red-800">{{ $message }}</p>@enderror
+                                </fieldset>
+                                <div>
+                                    <label for="t-body" class="label">A few words about working with us <span class="text-muted font-normal">(optional)</span></label>
+                                    <textarea id="t-body" name="body" rows="4" maxlength="2000" class="field">{{ old('body') }}</textarea>
+                                </div>
+                                <div>
+                                    <label for="t-name" class="label">Name to show with it</label>
+                                    <input id="t-name" name="display_name" maxlength="120" value="{{ old('display_name', auth()->user()->name.', '.$project->client->business_name) }}" class="field">
+                                </div>
+                                <label class="flex items-start gap-3 text-sm">
+                                    <input type="checkbox" name="can_publish" value="1" class="accent-navy mt-0.5 size-5 shrink-0" @checked(old('can_publish', true))>
+                                    <span>You may share this on your website and social media.</span>
+                                </label>
+                                <button type="submit" class="btn btn-dark w-full">Send feedback</button>
+                            </form>
+                        @elseif ($project->testimonial && $project->testimonial->status !== 'requested')
+                            <div class="card">
+                                <p class="font-medium">Thank you for your feedback</p>
+                                <p class="mt-1 text-2xl text-amber-500" aria-label="{{ $project->testimonial->rating }} out of 5 stars">{{ str_repeat('★', $project->testimonial->rating) }}</p>
+                                @if (session('review_prompt'))
+                                    <p class="mt-3">Would you also share it on Google? It helps other businesses find us.</p>
+                                    <a href="{{ \App\Models\Setting::get('google_review_url') }}" target="_blank" rel="noopener" class="btn btn-primary mt-3">Leave a Google review</a>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </x-layouts.app>

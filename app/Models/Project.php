@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -49,6 +50,8 @@ class Project extends Model
             'start_date' => 'date',
             'due_date' => 'date',
             'completed_at' => 'datetime',
+            'handover_sent_at' => 'datetime',
+            'handover_confirmed_at' => 'datetime',
             'progress' => 'integer',
         ];
     }
@@ -95,7 +98,22 @@ class Project extends Model
 
     public function files(): MorphMany
     {
-        return $this->morphMany(File::class, 'fileable')->latest();
+        return $this->morphMany(File::class, 'fileable')->whereNull('collection')->latest();
+    }
+
+    public function handoverFiles(): MorphMany
+    {
+        return $this->morphMany(File::class, 'fileable')->where('collection', 'handover')->latest();
+    }
+
+    public function changeRequests(): HasMany
+    {
+        return $this->hasMany(ChangeRequest::class)->latest('id');
+    }
+
+    public function testimonial(): HasOne
+    {
+        return $this->hasOne(Testimonial::class);
     }
 
     /** Every file shared in this project: uploaded directly, in chat or against a checklist item. */
@@ -104,7 +122,8 @@ class Project extends Model
         return File::where(function ($q) {
             $q->where(fn ($q) => $q->where('fileable_type', self::class)->where('fileable_id', $this->id))
                 ->orWhere(fn ($q) => $q->where('fileable_type', ProjectMessage::class)->whereIn('fileable_id', $this->messages()->select('id')))
-                ->orWhere(fn ($q) => $q->where('fileable_type', ProjectChecklistItem::class)->whereIn('fileable_id', $this->checklist()->select('id')));
+                ->orWhere(fn ($q) => $q->where('fileable_type', ProjectChecklistItem::class)->whereIn('fileable_id', $this->checklist()->select('id')))
+                ->orWhere(fn ($q) => $q->where('fileable_type', ChangeRequest::class)->whereIn('fileable_id', $this->changeRequests()->select('id')));
         })->with('uploader')->latest()->get();
     }
 
@@ -144,6 +163,12 @@ class Project extends Model
      */
     public static function startForQuote(Quote $quote, ?User $by = null, ?string $reason = null): self
     {
+        // A quote for a change request belongs to the project it came from.
+        $change = ChangeRequest::where('quote_id', $quote->id)->first();
+        if ($change) {
+            return $change->project;
+        }
+
         $project = DB::transaction(function () use ($quote, $by, $reason) {
             $existing = self::where('quote_id', $quote->id)->lockForUpdate()->first();
             if ($existing) {

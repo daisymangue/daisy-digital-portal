@@ -12,9 +12,11 @@
             ['Projects', route('admin.projects.index'), request()->routeIs('admin.projects.*'), $unread],
             ['Quotes', route('admin.quotes.index'), request()->routeIs('admin.quotes.*')],
             ['Invoices', route('admin.invoices.index'), request()->routeIs('admin.invoices.*')],
+            ['Care plans', route('admin.care-plans.index'), request()->routeIs('admin.care-plans.*')],
             ['Clients', route('admin.clients.index'), request()->routeIs('admin.clients.*')],
             ['Services', route('admin.services.index'), request()->routeIs('admin.services.*', 'admin.categories.*')],
             ['Packages', route('admin.packages.index'), request()->routeIs('admin.packages.*')],
+            ['Testimonials', route('admin.testimonials.index'), request()->routeIs('admin.testimonials.*')],
             ['Settings', route('admin.settings'), request()->routeIs('admin.settings')],
             ['Account', route('account'), request()->routeIs('account')],
         ]

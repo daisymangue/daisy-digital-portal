@@ -5,11 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Client;
-use App\Models\Counter;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Setting;
-use App\Notifications\InvoiceIssued;
+use App\Notifications\InvoiceReminder;
 use App\Support\DocumentPdf;
 use App\Support\Money;
 use Illuminate\Http\Request;
@@ -194,24 +193,7 @@ class InvoiceController extends Controller
             return redirect()->route('admin.invoices.edit', $invoice)->withErrors(['items' => 'An invoice needs an amount before it can be issued.']);
         }
 
-        DB::transaction(function () use ($invoice) {
-            $invoice->number = 'INV-'.str_pad((string) Counter::next('invoice'), 4, '0', STR_PAD_LEFT);
-            $invoice->status = 'issued';
-            $invoice->issue_date = today();
-            $invoice->issued_at = now();
-            if (! $invoice->due_date || $invoice->due_date->isPast()) {
-                $invoice->due_date = today()->addDays((int) Setting::get('invoice_due_days'));
-            }
-            $invoice->save();
-        });
-
-        AuditLog::record('invoice.issued', $invoice, ['number' => $invoice->number, 'total_cents' => $invoice->total_cents]);
-
-        try {
-            Notification::send($invoice->client->users, new InvoiceIssued($invoice));
-        } catch (\Throwable $e) {
-            report($e);
-        }
+        $invoice->issueNow();
 
         $message = $invoice->client->users()->exists()
             ? "Invoice {$invoice->number} issued. The client has been notified."
@@ -270,5 +252,23 @@ class InvoiceController extends Controller
         AuditLog::record('invoice.created', $invoice, ['type' => $type]);
 
         return $invoice;
+    }
+
+    public function remind(Invoice $invoice)
+    {
+        abort_unless($invoice->isOpen(), 409, 'Only unpaid issued invoices can be reminded.');
+        if ($invoice->client->users()->doesntExist()) {
+            return back()->withErrors(['remind' => 'This client has no portal login. Send the PDF yourself, or give them access first.']);
+        }
+        if ($invoice->last_reminded_at?->isToday()) {
+            return back()->withErrors(['remind' => 'A reminder already went out today.']);
+        }
+
+        Notification::send($invoice->client->users, new InvoiceReminder($invoice));
+        $invoice->last_reminded_at = now();
+        $invoice->save();
+        AuditLog::record('invoice.reminder', $invoice, ['number' => $invoice->number, 'manual' => true]);
+
+        return back()->with('status', 'Reminder sent.');
     }
 }

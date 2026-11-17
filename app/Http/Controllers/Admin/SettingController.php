@@ -30,7 +30,10 @@ class SettingController extends Controller
             'invoice_due_days' => ['required', 'integer', 'min:0', 'max:365'],
             'bank_details' => ['nullable', 'string', 'max:1000'],
             'quote_terms' => ['nullable', 'string', 'max:5000'],
+            'google_review_url' => ['nullable', 'url:https', 'max:300'],
         ]);
+        $data['overdue_reminders'] = $request->boolean('overdue_reminders') ? '1' : '0';
+        $data['ask_for_testimonial'] = $request->boolean('ask_for_testimonial') ? '1' : '0';
 
         Setting::put($data);
         AuditLog::record('settings.updated');

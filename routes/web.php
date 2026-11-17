@@ -58,6 +58,9 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::post('/projects/{id}/milestones/{milestone}/approve', [ClientProjectController::class, 'approve'])->whereUuid('id')->name('projects.milestones.approve');
     Route::post('/projects/{id}/milestones/{milestone}/changes', [ClientProjectController::class, 'changes'])->whereUuid('id')->name('projects.milestones.changes');
     Route::post('/projects/{id}/checklist/{item}', [ClientProjectController::class, 'submitItem'])->whereUuid('id')->middleware('throttle:30,60')->name('projects.checklist.submit');
+    Route::post('/projects/{id}/changes', [ClientProjectController::class, 'requestChange'])->whereUuid('id')->middleware('throttle:10,60')->name('projects.changes.store');
+    Route::post('/projects/{id}/handover', [ClientProjectController::class, 'confirmHandover'])->whereUuid('id')->name('projects.handover.confirm');
+    Route::post('/projects/{id}/testimonial', [ClientProjectController::class, 'testimonial'])->whereUuid('id')->middleware('throttle:5,60')->name('projects.testimonial');
     Route::post('/projects/{id}/files', [ClientProjectController::class, 'uploadFiles'])->whereUuid('id')->middleware('throttle:20,60')->name('projects.files');
 });
 
@@ -78,6 +81,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::patch('/projects/{project}/checklist/{item}', [Admin\ProjectController::class, 'checklistStatus'])->name('projects.checklist.status');
     Route::delete('/projects/{project}/checklist/{item}', [Admin\ProjectController::class, 'destroyChecklist'])->name('projects.checklist.destroy');
     Route::post('/projects/{project}/files', [Admin\ProjectController::class, 'uploadFiles'])->name('projects.files');
+    Route::post('/projects/{project}/changes/{change}', [Admin\ProjectController::class, 'answerChange'])->name('projects.changes.answer');
+    Route::post('/projects/{project}/handover', [Admin\ProjectController::class, 'handover'])->name('projects.handover');
+    Route::post('/projects/{project}/testimonial', [Admin\ProjectController::class, 'requestTestimonial'])->name('projects.testimonial');
+
+    Route::get('/care-plans', [Admin\CarePlanController::class, 'index'])->name('care-plans.index');
+    Route::post('/care-plans', [Admin\CarePlanController::class, 'store'])->name('care-plans.store');
+    Route::put('/care-plans/{carePlan}', [Admin\CarePlanController::class, 'update'])->name('care-plans.update');
+    Route::post('/care-plans/{carePlan}/bill', [Admin\CarePlanController::class, 'bill'])->name('care-plans.bill');
+
+    Route::get('/testimonials', [Admin\TestimonialController::class, 'index'])->name('testimonials.index');
+    Route::post('/testimonials/{testimonial}/feature', [Admin\TestimonialController::class, 'feature'])->name('testimonials.feature');
 
     Route::get('/requests', [Admin\RequestController::class, 'index'])->name('requests.index');
     Route::get('/requests/new', [Admin\RequestController::class, 'create'])->name('requests.create');
@@ -105,6 +119,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/invoices/{invoice}', [Admin\InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('/invoices/{invoice}/edit', [Admin\InvoiceController::class, 'edit'])->name('invoices.edit');
     Route::put('/invoices/{invoice}', [Admin\InvoiceController::class, 'update'])->name('invoices.update');
+    Route::post('/invoices/{invoice}/remind', [Admin\InvoiceController::class, 'remind'])->name('invoices.remind');
     Route::post('/invoices/{invoice}/issue', [Admin\InvoiceController::class, 'issue'])->name('invoices.issue');
     Route::post('/invoices/{invoice}/cancel', [Admin\InvoiceController::class, 'cancel'])->name('invoices.cancel');
     Route::delete('/invoices/{invoice}', [Admin\InvoiceController::class, 'destroy'])->name('invoices.destroy');

@@ -80,6 +80,17 @@
         </section>
 
         <section>
+            @if ($plans->isNotEmpty())
+                <h2 class="h-section">Your care plans</h2>
+                <ul class="card mt-4 mb-8 space-y-3">
+                    @foreach ($plans as $plan)
+                        <li>
+                            <p class="font-medium">{{ $plan->name }}</p>
+                            <p class="text-muted text-sm">{{ \App\Support\Money::format($plan->vatInclusiveCents()) }} incl. VAT, {{ strtolower($plan->intervalLabel()) }} · next invoice {{ $plan->next_invoice_on->format('j M Y') }}</p>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
             <h2 class="h-section">Updates</h2>
             <ul class="card mt-4 space-y-4">
                 @forelse ($notifications as $n)

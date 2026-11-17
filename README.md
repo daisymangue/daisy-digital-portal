@@ -87,6 +87,15 @@ Laravel 13, MySQL, Blade, Tailwind CSS 4 and Alpine.js. Built to run on Hostinge
 - Progress follows the steps. With no steps you set it by hand.
 - Unread messages show as a count next to Projects in the menu, on both sides. Only the first unread message sends an email, so a burst of messages is one email.
 
+## What milestone 5 adds: after-care
+
+- **Change requests**: clients ask for extra work from the project's Progress tab. You quote it (a draft quote is made for you, and paying it never opens a second project), include it free, or decline with a reason.
+- **Care plans** (menu: Care plans): a price per month, quarter or year. Invoices are created at 06:05 on the due date and either emailed automatically or left as drafts for you. Pause or end a plan any time. It never bills the same period twice.
+- **Overdue reminders**: emailed 1, 7 and 14 days after the due date, then they stop. Switch off in Settings. You can also send one by hand from any unpaid invoice (once a day).
+- **Handover**: on the project's Handover tab, write notes and attach guides. Save as a draft, then send. The client confirms they have everything by typing their name.
+- **Testimonials**: after confirming the handover, the client is asked for a 1 to 5 star rating and a few words, and whether you may publish it. 4 and 5 star clients are offered your Google review link (set it in Settings). See them all under Testimonials.
+- The sign-in page now says clearly that the username is the client's email address.
+
 ## Working for clients who do not log in
 
 Not every client will use the portal. The admin can run the whole flow for them:
@@ -178,5 +187,5 @@ After changing `.env` or uploading new code, run `php artisan config:cache && ph
 ## Roadmap
 
 4. Projects (done).
-5. Change requests, care plans and recurring billing, handover, testimonial request.
+5. After-care (done).
 6. Archiving, retention and a security review before launch.

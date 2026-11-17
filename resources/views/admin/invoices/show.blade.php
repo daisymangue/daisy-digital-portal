@@ -78,6 +78,20 @@
                     <p class="text-muted text-sm">The invoice number is assigned when you issue it, so numbers run in order with no gaps.</p>
                 @endif
                 <a href="{{ route('admin.invoices.pdf', $invoice) }}" class="btn btn-light w-full">Download PDF</a>
+                @if ($invoice->isOpen())
+                    <form method="POST" action="{{ route('admin.invoices.remind', $invoice) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-light w-full">Email a payment reminder</button>
+                    </form>
+                    @error('remind')<p class="text-sm text-red-800">{{ $message }}</p>@enderror
+                    <p class="text-muted text-sm">
+                        @if ($invoice->last_reminded_at) Last reminder {{ $invoice->last_reminded_at->format('j M Y') }}. @endif
+                        @if ($invoice->reminders_sent) {{ $invoice->reminders_sent }} of 3 automatic reminders sent. @endif
+                    </p>
+                @endif
+                @if ($invoice->carePlan)
+                    <p class="text-muted text-sm">From care plan <a href="{{ route('admin.care-plans.index', ['edit' => $invoice->care_plan_id]) }}" class="link">{{ $invoice->carePlan->name }}</a>.</p>
+                @endif
             </div>
 
             @if ($invoice->isOpen())

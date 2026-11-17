@@ -26,6 +26,7 @@ class ClientDashboardController extends Controller
                 ->withCount(['checklist as needed_count' => fn ($q) => $q->where('status', 'open')])
                 ->withCount(['milestones as approve_count' => fn ($q) => $q->where('status', 'awaiting_approval')])
                 ->latest()->get(),
+            'plans' => $client->carePlans()->where('status', 'active')->get(),
             'notifications' => $request->user()->notifications()->limit(5)->get(),
         ]);
     }

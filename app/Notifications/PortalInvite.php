@@ -23,6 +23,7 @@ class PortalInvite extends Notification
             ->line('We have set up a client portal for you. You can see your quotes, invoices and project updates there, and send us new requests.')
             ->action('Open your portal', $this->url)
             ->line('This link signs you in once and works for 7 days. After that, go to the sign-in page and choose "Email me a link".')
+            ->line('Your username is this email address: '.$notifiable->email.'.')
             ->line('No password is needed, but you can set one under Account once you are in.');
     }
 }

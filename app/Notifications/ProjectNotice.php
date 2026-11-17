@@ -2,11 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Models\ChangeRequest;
 use App\Models\Project;
 use App\Models\ProjectChecklistItem;
 use App\Models\ProjectMilestone;
+use App\Models\Testimonial;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 /**
  * Every project email and dashboard update. One class with named constructors keeps the wording
@@ -75,6 +78,57 @@ class ProjectNotice extends Notification
         return new self($i->project, "{$i->project->client->business_name} sent: {$i->title}", [
             "For {$i->project->number}. Check it and mark it as received.",
         ], 'Open project', true);
+    }
+
+    public static function changeRequested(ChangeRequest $c): self
+    {
+        return new self($c->project, "Change request on {$c->project->number}: {$c->title}", [
+            "{$c->project->client->business_name} asked for a change.",
+        ], 'Open project', true);
+    }
+
+    public static function changeAnswered(ChangeRequest $c): self
+    {
+        $line = match ($c->status) {
+            'included' => 'Good news: we will include it at no extra cost.',
+            'declined' => 'We are not able to do this one. Our note explains why.',
+            'quoted' => 'We are preparing a quote for it. You will get it shortly.',
+            'done' => 'It is done.',
+            default => 'There is an update.',
+        };
+
+        return new self($c->project, "Your change request: {$c->title}", array_filter([$line, $c->team_reply]), 'Open your project', false);
+    }
+
+    public static function handover(Project $p): self
+    {
+        return new self($p, "Your handover pack for {$p->number} is ready", [
+            "Everything you need to look after \"{$p->title}\" is on your project page: notes, guides and files.",
+            'Please look through it and confirm you have received everything.',
+        ], 'Open handover', false);
+    }
+
+    public static function handoverConfirmed(Project $p): self
+    {
+        return new self($p, "{$p->client->business_name} confirmed the handover for {$p->number}", [
+            "Confirmed by {$p->handover_confirmed_name}.",
+        ], 'Open project', true);
+    }
+
+    public static function testimonialRequested(Project $p): self
+    {
+        return new self($p, 'How did we do?', [
+            "Thank you for working with us on \"{$p->title}\".",
+            'It takes a minute to rate the work, and it helps us a lot.',
+        ], 'Leave a rating', false);
+    }
+
+    public static function testimonialReceived(Testimonial $t): self
+    {
+        return new self($t->project, "{$t->client->business_name} rated you {$t->rating} out of 5", array_filter([
+            $t->body ? '"'.Str::limit($t->body, 300).'"' : null,
+            $t->can_publish ? 'They are happy for you to publish it.' : 'Not for publishing.',
+        ]), 'See testimonials', true);
     }
 
     public function via(object $notifiable): array

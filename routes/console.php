@@ -1,10 +1,15 @@
 <?php
 
 use App\Models\AuditLog;
+use App\Models\CarePlan;
+use App\Models\Invoice;
 use App\Models\LoginToken;
 use App\Models\Quote;
+use App\Models\Setting;
 use App\Models\User;
+use App\Notifications\InvoiceReminder;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
@@ -49,3 +54,49 @@ Schedule::command('queue:work --stop-when-empty --max-time=50')->everyMinute()->
 
 // Sent quotes past their valid-until date become expired.
 Schedule::call(fn () => Quote::where('status', 'sent')->whereDate('valid_until', '<', today())->update(['status' => 'expired']))->dailyAt('00:10');
+
+/*
+ * Care plans: raise every invoice that has fallen due. Safe to run again, it never bills a period twice.
+ *   php artisan portal:bill-care-plans
+ */
+Artisan::command('portal:bill-care-plans', function () {
+    $count = 0;
+    CarePlan::where('status', 'active')->whereDate('next_invoice_on', '<=', today())->each(function (CarePlan $plan) use (&$count) {
+        $count += count($plan->billDue());
+    });
+    $this->info("Care plan invoices created: {$count}");
+})->purpose('Create invoices for care plans that are due');
+Schedule::command('portal:bill-care-plans')->dailyAt('06:05');
+
+/*
+ * Overdue reminders: 1, 7 and 14 days after the due date, then stop. Only for clients with a login.
+ *   php artisan portal:send-reminders
+ */
+Artisan::command('portal:send-reminders', function () {
+    if (Setting::get('overdue_reminders') !== '1') {
+        $this->info('Overdue reminders are switched off in Settings.');
+
+        return;
+    }
+
+    $sent = 0;
+    $steps = [1, 7, 14];
+    Invoice::overdue()->with('client.users')->where('reminders_sent', '<', count($steps))->each(function (Invoice $invoice) use ($steps, &$sent) {
+        $daysLate = (int) $invoice->due_date->startOfDay()->diffInDays(today());
+        if ($daysLate < $steps[$invoice->reminders_sent] || $invoice->client->users->isEmpty()) {
+            return;
+        }
+        // Never two reminders in one day, even if the schedule ran late.
+        if ($invoice->last_reminded_at?->isToday()) {
+            return;
+        }
+        Notification::send($invoice->client->users, new InvoiceReminder($invoice));
+        $invoice->reminders_sent++;
+        $invoice->last_reminded_at = now();
+        $invoice->save();
+        AuditLog::record('invoice.reminder', $invoice, ['number' => $invoice->number, 'step' => $invoice->reminders_sent]);
+        $sent++;
+    });
+    $this->info("Reminders sent: {$sent}");
+})->purpose('Email reminders for overdue invoices');
+Schedule::command('portal:send-reminders')->dailyAt('08:15');

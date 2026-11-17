@@ -4,16 +4,21 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\ChangeRequest;
 use App\Models\Client;
+use App\Models\Counter;
 use App\Models\Project;
 use App\Models\ProjectChecklistItem;
 use App\Models\ProjectMilestone;
 use App\Models\ProjectUpdate;
 use App\Models\Quote;
+use App\Models\Setting;
+use App\Models\Testimonial;
 use App\Notifications\ProjectNotice;
 use App\Support\ProjectWork;
 use App\Support\RequestBuilder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ProjectController extends Controller
@@ -72,7 +77,7 @@ class ProjectController extends Controller
 
     public function show(Request $request, Project $project)
     {
-        $project->load(['client.users', 'quote', 'serviceRequest', 'milestones', 'updates.user', 'checklist.files', 'starter']);
+        $project->load(['client.users', 'quote', 'serviceRequest', 'milestones', 'updates.user', 'checklist.files', 'starter', 'changeRequests.requester', 'changeRequests.files', 'changeRequests.quote', 'handoverFiles', 'testimonial']);
 
         return view('admin.projects.show', [
             'project' => $project,
@@ -259,5 +264,118 @@ class ProjectController extends Controller
         AuditLog::record('project.files_added', $project, ['count' => $count]);
 
         return back()->with('status', $count === 1 ? 'File added.' : "{$count} files added.");
+    }
+
+    public function answerChange(Request $request, Project $project, ChangeRequest $change)
+    {
+        abort_unless($change->project_id === $project->id, 404);
+
+        $data = $request->validate([
+            'action' => ['required', Rule::in(['quote', 'included', 'declined', 'done'])],
+            'team_reply' => ['nullable', 'string', 'max:3000', 'required_if:action,declined'],
+        ], ['team_reply.required_if' => 'Tell the client why, so they understand.']);
+
+        if ($data['action'] === 'quote') {
+            if ($change->quote_id) {
+                return redirect()->route('admin.quotes.edit', $change->quote_id);
+            }
+
+            $quote = DB::transaction(function () use ($project, $change, $request) {
+                $quote = new Quote([
+                    'title' => 'Change: '.$change->title,
+                    'scope' => $change->details,
+                    'terms' => Setting::get('quote_terms'),
+                    'vat_rate' => (float) Setting::get('vat_rate'),
+                    'deposit_percent' => 0,
+                    'valid_until' => now()->addDays((int) Setting::get('quote_valid_days'))->toDateString(),
+                ]);
+                $quote->number = 'Q-'.str_pad((string) Counter::next('quote'), 4, '0', STR_PAD_LEFT);
+                $quote->version = 1;
+                $quote->client_id = $project->client_id;
+                $quote->service_request_id = $project->service_request_id;
+                $quote->created_by = $request->user()->id;
+                $quote->status = 'draft';
+                $quote->save();
+
+                $change->quote_id = $quote->id;
+                $change->status = 'quoted';
+                $change->team_reply = $request->input('team_reply') ?: $change->team_reply;
+                $change->save();
+
+                return $quote;
+            });
+
+            AuditLog::record('change.quoted', $project, ['title' => $change->title, 'quote' => $quote->number]);
+
+            return redirect()->route('admin.quotes.edit', $quote)->with('status', 'Draft quote created for the change. Add the price and send it. When it is paid it stays part of this project.');
+        }
+
+        $change->status = $data['action'];
+        $change->team_reply = $data['team_reply'] ?? $change->team_reply;
+        $change->save();
+
+        AuditLog::record('change.'.$data['action'], $project, ['title' => $change->title]);
+        $project->notifyClient(ProjectNotice::changeAnswered($change->setRelation('project', $project)));
+
+        return back()->with('status', 'Change request updated. The client has been told.');
+    }
+
+    public function handover(Request $request, Project $project)
+    {
+        $request->validate(['handover_notes' => ['nullable', 'string', 'max:10000']] + ProjectWork::fileRules());
+
+        $project->handover_notes = $request->input('handover_notes');
+        $project->save();
+        if ($request->file('files')) {
+            foreach ($request->file('files') as $upload) {
+                $project->handoverFiles()->create([
+                    'client_id' => $project->client_id,
+                    'uploaded_by' => $request->user()->id,
+                    'collection' => 'handover',
+                    'original_name' => mb_substr($upload->getClientOriginalName(), 0, 200),
+                    'path' => $upload->store("clients/{$project->client_id}/projects/{$project->id}/handover", 'local'),
+                    'mime' => $upload->getMimeType(),
+                    'size' => $upload->getSize(),
+                ]);
+            }
+        }
+
+        if ($request->input('send') === '1') {
+            if (! $project->handover_notes && $project->handoverFiles()->doesntExist()) {
+                return back()->withErrors(['handover_notes' => 'Add some notes or files before sending the handover.']);
+            }
+            $project->handover_sent_at = now();
+            $project->handover_confirmed_at = null;
+            $project->handover_confirmed_name = null;
+            $project->save();
+            AuditLog::record('project.handover_sent', $project);
+            $project->notifyClient(ProjectNotice::handover($project));
+
+            return back()->with('status', 'Handover sent. The client will be asked to confirm they have everything.');
+        }
+
+        return back()->with('status', 'Handover saved. The client cannot see it until you send it.');
+    }
+
+    public function requestTestimonial(Project $project)
+    {
+        $t = $project->testimonial;
+        if ($t && $t->status !== 'requested') {
+            return back()->with('status', 'This client already left a testimonial.');
+        }
+
+        if (! $t) {
+            $t = new Testimonial;
+            $t->client_id = $project->client_id;
+            $t->project_id = $project->id;
+            $t->status = 'requested';
+        }
+        $t->requested_at = now();
+        $t->save();
+
+        $project->notifyClient(ProjectNotice::testimonialRequested($project));
+        AuditLog::record('testimonial.requested', $project);
+
+        return back()->with('status', 'Testimonial request sent.');
     }
 }

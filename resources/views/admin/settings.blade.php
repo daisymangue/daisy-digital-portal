@@ -73,6 +73,25 @@
             </div>
         </section>
 
+        <section class="card space-y-4 lg:col-span-2">
+            <h2 class="h-section">After the work</h2>
+            <label class="flex items-start gap-3">
+                <input type="hidden" name="overdue_reminders" value="0">
+                <input type="checkbox" name="overdue_reminders" value="1" @checked(old('overdue_reminders', $settings['overdue_reminders']) === '1') class="accent-navy mt-0.5 size-5 shrink-0">
+                <span><span class="font-medium">Email overdue reminders</span><span class="text-muted block text-sm">Polite reminders 1, 7 and 14 days after the due date, then they stop. You can always send one by hand from the invoice.</span></span>
+            </label>
+            <label class="flex items-start gap-3">
+                <input type="hidden" name="ask_for_testimonial" value="0">
+                <input type="checkbox" name="ask_for_testimonial" value="1" @checked(old('ask_for_testimonial', $settings['ask_for_testimonial']) === '1') class="accent-navy mt-0.5 size-5 shrink-0">
+                <span><span class="font-medium">Ask for a testimonial after handover</span><span class="text-muted block text-sm">When a client confirms they received the handover, they are asked to rate the work.</span></span>
+            </label>
+            <div class="sm:max-w-lg">
+                <label for="google_review_url" class="label">Google review link <span class="text-muted font-normal">(optional)</span></label>
+                <input id="google_review_url" name="google_review_url" type="url" value="{{ old('google_review_url', $settings['google_review_url']) }}" class="field" placeholder="https://g.page/r/...">
+                <p class="text-muted mt-1 text-sm">Happy clients (4 or 5 stars) are offered this link after leaving a testimonial.</p>
+            </div>
+        </section>
+
         <div class="lg:col-span-2"><button type="submit" class="btn btn-primary">Save settings</button></div>
     </form>
 </x-layouts.app>

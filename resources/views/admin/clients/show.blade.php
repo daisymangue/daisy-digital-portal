@@ -80,6 +80,26 @@
         </div>
 
         <aside class="min-w-0 space-y-6">
+            <div class="card">
+                <h2 class="h-section">Projects</h2>
+                @forelse ($projects as $p)
+                    <a href="{{ route('admin.projects.show', $p) }}" class="mt-3 flex items-center justify-between gap-3">
+                        <span class="link min-w-0 truncate">{{ $p->number }} · {{ $p->title }}</span>
+                        <x-status :status="$p->status" :label="$p->statusLabel()" />
+                    </a>
+                @empty
+                    <p class="text-muted mt-2 text-sm">None yet.</p>
+                @endforelse
+            </div>
+            <div class="card">
+                <h2 class="h-section">Care plans</h2>
+                @forelse ($plans as $plan)
+                    <p class="mt-3"><a href="{{ route('admin.care-plans.index', ['edit' => $plan->id]) }}" class="link">{{ $plan->name }}</a>
+                        <span class="text-muted block text-sm">{{ $money($plan->amount_cents) }} excl. VAT, {{ strtolower($plan->intervalLabel()) }} · {{ $plan->statusLabel() }}</span></p>
+                @empty
+                    <p class="text-muted mt-2 text-sm">None. <a href="{{ route('admin.care-plans.index') }}" class="link">Add one</a></p>
+                @endforelse
+            </div>
             <div class="card space-y-3">
                 <h2 class="h-section">Portal access</h2>
                 @forelse ($client->users as $person)

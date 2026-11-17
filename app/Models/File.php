@@ -12,7 +12,7 @@ class File extends Model
 {
     use HasUuids, SoftDeletes;
 
-    protected $fillable = ['client_id', 'uploaded_by', 'original_name', 'path', 'mime', 'size'];
+    protected $fillable = ['client_id', 'uploaded_by', 'collection', 'original_name', 'path', 'mime', 'size'];
 
     public function fileable(): MorphTo
     {
