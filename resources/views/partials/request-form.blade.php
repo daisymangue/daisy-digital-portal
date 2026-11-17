@@ -12,7 +12,7 @@
     $popular = $popular ?? collect();
     $selectedPkgIndex = $packages->search(fn ($p) => (string) $p->id === (string) old('package_id'));
 @endphp
-<div class="space-y-10"
+<div class="flex flex-col gap-10 lg:grid lg:grid-cols-5 lg:items-start lg:gap-8"
      x-data="{
          open: null,
          picked: @js(array_map('strval', old('services', []))),
@@ -31,31 +31,27 @@
          },
          toggle(id) { this.picked = this.picked.includes(id) ? this.picked.filter(x => x !== id) : [...this.picked, id] },
          get hasSpecial() { return this.special.trim().length > 0 },
+         callback: @js((bool) old('callback_phone')),
+         focusMessage() { $nextTick(() => { document.getElementById('special').scrollIntoView({ behavior: 'smooth', block: 'start' }); document.getElementById('special_details').focus() }) },
      }">
-    @unless ($admin)
-        <a href="#special" class="border-brand/30 flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-pink-50 px-5 py-4 text-pink-950 hover:bg-pink-100">
-            <span><span class="font-semibold">Not on our list? If it is IT or digital, we can most likely do it.</span> Tell us about it in a special request.</span>
-            <span class="font-semibold underline underline-offset-2">Make a special request</span>
-        </a>
-    @endunless
 
+    {{-- Left on large screens. On phones "contents" lets these sit around the request box, in order. --}}
+    <div class="contents lg:col-span-3 lg:block lg:space-y-10">
     @if ($packages->isNotEmpty())
-        <section aria-labelledby="pkg-heading" class="bg-navy -mx-5 px-5 py-8 text-white sm:mx-0 sm:rounded-3xl sm:px-8">
+        <section aria-labelledby="pkg-heading" class="order-1">
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                    <p class="text-navy-soft text-sm font-medium tracking-wider">BEST VALUE</p>
-                    <h2 id="pkg-heading" class="font-display mt-1 text-2xl font-bold">Packages</h2>
-                    <p class="text-navy-soft mt-1">Our most requested services, bundled for less. Optional.</p>
+                    <h2 id="pkg-heading" class="h-section">Packages</h2>
+                    <p class="text-muted mt-1">Our most requested services, bundled for less. Optional.</p>
                 </div>
-                <p class="text-navy-soft text-sm">Tap a selected package again to unselect it.</p>
             </div>
-            <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="mt-4 grid gap-4 sm:grid-cols-3">
                 @foreach ($packages as $package)
                     @php
                         $includes = $package->includes ?? [];
                     @endphp
-                    <label @if ($loop->index >= 3) x-show="showAllPkgs" x-cloak @endif class="relative flex cursor-pointer flex-col rounded-2xl border-2 bg-white p-5 text-ink transition-colors"
-                           :class="pkg === '{{ $package->id }}' ? 'border-brand ring-brand ring-2' : '{{ $package->is_featured ? 'border-brand' : 'border-transparent' }}'">
+                    <label @if ($loop->index >= 3) x-show="showAllPkgs" x-cloak @endif class="relative flex cursor-pointer flex-col rounded-2xl border-2 bg-white p-4 text-ink transition-colors"
+                           :class="pkg === '{{ $package->id }}' ? 'border-brand ring-brand ring-2' : '{{ $package->is_featured ? 'border-brand' : 'border-line hover:border-line-strong' }}'">
                         <input type="radio" name="package_id" value="{{ $package->id }}" x-model="pkg" class="sr-only"
                                @click="if (pkg === '{{ $package->id }}') { $event.preventDefault(); $nextTick(() => pkg = '') }">
                         @if ($package->is_featured)
@@ -65,18 +61,18 @@
                             <span class="font-semibold">{{ $package->name }}</span>
                             <span x-show="pkg === '{{ $package->id }}'" x-cloak class="bg-brand rounded-full px-2.5 py-0.5 text-xs font-semibold text-white">Selected</span>
                         </span>
-                        <span class="font-display mt-2 text-2xl font-bold">{{ $package->priceLabel() }}</span>
+                        <span class="text-brand-dark mt-1 font-semibold">{{ $package->priceLabel() }}</span>
                         @if ($includes)
-                            <ul class="mt-3 space-y-1.5 text-sm">
-                                @foreach (array_slice($includes, 0, 4) as $line)
+                            <ul class="text-muted mt-3 space-y-1 text-sm">
+                                @foreach (array_slice($includes, 0, 3) as $line)
                                     <li class="flex gap-2"><svg class="text-brand mt-0.5 size-4 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ $line }}</li>
                                 @endforeach
                             </ul>
-                            @if (count($includes) > 4)
+                            @if (count($includes) > 3)
                                 <details class="mt-2 text-sm" @click.stop>
-                                    <summary class="text-brand-dark min-h-8 cursor-pointer font-medium">and {{ count($includes) - 4 }} more</summary>
+                                    <summary class="text-brand-dark min-h-8 cursor-pointer font-medium">and {{ count($includes) - 3 }} more</summary>
                                     <ul class="mt-1.5 space-y-1.5">
-                                        @foreach (array_slice($includes, 4) as $line)
+                                        @foreach (array_slice($includes, 3) as $line)
                                             <li class="flex gap-2"><svg class="text-brand mt-0.5 size-4 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ $line }}</li>
                                         @endforeach
                                     </ul>
@@ -84,21 +80,21 @@
                             @endif
                         @endif
                         <span class="mt-auto pt-4">
-                            <span class="btn w-full" :class="pkg === '{{ $package->id }}' ? 'btn-primary' : 'btn-light'" x-text="pkg === '{{ $package->id }}' ? 'Selected' : 'Choose this package'">Choose this package</span>
+                            <span class="btn w-full" :class="pkg === '{{ $package->id }}' ? 'btn-primary' : 'btn-light'" x-text="pkg === '{{ $package->id }}' ? 'Selected' : 'Select'">Select</span>
                         </span>
                     </label>
                 @endforeach
             </div>
             @if ($packages->count() > 3)
-                <div class="mt-5 text-center">
-                    <button type="button" class="btn min-h-11 border border-white/40 px-6 text-white hover:bg-white/10" @click="showAllPkgs = !showAllPkgs"
+                <div class="mt-3">
+                    <button type="button" class="link min-h-11 cursor-pointer" @click="showAllPkgs = !showAllPkgs"
                             x-text="showAllPkgs ? 'Show fewer packages' : 'See all {{ $packages->count() }} packages'">See all {{ $packages->count() }} packages</button>
                 </div>
             @endif
         </section>
     @endif
 
-    <section aria-labelledby="svc-heading">
+    <section aria-labelledby="svc-heading" class="order-3">
         <h2 id="svc-heading" class="h-section">Individual services</h2>
         <p class="text-muted mt-1">Search, tap a popular service, or open a category. You can choose as many as you like.</p>
 
@@ -121,8 +117,8 @@
             </ul>
             <div x-show="!results.length" class="px-4 py-5">
                 <p class="font-medium">No service matches "<span x-text="find.trim()"></span>".</p>
-                <p class="text-muted mt-1">If it is IT related, we can most likely still help. Describe it as a special request.</p>
-                <button type="button" class="btn btn-primary mt-3" @click="special = special || find.trim() + ': '; find = ''; $nextTick(() => { document.getElementById('special').scrollIntoView({ behavior: 'smooth' }); document.getElementById('special_details').focus() })">Make a special request</button>
+                <p class="text-muted mt-1">Not on our list does not mean we cannot do it. Tell us in your own words.</p>
+                <button type="button" class="btn btn-primary mt-3" @click="special = special || find.trim() + ': '; find = ''; focusMessage()">Tell us what you need</button>
             </div>
         </div>
 
@@ -189,7 +185,7 @@
 
     @foreach ($categories as $category)
         @if ($category->questions->isNotEmpty())
-            <section x-show="count({{ $category->id }}) > 0" x-cloak class="card space-y-5">
+            <section x-show="count({{ $category->id }}) > 0" x-cloak class="card order-4 space-y-5">
                 <div>
                     <p class="text-muted text-sm">A few quick questions{{ $admin ? ', fill in what you know' : '' }}</p>
                     <h2 class="h-section">{{ $category->name }}</h2>
@@ -227,77 +223,106 @@
         @endif
     @endforeach
 
-    <section id="special" class="scroll-mt-6 rounded-2xl border-2 border-dashed border-pink-300 bg-white p-5 sm:p-6"
->
-        <div class="flex flex-wrap items-start justify-between gap-3">
-            <div>
-                <h2 class="h-section">Special request</h2>
-                <p class="text-muted mt-1">{{ $admin ? 'For work that is not in the packages or service list.' : 'Our lists cover the most common jobs, not everything we do. If it is IT related, from websites and apps to computers, networks, security and automation, describe it here and we will work out the best way to do it.' }}</p>
+    </div>
+
+    {{-- The request box: beside the menu on large screens and always in view, after packages on phones. --}}
+    <aside class="order-2 lg:col-span-2 lg:self-stretch">
+        <section id="special" class="bg-navy -mx-5 scroll-mt-6 px-5 py-7 text-white sm:mx-0 sm:rounded-3xl sm:px-6 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto">
+            <div class="flex flex-wrap items-center gap-2">
+                <h2 class="font-display text-2xl font-bold">{{ $admin ? 'In their own words' : 'Tell us what you need' }}</h2>
+                @unless ($admin)
+                    <span class="bg-brand rounded-full px-3 py-1 text-xs font-semibold tracking-wide">ANYTHING GOES</span>
+                @endunless
             </div>
-            <span class="pill bg-pink-100 text-pink-900">Custom work</span>
-        </div>
+            <p class="text-navy-soft mt-2 text-sm">{{ $admin ? 'For anything not in the packages or service list, or extra detail.' : 'Documents, translations, tech help, design, or anything else. If you need it done, ask us.' }}</p>
 
-        @unless ($admin)
-            <div class="mt-4 flex flex-wrap gap-2" aria-label="Examples">
-                @foreach (['A booking system for my salon', 'Move my old website to a new host', 'Automate my invoices and follow-ups', 'A custom app for my staff'] as $example)
-                    <button type="button" class="border-line-strong min-h-9 cursor-pointer rounded-full border px-3 text-sm hover:bg-pink-50"
-                            @click="special = special ? special : @js($example.'. '); $nextTick(() => $refs.special.focus())">{{ $example }}</button>
-                @endforeach
-            </div>
-        @endunless
+            <label for="special_details" class="sr-only">Describe what you need</label>
+            <textarea id="special_details" name="special_details" x-ref="special" x-model="special" rows="4" maxlength="5000"
+                      class="text-ink mt-4 w-full rounded-2xl border-0 bg-white px-4 py-3 placeholder:text-gray-500"
+                      placeholder="For example: Translate my 12-page booklet from English to isiZulu by Friday"></textarea>
 
-        <div class="mt-4">
-            <label for="special_details" class="label">What do you need?</label>
-            <textarea id="special_details" name="special_details" x-ref="special" x-model="special" rows="4" maxlength="5000" class="field"
-                      placeholder="What it should do, who will use it, and anything you have seen elsewhere that you like."></textarea>
-        </div>
-
-        <div x-show="special.trim().length > 0" x-cloak class="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-                <label for="budget_range" class="label">Rough budget <span class="text-muted font-normal">(optional)</span></label>
-                <select id="budget_range" name="budget_range" class="field">
-                    @foreach (\App\Models\ServiceRequest::BUDGETS as $budget)
-                        <option value="{{ $budget }}" @selected(old('budget_range') === $budget)>{{ $budget }}</option>
-                    @endforeach
-                </select>
-                <p class="text-muted mt-1.5 text-sm">Helps us suggest an option that fits. It is not a commitment.</p>
-            </div>
-            <div>
-                <label for="needed_by" class="label">Needed by <span class="text-muted font-normal">(optional)</span></label>
-                <input id="needed_by" name="needed_by" type="date" min="{{ today()->toDateString() }}" value="{{ old('needed_by') }}" class="field">
-            </div>
-        </div>
-
-        <div x-show="special.trim().length > 0" x-cloak class="mt-4">
-            <x-file-drop id="special-files" label="Show us an example" hint="A screenshot, photo, sketch or document helps us understand. Up to 8 files in total, 10 MB each." />
-        </div>
-    </section>
-
-    <section class="card space-y-5">
-        <h2 class="h-section">{{ $admin ? 'What the client asked for' : 'Anything else we should know?' }}</h2>
-        <div>
-            <label for="description" class="label">
-                {{ $admin ? 'Notes from the call, email or message' : 'Notes for our team' }}
-                <span class="text-muted font-normal">(optional)</span>
-            </label>
-            <textarea id="description" name="description" rows="5" maxlength="5000" class="field" placeholder="For example: we already have a logo, and we would like to launch before December.">{{ old('description') }}</textarea>
             @unless ($admin)
-                <p class="text-muted mt-1.5 text-sm">Anything that helps us with what you picked above.</p>
+                <div class="mt-3 flex flex-wrap gap-2" aria-label="Ideas">
+                    @foreach (['Create an invoice for me', 'Translate my booklet', 'Set up my laptop', 'Convert a PDF to Word', 'Type up my handwritten notes', 'Design my CV'] as $example)
+                        <button type="button" class="min-h-9 cursor-pointer rounded-full border border-white/25 px-3 text-xs text-white hover:bg-white/10"
+                                @click="special = special ? special : @js($example.': '); $nextTick(() => $refs.special.focus())">{{ $example }}</button>
+                    @endforeach
+                </div>
             @endunless
-        </div>
-        <x-file-drop id="files" label="Logos, photos or documents" />
-    </section>
 
-    <div class="h-16" aria-hidden="true"></div>
-    <div class="border-line fixed inset-x-0 bottom-0 z-10 border-t bg-white px-5 py-3 lg:left-60">
-        <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
-            <p class="text-sm">
-                <span x-show="pkg" x-cloak><span class="font-semibold" x-text="pkgNames[pkg]"></span><span x-show="picked.length"> plus </span></span>
-                <span x-show="picked.length" x-cloak class="font-semibold" x-text="picked.length + (picked.length === 1 ? ' service' : ' services')"></span>
-                <span x-show="hasSpecial" x-cloak><span x-show="pkg || picked.length"> plus </span><span class="font-semibold">a special request</span></span>
-                <span x-show="!pkg && !picked.length && !hasSpecial" class="text-muted">Nothing selected yet</span>
-            </p>
-            <button type="submit" class="btn btn-primary">{{ $admin ? 'Save request' : 'Send request' }}</button>
-        </div>
+            <div class="mt-4 rounded-2xl bg-white p-3 text-ink">
+                <x-file-drop id="files" :compact="true" label="Attach files (PDFs, photos, documents)" />
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+                <div>
+                    <label for="needed_by" class="text-navy-soft mb-1 block text-xs">When do you need it?</label>
+                    <input id="needed_by" name="needed_by" type="date" min="{{ today()->toDateString() }}" value="{{ old('needed_by') }}" class="text-ink min-h-11 w-full rounded-xl border-0 bg-white px-3">
+                </div>
+                <div>
+                    <label for="budget_range" class="text-navy-soft mb-1 block text-xs">Budget <span class="opacity-75">(optional)</span></label>
+                    <select id="budget_range" name="budget_range" class="text-ink min-h-11 w-full rounded-xl border-0 bg-white px-3">
+                        <option value="">Not sure</option>
+                        @foreach (array_diff(\App\Models\ServiceRequest::BUDGETS, ['Not sure']) as $budget)
+                            <option value="{{ $budget }}" @selected(old('budget_range') === $budget)>{{ $budget }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            @if ($admin)
+                <div class="mt-4">
+                    <label for="description" class="text-navy-soft mb-1 block text-xs">Notes from the call, email or message <span class="opacity-75">(optional)</span></label>
+                    <textarea id="description" name="description" rows="3" maxlength="5000" class="text-ink w-full rounded-xl border-0 bg-white px-3 py-2">{{ old('description') }}</textarea>
+                </div>
+            @else
+                <div class="mt-4">
+                    <button type="button" class="text-navy-soft min-h-10 cursor-pointer text-sm underline underline-offset-2 hover:text-white" @click="callback = !callback" :aria-expanded="callback.toString()">Rather talk? Ask us to call you</button>
+                    <div x-show="callback" x-cloak class="mt-2 grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="callback_phone" class="text-navy-soft mb-1 block text-xs">Your number</label>
+                            <input id="callback_phone" name="callback_phone" type="tel" maxlength="30" value="{{ old('callback_phone', auth()->user()->phone ?? auth()->user()->client?->phone) }}" :disabled="!callback" class="text-ink min-h-11 w-full rounded-xl border-0 bg-white px-3">
+                        </div>
+                        <div>
+                            <label for="callback_time" class="text-navy-soft mb-1 block text-xs">Best time</label>
+                            <select id="callback_time" name="callback_time" :disabled="!callback" class="text-ink min-h-11 w-full rounded-xl border-0 bg-white px-3">
+                                @foreach (\App\Support\RequestBuilder::CALLBACK_TIMES as $t)
+                                    <option @selected(old('callback_time') === $t)>{{ $t }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="mt-5 rounded-2xl bg-white/10 p-4">
+                <p class="text-navy-soft text-xs font-semibold tracking-widest">{{ $admin ? 'THIS REQUEST' : 'YOUR REQUEST' }}</p>
+                <ul class="mt-2 space-y-1 text-sm">
+                    <li x-show="hasSpecial" x-cloak>✓ {{ $admin ? 'Their words' : 'Your message' }}</li>
+                    <li x-show="callback" x-cloak>✓ A call back</li>
+                    <li x-show="pkg" x-cloak>✓ <span x-text="pkgNames[pkg]"></span></li>
+                    <template x-for="id in picked" :key="id">
+                        <li>✓ <span x-text="(all.find(s => s.id === id) || {}).name"></span> <span class="text-navy-soft" x-text="'· ' + ((all.find(s => s.id === id) || {}).price || '')"></span></li>
+                    </template>
+                    <li x-show="!pkg && !picked.length && !hasSpecial && !callback" class="text-navy-soft">Nothing yet. Write above, or tap a package or service.</li>
+                </ul>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-5 w-full text-lg">{{ $admin ? 'Save request' : 'Send request' }}</button>
+            @unless ($admin)
+                <p class="text-navy-soft mt-3 text-center text-xs">We reply with a quote, usually within one working day. Prices are a guide.</p>
+            @endunless
+        </section>
+    </aside>
+
+    {{-- Phones: the send button stays in reach while scrolling the services. --}}
+    <div class="h-14 lg:hidden" aria-hidden="true"></div>
+    <div class="border-line fixed inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t bg-white px-5 py-2.5 lg:hidden">
+        <p class="min-w-0 truncate text-sm">
+            <span x-show="pkg || picked.length || hasSpecial || callback" x-cloak class="font-semibold"
+                  x-text="[hasSpecial ? 'Your message' : '', callback ? 'call back' : '', pkg ? '1 package' : '', picked.length ? picked.length + (picked.length === 1 ? ' service' : ' services') : ''].filter(Boolean).join(' + ')"></span>
+            <span x-show="!pkg && !picked.length && !hasSpecial && !callback" class="text-muted">Nothing selected yet</span>
+        </p>
+        <button type="submit" class="btn btn-primary min-h-10 shrink-0 px-5">{{ $admin ? 'Save' : 'Send request' }}</button>
     </div>
 </div>

@@ -69,7 +69,7 @@ class SpecialRequestTest extends TestCase
         $this->assertSame(0, ServiceRequest::count());
     }
 
-    public function test_budget_and_deadline_are_ignored_without_a_special_request(): void
+    public function test_budget_and_deadline_are_kept_with_a_package_too(): void
     {
         $package = Package::create(['name' => 'Starter', 'price_cents' => 199900, 'is_from' => true]);
         $this->actingAs($this->client)->post('/requests', [
@@ -78,8 +78,24 @@ class SpecialRequestTest extends TestCase
 
         $request = ServiceRequest::firstOrFail();
         $this->assertFalse($request->isSpecial());
-        $this->assertNull($request->budget_range);
-        $this->assertNull($request->needed_by);
+        $this->assertSame('Under R2 000', $request->budget_range);
+        $this->assertSame(today()->addWeek()->toDateString(), $request->needed_by->toDateString());
+    }
+
+    public function test_call_back_request_lands_as_the_first_line(): void
+    {
+        $this->actingAs($this->client)->post('/requests', ['callback_phone' => '079 083 5197', 'callback_time' => 'Morning'])->assertSessionHasNoErrors();
+        $request = ServiceRequest::latest('id')->firstOrFail();
+        $this->assertStringStartsWith('Please call me back on 079 083 5197 (Morning).', $request->special_details);
+
+        $this->actingAs($this->client)->post('/requests', ['callback_phone' => 'call me'])->assertSessionHasErrors('callback_phone');
+    }
+
+    public function test_request_page_offers_everyday_gigs(): void
+    {
+        $this->actingAs($this->client)->get('/requests/new')->assertOk()
+            ->assertSee('ANYTHING GOES')->assertSee('Translate my booklet')->assertSee('Convert a PDF to Word')
+            ->assertDontSee('If it is IT related');
     }
 
     public function test_featured_package_is_shown_first_with_a_badge_and_admin_can_set_it(): void
@@ -90,7 +106,7 @@ class SpecialRequestTest extends TestCase
         $this->actingAs($this->client)->get('/requests/new')->assertOk()
             ->assertSeeInOrder(['Popular Package', 'Plain Package'])
             ->assertSee('Most popular')
-            ->assertSee('Make a special request');
+            ->assertSee('Tell us what you need');
 
         $this->actingAs($this->admin)->put("/admin/packages/{$featured->id}", ['name' => 'Popular Package', 'price' => '2000', 'is_active' => '1']);
         $this->assertFalse($featured->fresh()->is_featured);

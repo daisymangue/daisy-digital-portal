@@ -21,6 +21,8 @@ class RequestBuilder
     public const FILE_TYPES = 'jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,zip';
 
     /** Validation rules shared by the client form and the admin form. */
+    public const CALLBACK_TIMES = ['Any time', 'Morning', 'Afternoon', 'After 5pm'];
+
     public static function rules(): array
     {
         return [
@@ -33,6 +35,8 @@ class RequestBuilder
             'special_details' => ['nullable', 'string', 'max:5000'],
             'budget_range' => ['nullable', Rule::in(ServiceRequest::BUDGETS)],
             'needed_by' => ['nullable', 'date', 'after_or_equal:today'],
+            'callback_phone' => ['nullable', 'string', 'max:30', 'regex:/^[0-9+()\-\s]{9,30}$/'],
+            'callback_time' => ['nullable', Rule::in(self::CALLBACK_TIMES)],
             'files' => ['nullable', 'array', 'max:8'],
             'files.*' => ['file', 'max:10240', 'mimes:'.self::FILE_TYPES],
         ];
@@ -45,6 +49,7 @@ class RequestBuilder
             'files.max' => 'You can add up to 8 files in total.',
             'files.*.mimes' => 'That file type is not supported. Please upload images, PDFs, Office documents or a zip.',
             'needed_by.after_or_equal' => 'The "needed by" date cannot be in the past.',
+            'callback_phone.regex' => 'Enter a phone number we can call, for example 079 083 5197.',
         ];
     }
 
@@ -79,12 +84,19 @@ class RequestBuilder
         $description = trim($data['description'] ?? '');
         $special = trim($data['special_details'] ?? '');
 
+        // "Rather talk?" becomes the first line of their message, so the team sees it straight away.
+        $phone = trim($data['callback_phone'] ?? '');
+        if ($phone !== '') {
+            $line = 'Please call me back on '.$phone.' ('.($data['callback_time'] ?? 'Any time').').';
+            $special = trim($line."\n".$special);
+        }
+
         if ($special !== '' && mb_strlen($special) < 10) {
-            throw ValidationException::withMessages(['special_details' => 'Please describe the special request in a sentence or two.']);
+            throw ValidationException::withMessages(['special_details' => 'Please tell us a little more, a sentence or two is enough.']);
         }
         if ($services->isEmpty() && ! $package && $special === '' && mb_strlen($description) < 10) {
             throw ValidationException::withMessages([
-                'services' => 'Please choose a package or a service, or describe what you need as a special request.',
+                'services' => 'Tell us what you need in the box, or choose a package or a service.',
             ]);
         }
 
@@ -113,9 +125,8 @@ class RequestBuilder
         return DB::transaction(function () use ($client, $by, $services, $package, $description, $special, $data, $answers, $files, $source, $status) {
             $sr = new ServiceRequest(['description' => $description ?: null, 'package_id' => $package?->id, 'package_name' => $package?->name]);
             $sr->special_details = $special ?: null;
-            // Budget and deadline only mean something alongside a special request.
-            $sr->budget_range = $special !== '' ? ($data['budget_range'] ?? null) : null;
-            $sr->needed_by = $special !== '' ? ($data['needed_by'] ?? null) : null;
+            $sr->budget_range = $data['budget_range'] ?? null;
+            $sr->needed_by = $data['needed_by'] ?? null;
             $sr->client_id = $client->id;
             $sr->user_id = $by->id;
             $sr->source = $source;
