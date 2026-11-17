@@ -208,4 +208,15 @@ class LaunchReadinessTest extends TestCase
         $this->assertFalse((bool) $user->has_password);
         Notification::assertSentTo($user, PortalInvite::class);
     }
+
+    public function test_activity_log_has_its_own_page_and_the_dashboard_stays_clean(): void
+    {
+        AuditLog::record('quote.sent', null, ['number' => 'Q-0042'], $this->admin->id);
+
+        $this->actingAs($this->admin)->get('/admin')->assertOk()->assertDontSee('Recent activity')->assertSee('Activity log');
+        $this->actingAs($this->admin)->get('/admin/activity')->assertOk()->assertSee('Quote sent')->assertSee('Q-0042');
+        $this->actingAs($this->admin)->get('/admin/activity?group=quotes&q=Q-0042')->assertOk()->assertSee('Q-0042');
+        $this->actingAs($this->admin)->get('/admin/activity?group=money')->assertOk()->assertDontSee('Q-0042');
+        $this->actingAs($this->client)->get('/admin/activity')->assertNotFound();
+    }
 }

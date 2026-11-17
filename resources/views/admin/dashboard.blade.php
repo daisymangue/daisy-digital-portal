@@ -1,6 +1,9 @@
 <x-layouts.app title="Admin dashboard">
     <h1 class="h-page">Agency overview</h1>
-    <p class="text-muted mt-1">{{ now()->format('l j F Y') }}</p>
+    <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <p class="text-muted mt-1">{{ now()->format('l j F Y') }}</p>
+        <a href="{{ route('admin.activity') }}" class="link text-sm">Activity log</a>
+    </div>
 
     <section class="mt-8" aria-labelledby="attention">
         <h2 id="attention" class="h-section">Needs your attention</h2>
@@ -35,46 +38,30 @@
         </div>
     @endforeach
 
-    <div class="mt-8 grid gap-8 lg:grid-cols-3">
-        <section class="lg:col-span-2">
-            <div class="flex items-center justify-between gap-3">
-                <h2 class="h-section">Requests needing attention</h2>
-                <a href="{{ route('admin.requests.index') }}" class="link">View all</a>
-            </div>
-            <div class="mt-4 space-y-3">
-                @forelse ($requests as $r)
-                    <a href="{{ route('admin.requests.show', $r) }}" class="card hover:border-line-strong flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <p class="font-semibold">{{ $r->number }} · {{ $r->client->business_name }}
-                                @if ($r->isSpecial())
-                                    <span class="pill ml-1 bg-pink-100 text-pink-900">Special</span>
-                                @endif
-                            </p>
-                            <p class="text-muted text-sm">
-                                {{ $r->package_name ?: trans_choice(':count service|:count services', $r->services_count) }}
-                                · {{ $r->submitted_at->diffForHumans() }}
-                            </p>
-                        </div>
-                        <x-status :status="$r->status" :label="$r->statusLabel()" />
-                    </a>
-                @empty
-                    <div class="card text-muted">Nothing waiting. New requests will appear here.</div>
-                @endforelse
-            </div>
-        </section>
-
-        <section>
-            <h2 class="h-section">Recent activity</h2>
-            <ul class="card mt-4 space-y-4">
-                @forelse ($activity as $log)
-                    <li>
-                        <p class="font-medium">{{ Str::of($log->action)->replace(['.', '_'], ' ')->ucfirst() }}@if (! empty($log->meta['number'])) · {{ $log->meta['number'] }}@endif</p>
-                        <p class="text-muted text-sm">{{ $log->user?->name ?? 'System' }} · {{ $log->created_at->diffForHumans() }}</p>
-                    </li>
-                @empty
-                    <li class="text-muted">No activity yet.</li>
-                @endforelse
-            </ul>
-        </section>
-    </div>
+    <section class="mt-10">
+        <div class="flex items-center justify-between gap-3">
+            <h2 class="h-section">Requests needing attention</h2>
+            <a href="{{ route('admin.requests.index') }}" class="link">View all</a>
+        </div>
+        <div class="mt-4 space-y-3">
+            @forelse ($requests as $r)
+                <a href="{{ route('admin.requests.show', $r) }}" class="card hover:border-line-strong flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p class="font-semibold">{{ $r->number }} · {{ $r->client->business_name }}
+                            @if ($r->isSpecial())
+                                <span class="pill ml-1 bg-pink-100 text-pink-900">Special</span>
+                            @endif
+                        </p>
+                        <p class="text-muted text-sm">
+                            {{ $r->package_name ?: ($r->services_count ? trans_choice(':count service|:count services', $r->services_count) : ($r->isSpecial() ? Str::limit($r->special_details, 70) : 'Described in notes')) }}
+                            · {{ $r->submitted_at->diffForHumans() }}
+                        </p>
+                    </div>
+                    <x-status :status="$r->status" :label="$r->statusLabel()" />
+                </a>
+            @empty
+                <div class="card text-muted">Nothing waiting. New requests will appear here.</div>
+            @endforelse
+        </div>
+    </section>
 </x-layouts.app>

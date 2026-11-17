@@ -78,6 +78,7 @@ Route::middleware(['auth', 'role:client'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', Admin\DashboardController::class)->name('dashboard');
+    Route::get('/activity', [Admin\ActivityController::class, 'index'])->name('activity');
 
     Route::get('/projects', [Admin\ProjectController::class, 'index'])->name('projects.index');
     Route::post('/projects', [Admin\ProjectController::class, 'store'])->name('projects.store');

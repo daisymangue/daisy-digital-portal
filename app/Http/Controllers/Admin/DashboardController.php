@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AuditLog;
 use App\Models\ChangeRequest;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -50,7 +49,6 @@ class DashboardController extends Controller
                 ->whereIn('status', ['new', 'reviewing', 'awaiting_client'])
                 ->latest('submitted_at')->limit(8)->get(),
             'pendingPayments' => Payment::with('invoice.client')->where('status', 'pending')->oldest()->get(),
-            'activity' => AuditLog::with('user')->whereNotIn('action', ['file.downloaded', 'login.failed'])->latest('id')->limit(8)->get(),
         ]);
     }
 }
