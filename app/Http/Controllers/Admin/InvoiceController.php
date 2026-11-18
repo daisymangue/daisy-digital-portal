@@ -18,14 +18,19 @@ use Illuminate\Validation\Rule;
 
 class InvoiceController extends Controller
 {
+    /** Billing, "All bills" tab. Opens on unpaid bills, the ones that need attention. */
     public function index(Request $request)
     {
-        $status = $request->query('status');
         $search = trim((string) $request->query('q'));
+        $status = $request->query('status', $search !== '' ? 'all' : 'unpaid');
+        $kind = in_array($request->query('kind'), ['plan', 'project'], true) ? $request->query('kind') : 'all';
 
         $invoices = Invoice::with('client')
+            ->when($kind === 'plan', fn ($q) => $q->whereNotNull('care_plan_id'))
+            ->when($kind === 'project', fn ($q) => $q->whereNull('care_plan_id'))
+            ->when($status === 'unpaid', fn ($q) => $q->open())
             ->when($status === 'overdue', fn ($q) => $q->overdue())
-            ->when($status !== 'overdue' && isset(Invoice::STATUSES[$status]), fn ($q) => $q->where('status', $status))
+            ->when(in_array($status, ['draft', 'paid', 'cancelled'], true), fn ($q) => $q->where('status', $status))
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w
                 ->where('number', 'like', "%{$search}%")
                 ->orWhere('title', 'like', "%{$search}%")
@@ -35,10 +40,10 @@ class InvoiceController extends Controller
         return view('admin.invoices.index', [
             'invoices' => $invoices,
             'status' => $status,
+            'kind' => $kind,
             'search' => $search,
             'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
-            'outstanding' => (int) Invoice::open()->sum(DB::raw('total_cents - paid_cents')),
-            'overdueCount' => Invoice::overdue()->count(),
+            'drafts' => Invoice::where('status', 'draft')->count(),
         ]);
     }
 

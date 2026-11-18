@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
+use App\Models\CarePlan;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Setting;
@@ -20,9 +21,16 @@ class ClientInvoiceController extends Controller
     {
         $base = Invoice::where('client_id', $request->user()->client_id)->visibleToClient();
 
+        $plans = CarePlan::where('client_id', $request->user()->client_id)
+            ->whereIn('status', ['active', 'paused'])->withBillCounts()->orderBy('next_invoice_on')->get();
+        $next = $plans->where('status', 'active')->sortBy('next_invoice_on')->first();
+
         return view('client.invoices.index', [
-            'invoices' => (clone $base)->latest('issued_at')->paginate(15),
+            'invoices' => (clone $base)->orderByDesc('issued_at')->orderByDesc('number')->paginate(15),
             'outstanding' => (int) (clone $base)->open()->sum(DB::raw('total_cents - paid_cents')),
+            'overdue' => (clone $base)->overdue()->count(),
+            'plans' => $plans,
+            'next' => $next,
         ]);
     }
 

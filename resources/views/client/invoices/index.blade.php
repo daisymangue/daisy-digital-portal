@@ -1,23 +1,79 @@
-<x-layouts.app title="Invoices">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-        <h1 class="h-page">Invoices</h1>
-        <p class="text-muted">Outstanding: <span class="text-ink text-xl font-semibold">{{ \App\Support\Money::format($outstanding) }}</span></p>
-    </div>
+<x-layouts.app title="Billing">
+    <h1 class="h-page">Billing</h1>
+    <p class="text-muted mt-1">Your subscriptions and bills in one place.</p>
 
-    <div class="mt-8 space-y-3">
-        @forelse ($invoices as $inv)
-            <a href="{{ route('invoices.show', $inv->id) }}" class="card hover:border-line-strong flex flex-wrap items-center justify-between gap-3">
-                <div>
-                    <p class="font-semibold">{{ $inv->number }} · {{ $inv->title }}</p>
-                    <p class="text-muted text-sm">
-                        {{ \App\Support\Money::format($inv->total_cents) }}
-                        @if ($inv->isOpen()) · Due {{ $inv->due_date->format('j M Y') }} @endif
+    <dl class="mt-6 grid gap-3 sm:grid-cols-2 lg:max-w-2xl">
+        <div class="card py-4 {{ $overdue ? 'border-red-200 bg-red-50' : '' }}">
+            <dt class="text-sm {{ $overdue ? 'text-red-900' : 'text-muted' }}">To pay now</dt>
+            <dd class="mt-1 text-2xl font-semibold {{ $overdue ? 'text-red-900' : '' }}">{{ \App\Support\Money::format($outstanding) }}</dd>
+            @if ($overdue)<dd class="text-sm text-red-800">{{ trans_choice(':count bill is overdue|:count bills are overdue', $overdue) }}</dd>@endif
+        </div>
+        @if ($next)
+            <div class="card py-4">
+                <dt class="text-muted text-sm">Next bill</dt>
+                <dd class="mt-1 text-2xl font-semibold">{{ \App\Support\Money::format($next->vatInclusiveCents()) }}</dd>
+                <dd class="text-muted text-sm">on {{ $next->next_invoice_on->format('j M Y') }}, {{ $next->name }}</dd>
+            </div>
+        @endif
+    </dl>
+
+    @if ($plans->isNotEmpty())
+        <h2 class="h-section mt-10">Your subscriptions</h2>
+        <div class="mt-4 grid gap-3 lg:grid-cols-2">
+            @foreach ($plans as $plan)
+                @php [$payKey, $payLabel] = $plan->paymentState(); @endphp
+                <div class="card">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-semibold">{{ $plan->name }}</p>
+                            <p class="text-muted text-sm">{{ \App\Support\Money::format($plan->vatInclusiveCents()) }} incl. VAT {{ $plan->perLabel() }}</p>
+                        </div>
+                        @if ($plan->status === 'paused')
+                            <x-status status="on_hold" label="Paused" />
+                        @else
+                            <x-status :status="$payKey" :label="$payLabel" />
+                        @endif
+                    </div>
+                    @if ($plan->includedItems())
+                        <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                            @foreach ($plan->includedItems() as $item)
+                                <li class="flex items-center gap-1.5"><svg class="text-brand size-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.6l7.3-7.3a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>{{ $item }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    <p class="text-muted border-line mt-4 border-t pt-3 text-sm">
+                        @if ($plan->status === 'active') Next bill {{ $plan->next_invoice_on->format('j M Y') }} · @endif
+                        Pay with reference <span class="text-ink font-semibold whitespace-nowrap">{{ $plan->reference }}</span>
                     </p>
                 </div>
-                <x-status :status="$inv->effectiveStatus()" :label="$inv->clientStatusLabel()" />
+            @endforeach
+        </div>
+        <p class="text-muted mt-3 text-sm">Using the same reference every time lets you set up a repeat EFT or stop order. Want to change or stop a plan? Send us a message from any project, or <a href="{{ route('requests.create') }}" class="link">start a request</a>.</p>
+    @endif
+
+    <h2 class="h-section mt-10">Your bills</h2>
+    <div class="mt-4 space-y-3">
+        @forelse ($invoices as $inv)
+            <a href="{{ route('invoices.show', $inv->id) }}" class="card hover:border-line-strong flex flex-wrap items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="font-semibold">{{ $inv->number }}</p>
+                    <p class="text-muted flex items-center gap-1.5 text-sm">
+                        @if ($inv->care_plan_id)
+                            <svg class="size-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-label="Subscription bill" role="img"><path fill-rule="evenodd" d="M15.3 5.2A7 7 0 0 0 3.1 9a.75.75 0 0 0 1.48.24 5.5 5.5 0 0 1 9.6-2.98l-1.7.1a.75.75 0 0 0 .08 1.5l3.5-.2a.75.75 0 0 0 .7-.8l-.2-3.5a.75.75 0 0 0-1.5.08l.1 1.76ZM4.7 14.8A7 7 0 0 0 16.9 11a.75.75 0 0 0-1.48-.24 5.5 5.5 0 0 1-9.6 2.98l1.7-.1a.75.75 0 0 0-.08-1.5l-3.5.2a.75.75 0 0 0-.7.8l.2 3.5a.75.75 0 0 0 1.5-.08l-.1-1.76Z" clip-rule="evenodd"/></svg>
+                        @endif
+                        <span class="truncate">{{ $inv->title }}</span>
+                    </p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-sm whitespace-nowrap">
+                        {{ \App\Support\Money::format($inv->total_cents) }}
+                        @if ($inv->isOpen())<span class="text-muted"> · due {{ $inv->due_date->format('j M') }}</span>@endif
+                    </span>
+                    <x-status :status="$inv->effectiveStatus()" :label="$inv->clientStatusLabel()" />
+                </div>
             </a>
         @empty
-            <div class="card text-muted">No invoices yet. When we invoice you, it appears here and we email you.</div>
+            <div class="card text-muted">No bills yet. When we bill you, it appears here and we email you.</div>
         @endforelse
     </div>
 

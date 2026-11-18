@@ -11,8 +11,7 @@
             ['Requests', route('admin.requests.index'), request()->routeIs('admin.requests.*')],
             ['Projects', route('admin.projects.index'), request()->routeIs('admin.projects.*'), $unread],
             ['Quotes', route('admin.quotes.index'), request()->routeIs('admin.quotes.*')],
-            ['Invoices', route('admin.invoices.index'), request()->routeIs('admin.invoices.*')],
-            ['Care plans', route('admin.care-plans.index'), request()->routeIs('admin.care-plans.*')],
+            ['Billing', route('admin.care-plans.index'), request()->routeIs('admin.invoices.*', 'admin.care-plans.*', 'admin.plan-templates.*')],
             ['Clients', route('admin.clients.index'), request()->routeIs('admin.clients.*')],
             ['Services', route('admin.services.index'), request()->routeIs('admin.services.*', 'admin.categories.*')],
             ['Packages', route('admin.packages.index'), request()->routeIs('admin.packages.*')],
@@ -25,7 +24,7 @@
             ['Projects', route('projects.index'), request()->routeIs('projects.*'), $unread],
             ['My Requests', route('requests.index'), request()->routeIs('requests.index', 'requests.show')],
             ['Quotes', route('quotes.index'), request()->routeIs('quotes.*')],
-            ['Invoices', route('invoices.index'), request()->routeIs('invoices.*')],
+            ['Billing', route('invoices.index'), request()->routeIs('invoices.*')],
             ['Start a Request', route('requests.create'), request()->routeIs('requests.create')],
             ['Account', route('account'), request()->routeIs('account')],
         ];

@@ -156,7 +156,7 @@
                 <section class="card">
                     <h2 class="h-section">Care plans</h2>
                     @forelse ($plans as $plan)
-                        <p class="mt-3"><a href="{{ route('admin.care-plans.index', ['edit' => $plan->id]) }}" class="link">{{ $plan->name }}</a>
+                        <p class="mt-3"><a href="{{ route('admin.care-plans.show', $plan) }}" class="link">{{ $plan->name }}</a>
                             <span class="text-muted block text-sm">{{ $money($plan->amount_cents) }} excl. VAT, {{ strtolower($plan->intervalLabel()) }} · {{ $plan->statusLabel() }}</span></p>
                     @empty
                         <p class="text-muted mt-2 text-sm">None. <a href="{{ route('admin.care-plans.index') }}" class="link">Add one</a></p>

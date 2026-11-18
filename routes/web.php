@@ -101,7 +101,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/care-plans', [Admin\CarePlanController::class, 'index'])->name('care-plans.index');
     Route::post('/care-plans', [Admin\CarePlanController::class, 'store'])->name('care-plans.store');
+    Route::get('/care-plans/{carePlan}', [Admin\CarePlanController::class, 'show'])->name('care-plans.show');
     Route::put('/care-plans/{carePlan}', [Admin\CarePlanController::class, 'update'])->name('care-plans.update');
+    Route::get('/plan-menu', [Admin\CarePlanTemplateController::class, 'index'])->name('plan-templates.index');
+    Route::post('/plan-menu', [Admin\CarePlanTemplateController::class, 'store'])->name('plan-templates.store');
+    Route::put('/plan-menu/{planTemplate}', [Admin\CarePlanTemplateController::class, 'update'])->name('plan-templates.update');
+    Route::delete('/plan-menu/{planTemplate}', [Admin\CarePlanTemplateController::class, 'destroy'])->name('plan-templates.destroy');
+    Route::redirect('/billing', '/admin/care-plans')->name('billing');
     Route::post('/care-plans/{carePlan}/bill', [Admin\CarePlanController::class, 'bill'])->name('care-plans.bill');
 
     Route::get('/testimonials', [Admin\TestimonialController::class, 'index'])->name('testimonials.index');

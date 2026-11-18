@@ -81,12 +81,15 @@
 
         <section>
             @if ($plans->isNotEmpty())
-                <h2 class="h-section">Your care plans</h2>
+                <div class="flex items-baseline justify-between gap-3">
+                    <h2 class="h-section">Your subscriptions</h2>
+                    <a href="{{ route('invoices.index') }}" class="link text-sm">Billing</a>
+                </div>
                 <ul class="card mt-4 mb-8 space-y-3">
                     @foreach ($plans as $plan)
                         <li>
                             <p class="font-medium">{{ $plan->name }}</p>
-                            <p class="text-muted text-sm">{{ \App\Support\Money::format($plan->vatInclusiveCents()) }} incl. VAT, {{ strtolower($plan->intervalLabel()) }} · next invoice {{ $plan->next_invoice_on->format('j M Y') }}</p>
+                            <p class="text-muted text-sm">{{ \App\Support\Money::format($plan->vatInclusiveCents()) }} incl. VAT, {{ strtolower($plan->intervalLabel()) }} · next bill {{ $plan->next_invoice_on->format('j M Y') }}</p>
                         </li>
                     @endforeach
                 </ul>

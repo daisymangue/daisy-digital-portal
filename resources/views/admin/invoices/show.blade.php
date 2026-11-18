@@ -90,7 +90,7 @@
                     </p>
                 @endif
                 @if ($invoice->carePlan)
-                    <p class="text-muted text-sm">From care plan <a href="{{ route('admin.care-plans.index', ['edit' => $invoice->care_plan_id]) }}" class="link">{{ $invoice->carePlan->name }}</a>.</p>
+                    <p class="text-muted text-sm">From care plan <a href="{{ route('admin.care-plans.show', $invoice->care_plan_id) }}" class="link">{{ $invoice->carePlan->name }}</a>.</p>
                 @endif
             </div>
 

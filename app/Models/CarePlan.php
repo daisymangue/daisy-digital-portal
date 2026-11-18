@@ -21,6 +21,13 @@ class CarePlan extends Model
         return ['next_invoice_on' => 'date', 'ends_on' => 'date', 'auto_issue' => 'boolean', 'amount_cents' => 'integer'];
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (CarePlan $plan) {
+            $plan->reference ??= 'CARE-'.str_pad((string) Counter::next('care_plan'), 4, '0', STR_PAD_LEFT);
+        });
+    }
+
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
@@ -29,6 +36,60 @@ class CarePlan extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class)->latest('period_start');
+    }
+
+    /** "What is included", one item per line. */
+    public function includedItems(): array
+    {
+        return array_values(array_filter(array_map('trim', preg_split('/\r?\n/', (string) $this->description))));
+    }
+
+    /** "R950 / month" style suffix. */
+    public function perLabel(): string
+    {
+        return match ($this->interval) {
+            'quarterly' => '/ 3 months',
+            'yearly' => '/ year',
+            default => '/ month',
+        };
+    }
+
+    /** What the plan is worth per month, excluding VAT. */
+    public function monthlyCents(): int
+    {
+        return match ($this->interval) {
+            'quarterly' => intdiv($this->amount_cents, 3),
+            'yearly' => intdiv($this->amount_cents, 12),
+            default => $this->amount_cents,
+        };
+    }
+
+    /**
+     * Where the client stands with this plan's bills: [status key for x-status, label].
+     * Uses open_bills_count and overdue_bills_count when loaded with withBillCounts().
+     */
+    public function paymentState(): array
+    {
+        $overdue = $this->overdue_bills_count ?? $this->invoices()->overdue()->count();
+        $open = $this->open_bills_count ?? $this->invoices()->open()->count();
+        $sent = $this->sent_bills_count ?? $this->invoices()->visibleToClient()->count();
+
+        return match (true) {
+            $overdue > 0 => ['overdue', $overdue.' overdue'],
+            $open > 0 => ['issued', 'Bill sent'],
+            $this->status === 'cancelled' => ['cancelled', 'Ended'],
+            $sent === 0 => ['draft', 'No bills yet'],
+            default => ['paid', 'Paid up'],
+        };
+    }
+
+    public function scopeWithBillCounts($query)
+    {
+        return $query->withCount([
+            'invoices as open_bills_count' => fn ($q) => $q->open(),
+            'invoices as overdue_bills_count' => fn ($q) => $q->overdue(),
+            'invoices as sent_bills_count' => fn ($q) => $q->visibleToClient(),
+        ]);
     }
 
     public function intervalLabel(): string

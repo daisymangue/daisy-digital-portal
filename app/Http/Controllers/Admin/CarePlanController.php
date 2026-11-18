@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\CarePlan;
+use App\Models\CarePlanTemplate;
 use App\Models\Client;
 use App\Support\Money;
 use Illuminate\Http\Request;
@@ -15,22 +16,29 @@ class CarePlanController extends Controller
 {
     public function index(Request $request)
     {
-        $plans = CarePlan::with('client')->withCount('invoices')
+        // Old "edit" links now open the plan's own page.
+        if ($request->query('edit')) {
+            return redirect()->route('admin.care-plans.show', (int) $request->query('edit'));
+        }
+
+        $plans = CarePlan::with('client')->withBillCounts()
             ->orderByRaw("case status when 'active' then 0 when 'paused' then 1 else 2 end")
             ->orderBy('next_invoice_on')->get();
 
-        // What the active plans bring in each month, excluding VAT.
-        $monthly = $plans->where('status', 'active')->sum(fn ($p) => match ($p->interval) {
-            'quarterly' => intdiv($p->amount_cents, 3),
-            'yearly' => intdiv($p->amount_cents, 12),
-            default => $p->amount_cents,
-        });
-
         return view('admin.care-plans.index', [
             'plans' => $plans,
-            'monthly' => $monthly,
+            'templates' => CarePlanTemplate::orderBy('sort_order')->orderBy('name')->get(),
             'clients' => Client::whereNull('archived_at')->orderBy('business_name')->get(['id', 'business_name']),
-            'editing' => $request->query('edit') ? $plans->firstWhere('id', (int) $request->query('edit')) : null,
+        ]);
+    }
+
+    public function show(CarePlan $carePlan)
+    {
+        $carePlan->load('client');
+
+        return view('admin.care-plans.show', [
+            'plan' => $carePlan,
+            'bills' => $carePlan->invoices()->get(),
         ]);
     }
 
@@ -69,7 +77,7 @@ class CarePlanController extends Controller
 
         $note = $plan->next_invoice_on->lte(today()) ? ' The first invoice will go out within the hour, or use "Bill now".' : ' The first invoice goes out on '.$plan->next_invoice_on->format('j M Y').'.';
 
-        return redirect()->route('admin.care-plans.index')->with('status', "Care plan added.{$note}");
+        return redirect()->route('admin.care-plans.show', $plan)->with('status', "Subscription added.{$note}");
     }
 
     public function update(Request $request, CarePlan $carePlan)
@@ -80,7 +88,7 @@ class CarePlanController extends Controller
 
         AuditLog::record('care_plan.updated', $carePlan, ['status' => $carePlan->status]);
 
-        return redirect()->route('admin.care-plans.index')->with('status', 'Care plan saved.');
+        return redirect()->route('admin.care-plans.show', $carePlan)->with('status', 'Subscription saved.');
     }
 
     public function bill(CarePlan $carePlan)
