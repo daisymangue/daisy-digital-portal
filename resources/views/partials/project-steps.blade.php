@@ -200,8 +200,11 @@
 
     {{-- Handover: the end of the road --}}
     {{-- The handover stays in view on a phone only while the client still has to confirm it. --}}
-    @php $handoverNeedsYou = ! $admin && $project->handover_sent_at && ! $project->handover_confirmed_at; @endphp
-    <div @unless ($handoverNeedsYou) :class="all ? '' : 'hidden lg:block'" @endunless>
+    @php
+        $fold = $project->milestones->count() > 1;
+        $handoverNeedsYou = ! $admin && $project->handover_sent_at && ! $project->handover_confirmed_at;
+    @endphp
+    <div @if ($fold && ! $handoverNeedsYou) :class="all ? '' : 'hidden lg:block'" @endif>
         @if ($admin)
             @include('partials.project-handover-admin')
         @elseif ($project->handover_sent_at)
@@ -209,11 +212,11 @@
         @endif
     </div>
 
-    <div :class="all ? '' : 'hidden lg:block'">
+    <div @if ($fold) :class="all ? '' : 'hidden lg:block'" @endif>
         @include('partials.project-changes')
     </div>
 
-    @if ($project->milestones->count() > 1)
+    @if ($fold)
         <button type="button" x-show="!all" class="border-line text-brand-dark flex min-h-12 w-full cursor-pointer items-center justify-center border-t text-sm font-semibold lg:hidden" @click="all = true">
             Show all steps{{ $project->changeRequests->isNotEmpty() || ! $admin ? ' and extras' : '' }}
         </button>

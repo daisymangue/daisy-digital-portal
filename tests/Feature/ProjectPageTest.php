@@ -126,7 +126,9 @@ class ProjectPageTest extends TestCase
         $ready->status = 'awaiting_approval';
         $ready->save();
 
+        // On a phone only the current step shows, with the rest behind "Show all steps".
         $this->actingAs($this->client)->get("/projects/{$project->id}")->assertOk()
+            ->assertSee('Step 1 of 3')->assertSee('Show all steps')
             ->assertSee('Ready for you to review')->assertSee('Ask for changes')
             ->assertSee(route('projects.milestones.approve', [$project->id, $ready->id]), false);
     }
@@ -152,7 +154,7 @@ class ProjectPageTest extends TestCase
 
         $this->actingAs($this->client)->get("/projects/{$project->id}")->assertOk()
             ->assertDontSee('role="tabpanel"', false)->assertSee('chat-files-panel')->assertSee('brief.pdf')
-            ->assertSee('Need something extra?')->assertSee('Show all steps')->assertDontSee('aria-label="Project"', false);
+            ->assertSee('Need something extra?')->assertDontSee('Show all steps')->assertDontSee('aria-label="Project"', false);
         $this->actingAs($this->admin)->get("/admin/projects/{$project->id}")->assertOk()
             ->assertDontSee('panel-details')->assertSee('Handover pack')->assertSee('brief.pdf');
     }
