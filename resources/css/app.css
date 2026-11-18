@@ -53,6 +53,18 @@
     .field {
         @apply border-line-strong text-ink min-h-11 w-full rounded-xl border bg-white px-4 py-2.5;
     }
+    /* Safari draws its own small grey dropdown unless the native look is turned off. */
+    select.field {
+        @apply cursor-pointer appearance-none pr-10;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b6b7b'%3E%3Cpath fill-rule='evenodd' d='M5.2 7.7a.75.75 0 0 1 1.06.02L10 11.7l3.74-3.98a.75.75 0 1 1 1.1 1.02l-4.3 4.57a.75.75 0 0 1-1.1 0L5.18 8.76a.75.75 0 0 1 .02-1.06Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+        background-position: right 0.85rem center;
+        background-repeat: no-repeat;
+        background-size: 1.1rem;
+    }
+    select.field[multiple] {
+        @apply pr-4;
+        background-image: none;
+    }
     .label {
         @apply mb-1.5 block text-sm font-medium;
     }
