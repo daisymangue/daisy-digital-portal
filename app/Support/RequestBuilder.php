@@ -124,6 +124,9 @@ class RequestBuilder
 
         return DB::transaction(function () use ($client, $by, $services, $package, $description, $special, $data, $answers, $files, $source, $status) {
             $sr = new ServiceRequest(['description' => $description ?: null, 'package_id' => $package?->id, 'package_name' => $package?->name]);
+            // Keep the price they saw, including a sale price, for the quote.
+            $sr->package_price_cents = $package?->currentPriceCents();
+            $sr->package_was_cents = $package?->onSale() ? $package->price_cents : null;
             $sr->special_details = $special ?: null;
             $sr->budget_range = $data['budget_range'] ?? null;
             $sr->needed_by = $data['needed_by'] ?? null;

@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Support\Money;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class PackageController extends Controller
 {
@@ -40,13 +41,21 @@ class PackageController extends Controller
             'unit' => ['nullable', Rule::in(['month'])],
             'includes' => ['nullable', 'string', 'max:3000'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
+            'sale_price' => ['nullable', 'string', 'max:20'],
+            'sale_ends_on' => ['nullable', 'date'],
         ]);
 
         $cents = Money::toCents($data['price'] ?? null);
+        $sale = Money::toCents($data['sale_price'] ?? null);
+        if ($sale !== null && ($cents === null || $sale >= $cents)) {
+            throw ValidationException::withMessages(['sale_price' => 'The sale price must be lower than the normal price. Leave it empty for no sale.']);
+        }
 
         return [
             'name' => $data['name'],
             'price_cents' => $cents,
+            'sale_price_cents' => $sale,
+            'sale_ends_on' => $sale !== null ? ($data['sale_ends_on'] ?? null) : null,
             'is_from' => $cents !== null && $request->boolean('is_from'),
             'is_featured' => $request->boolean('is_featured'),
             'sort_order' => (int) ($data['sort_order'] ?? Package::max('sort_order') + 1),

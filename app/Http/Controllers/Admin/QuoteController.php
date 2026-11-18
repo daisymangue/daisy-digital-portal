@@ -74,7 +74,12 @@ class QuoteController extends Controller
 
             if ($serviceRequest->package) {
                 $p = $serviceRequest->package;
-                $quote->items()->create($this->line($p->name, 1, $p->price_cents ?? 0, $p->unit, null, ++$order));
+                // The price at the time of the request wins, so a sale they caught is honoured.
+                $price = $serviceRequest->package_price_cents ?? $p->price_cents ?? 0;
+                $name = $serviceRequest->package_was_cents
+                    ? $p->name.' (special price, normally '.Money::format($serviceRequest->package_was_cents).')'
+                    : $p->name;
+                $quote->items()->create($this->line($name, 1, $price, $p->unit, null, ++$order));
             }
             foreach ($serviceRequest->services as $s) {
                 $quote->items()->create($this->line($s->name, 1, $s->price_cents ?? 0, $s->unit, $s->service_id, ++$order));

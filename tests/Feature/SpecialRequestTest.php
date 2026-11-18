@@ -164,4 +164,36 @@ class SpecialRequestTest extends TestCase
         $this->assertSame(['Business Essentials Package'], Package::where('is_featured', true)->pluck('name')->all());
         $this->assertSame(8, Service::where('is_popular', true)->count());
     }
+
+    public function test_package_sale_price_shows_crossed_out_and_is_honoured_on_the_quote(): void
+    {
+        $package = Package::create(['name' => 'Starter Pack', 'price_cents' => 499900, 'is_from' => true, 'is_active' => true, 'includes' => ['Logo'], 'sort_order' => 1]);
+        $normal = $package->price_cents;
+
+        // A sale price must be lower than the normal price.
+        $this->actingAs($this->admin)->put("/admin/packages/{$package->id}", [
+            'name' => $package->name, 'price' => (string) ($normal / 100), 'sale_price' => (string) ($normal / 100 + 1), 'is_active' => '1',
+        ])->assertSessionHasErrors('sale_price');
+
+        $this->actingAs($this->admin)->put("/admin/packages/{$package->id}", [
+            'name' => $package->name, 'price' => (string) ($normal / 100), 'sale_price' => (string) ($normal / 100 - 1000),
+            'sale_ends_on' => today()->addDays(5)->toDateString(), 'is_active' => '1', 'is_from' => '1',
+        ])->assertSessionHasNoErrors();
+        $package->refresh();
+        $this->assertTrue($package->onSale());
+
+        $this->actingAs($this->client)->get('/requests/new')->assertOk()
+            ->assertSee('Save R1 000')->assertSee('<del', false)->assertSee($package->regularPriceLabel());
+
+        $this->actingAs($this->client)->post('/requests', ['package_id' => $package->id])->assertSessionHasNoErrors();
+        $request = ServiceRequest::latest('id')->firstOrFail();
+
+        // The sale ends before the quote is made: the client still gets the price they saw.
+        $this->travel(10)->days();
+        $this->assertFalse($package->fresh()->onSale());
+        $this->actingAs($this->admin)->post("/admin/requests/{$request->id}/quotes");
+        $line = Quote::latest('created_at')->firstOrFail()->items()->first();
+        $this->assertSame($normal - 100000, $line->unit_price_cents);
+        $this->assertStringContainsString('special price, normally', $line->description);
+    }
 }

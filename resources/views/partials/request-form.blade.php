@@ -112,12 +112,25 @@
                         <input type="radio" name="package_id" value="{{ $package->id }}" x-model="pkg" class="sr-only"
                                @click="if (pkg === '{{ $package->id }}') { $event.preventDefault(); $nextTick(() => pkg = '') }">
                         @if ($package->is_featured)
-                            <span class="bg-brand absolute -top-3 left-5 rounded-full px-3 py-1 text-xs font-semibold text-white">Most popular</span>
+                            <span class="bg-brand absolute -top-3 left-5 whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold text-white">Most popular</span>
                         @endif
                         <span class="flex items-start justify-between gap-3">
                             <span class="font-semibold">{{ $package->name }}</span>
                         </span>
-                        <span class="text-brand-dark mt-1 font-semibold">{{ $package->priceLabel() }}</span>
+                        @if ($package->onSale())
+                            <span class="mt-1 flex flex-wrap items-baseline gap-x-2">
+                                <span class="text-brand-dark font-semibold">{{ $package->priceLabel() }}</span>
+                                <del class="text-muted text-sm"><span class="sr-only">Normally </span>{{ $package->regularPriceLabel() }}</del>
+                            </span>
+                            <span class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+                                <span class="whitespace-nowrap rounded-full bg-amber-100 px-2 py-0.5 font-bold text-amber-900">Save {{ \App\Support\Money::format($package->savingCents()) }}</span>
+                                @if ($package->sale_ends_on)
+                                    <span class="font-medium text-amber-800">ends {{ $package->sale_ends_on->format('j M') }}</span>
+                                @endif
+                            </span>
+                        @else
+                            <span class="text-brand-dark mt-1 font-semibold">{{ $package->priceLabel() }}</span>
+                        @endif
                         @if ($includes)
                             <ul class="text-muted mt-3 space-y-1 text-sm">
                                 @foreach (array_slice($includes, 0, 3) as $line)
