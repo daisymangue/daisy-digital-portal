@@ -10,7 +10,7 @@ class ProjectChecklistItem extends Model
 {
     public const STATUSES = ['open' => 'Needed', 'submitted' => 'Sent, being checked', 'accepted' => 'Received'];
 
-    protected $fillable = ['title', 'note', 'sort_order'];
+    protected $fillable = ['title', 'note', 'sort_order', 'milestone_id'];
 
     protected function casts(): array
     {

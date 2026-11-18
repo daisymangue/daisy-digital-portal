@@ -9,7 +9,7 @@
         ? [
             ['Dashboard', route('admin.dashboard'), request()->routeIs('admin.dashboard')],
             ['Requests', route('admin.requests.index'), request()->routeIs('admin.requests.*')],
-            ['Projects', route('admin.projects.index'), request()->routeIs('admin.projects.*'), $unread],
+            ['Projects', route('admin.projects.index'), request()->routeIs('admin.projects.*', 'admin.step-sets.*'), $unread],
             ['Quotes', route('admin.quotes.index'), request()->routeIs('admin.quotes.*')],
             ['Billing', route('admin.care-plans.index'), request()->routeIs('admin.invoices.*', 'admin.care-plans.*', 'admin.plan-templates.*')],
             ['Clients', route('admin.clients.index'), request()->routeIs('admin.clients.*')],

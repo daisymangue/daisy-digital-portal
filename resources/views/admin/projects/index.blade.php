@@ -2,7 +2,7 @@
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
             <h1 class="h-page">Projects</h1>
-            <p class="text-muted mt-1">A project opens by itself when a deposit or full invoice is paid. You can also start one by hand.</p>
+            <p class="text-muted mt-1">A project opens by itself when a deposit or full invoice is paid. You can also start one by hand. <a href="{{ route('admin.step-sets.index') }}" class="link">Step sets</a></p>
         </div>
         <details class="w-full sm:w-auto">
             <summary class="btn btn-primary cursor-pointer list-none">Start a project without a quote</summary>

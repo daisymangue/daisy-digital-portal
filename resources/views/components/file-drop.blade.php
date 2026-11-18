@@ -1,9 +1,9 @@
-@props(['id', 'max' => 8, 'compact' => false, 'label' => 'Add files', 'hint' => 'Images, PDFs, Word, Excel, PowerPoint or zip. Up to 8 files, 10 MB each.'])
+@props(['id', 'max' => 8, 'compact' => false, 'icon' => false, 'label' => 'Add files', 'hint' => 'Images, PDFs, Word, Excel, PowerPoint or zip. Up to 8 files, 10 MB each.'])
 {{--
     Drag-and-drop file picker with previews. It keeps a real <input type="file" name="files[]">
     in sync, so the form posts normally. Several of these on one form post into the same files[] list.
 --}}
-<div x-data="{
+<div @if ($icon) class="contents" @endif x-data="{
         files: [],
         error: '',
         over: false,
@@ -26,7 +26,14 @@
         size(b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB' },
      }"
      @files-cleared.window="if ($event.detail === $el.closest('form')) { files = []; sync() }">
-    @if ($compact)
+    @if ($icon)
+    <label for="{{ $id }}" title="{{ $label }}" class="text-muted hover:bg-sand-dark hover:text-ink flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full"
+           :class="files.length && 'text-brand'"
+           @dragover.prevent="over = true" @dragleave.prevent="over = false" @drop.prevent="over = false; add($event.dataTransfer.files)">
+        <span class="sr-only">{{ $label }}</span>
+        <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M15.62 4.38a2.75 2.75 0 0 0-3.89 0L5.6 10.5a1.5 1.5 0 0 0 2.12 2.12l5.3-5.3a.75.75 0 1 1 1.06 1.06l-5.3 5.3a3 3 0 0 1-4.24-4.24l6.13-6.12a4.25 4.25 0 0 1 6.01 6.01l-6.48 6.48a.75.75 0 0 1-1.06-1.06l6.48-6.48a2.75 2.75 0 0 0 0-3.89Z" clip-rule="evenodd"/></svg>
+    </label>
+    @elseif ($compact)
     <label for="{{ $id }}" class="btn btn-light min-h-10 gap-2 px-4 text-sm"
            @dragover.prevent="over = true" @dragleave.prevent="over = false" @drop.prevent="over = false; add($event.dataTransfer.files)">
         <span aria-hidden="true">📎</span> {{ $label }}
@@ -44,12 +51,12 @@
     @endif
     <input id="{{ $id }}" x-ref="input" type="file" name="files[]" multiple class="sr-only" @change="add([...$event.target.files])"
            accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,image/*">
-    @unless ($compact)
+    @unless ($compact || $icon)
         <p class="text-muted mt-1.5 text-sm">{{ $hint }}</p>
     @endunless
-    <p x-show="error" x-cloak x-text="error" role="alert" class="mt-1.5 text-sm text-red-800"></p>
+    <p x-show="error" x-cloak x-text="error" role="alert" class="{{ $icon ? 'order-last basis-full' : 'mt-1.5' }} text-sm text-red-800"></p>
 
-    <ul x-show="files.length" x-cloak class="mt-3 grid gap-2 sm:grid-cols-2">
+    <ul x-show="files.length" x-cloak class="{{ $icon ? 'order-last basis-full mt-1' : 'mt-3' }} grid gap-2 sm:grid-cols-2">
         <template x-for="(f, i) in files" :key="f.file.name + f.file.size">
             <li class="border-line flex items-center gap-3 rounded-xl border bg-white p-2 pr-3">
                 <template x-if="f.url"><img :src="f.url" alt="" class="size-12 shrink-0 rounded-lg object-cover"></template>
