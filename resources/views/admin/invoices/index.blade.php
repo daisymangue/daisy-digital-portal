@@ -1,32 +1,49 @@
 @php
-    $kinds = ['all' => 'All', 'plan' => 'Subscription bills', 'project' => 'Project bills'];
-    $statuses = ['unpaid' => 'Unpaid', 'overdue' => 'Overdue', 'paid' => 'Paid', 'draft' => 'Drafts'.($drafts ? " ({$drafts})" : ''), 'all' => 'Any status'];
-    $chip = fn ($on) => 'inline-flex min-h-10 items-center rounded-full border px-4 text-sm font-medium '.($on ? 'border-navy bg-navy text-white' : 'border-line-strong bg-white hover:border-navy');
+    $kinds = ['all' => 'All bills', 'plan' => 'Subscription bills', 'project' => 'Project bills'];
+    $statuses = ['unpaid' => 'Unpaid', 'overdue' => 'Overdue', 'paid' => 'Paid', 'draft' => 'Drafts'.($drafts ? " ({$drafts})" : ''), 'cancelled' => 'Cancelled', 'all' => 'Any status'];
 @endphp
 <x-layouts.app title="Billing · All bills">
     @include('admin.billing.header', ['tab' => 'bills'])
 
-    <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap gap-2" role="group" aria-label="Type of bill">
+    <form method="GET" class="mt-6 flex flex-wrap items-center gap-2" role="search">
+        <label for="kind" class="sr-only">Type of bill</label>
+        <select id="kind" name="kind" class="field w-auto" onchange="this.form.submit()">
             @foreach ($kinds as $k => $l)
-                <a href="{{ route('admin.invoices.index', array_filter(['kind' => $k === 'all' ? null : $k, 'status' => $status, 'q' => $search])) }}" class="{{ $chip($kind === $k) }}" @if ($kind === $k) aria-current="true" @endif>{{ $l }}</a>
+                <option value="{{ $k === 'all' ? '' : $k }}" @selected($kind === $k)>{{ $l }}</option>
             @endforeach
-        </div>
-        <form method="GET" class="flex w-full gap-2 sm:w-72">
-            <input type="hidden" name="kind" value="{{ $kind === 'all' ? '' : $kind }}">
-            <label for="q" class="sr-only">Search bills</label>
-            <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Number, title or client" class="field">
-            <button type="submit" class="btn btn-dark">Search</button>
-        </form>
-    </div>
+        </select>
+        <label for="status" class="sr-only">Payment status</label>
+        <select id="status" name="status" class="field w-auto" onchange="this.form.submit()">
+            @foreach ($statuses as $k => $l)
+                <option value="{{ $k }}" @selected($status === $k)>{{ $l }}</option>
+            @endforeach
+        </select>
+        <label for="q" class="sr-only">Search bills</label>
+        <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Search number, title or client" class="field min-w-0 flex-1 sm:max-w-xs">
+        <button type="submit" class="btn btn-dark">Search</button>
+        @if ($search !== '' || $kind !== 'all' || $status !== 'unpaid')
+            <a href="{{ route('admin.invoices.index') }}" class="link flex min-h-11 items-center px-1">Clear</a>
+        @endif
+    </form>
 
-    <div class="mt-3 flex flex-wrap gap-2" role="group" aria-label="Payment status">
-        @foreach ($statuses as $k => $l)
-            <a href="{{ route('admin.invoices.index', array_filter(['kind' => $kind === 'all' ? null : $kind, 'status' => $k, 'q' => $search])) }}" class="{{ $chip($status === $k) }}" @if ($status === $k) aria-current="true" @endif>{{ $l }}</a>
-        @endforeach
-    </div>
+    <ul class="card divide-line mt-6 divide-y p-0 md:hidden">
+        @forelse ($invoices as $inv)
+            <li class="flex items-center gap-2 py-1 pr-1 pl-4">
+                <a href="{{ route('admin.invoices.show', $inv) }}" class="min-w-0 flex-1 py-2">
+                    <span class="flex items-center justify-between gap-2"><span class="text-brand-dark font-semibold">{{ $inv->reference() }}</span><x-status :status="$inv->effectiveStatus()" :label="$inv->statusLabel()" /></span>
+                    <span class="block truncate text-sm">{{ $inv->client->business_name }} · {{ $inv->title }}</span>
+                    <span class="text-muted block text-sm">{{ \App\Support\Money::format($inv->balanceCents() ?: $inv->total_cents) }}{{ $inv->isOpen() ? ' owing' : '' }}@if ($inv->isOpen() && $inv->due_date) · due {{ $inv->due_date->format('j M') }}@endif</span>
+                </a>
+                <a href="{{ route('admin.invoices.pdf', $inv) }}" class="text-muted flex size-11 shrink-0 items-center justify-center rounded-full" aria-label="Download {{ $inv->reference() }} as PDF">
+                    <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.6L6.3 8.4a.75.75 0 1 0-1.1 1.03l4.25 4.5a.75.75 0 0 0 1.1 0l4.25-4.5a.75.75 0 0 0-1.1-1.03l-2.95 2.95v-8.6Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                </a>
+            </li>
+        @empty
+            <li class="text-muted px-5 py-8 text-center">{{ $status === 'unpaid' && $search === '' ? 'Nothing unpaid. Everyone is up to date.' : 'No bills match.' }}</li>
+        @endforelse
+    </ul>
 
-    <div class="card mt-6 overflow-x-auto p-0 sm:p-0">
+    <div class="card mt-6 hidden overflow-x-auto p-0 sm:p-0 md:block">
         <table class="w-full min-w-[720px] text-left">
             <thead class="text-muted text-sm">
                 <tr>
@@ -36,6 +53,7 @@
                     <th scope="col" class="border-line border-b px-5 py-3 text-right font-medium">Owing</th>
                     <th scope="col" class="border-line border-b px-5 py-3 font-medium">Due</th>
                     <th scope="col" class="border-line border-b px-5 py-3 font-medium">Status</th>
+                    <th scope="col" class="border-line border-b px-3 py-3"><span class="sr-only">Download</span></th>
                 </tr>
             </thead>
             <tbody class="divide-line divide-y">
@@ -57,9 +75,14 @@
                         <td class="px-5 py-4 text-right whitespace-nowrap">{{ \App\Support\Money::format($inv->balanceCents()) }}</td>
                         <td class="px-5 py-4 whitespace-nowrap">{{ $inv->due_date?->format('j M Y') }}</td>
                         <td class="px-5 py-4"><x-status :status="$inv->effectiveStatus()" :label="$inv->statusLabel()" /></td>
+                        <td class="px-3 py-4">
+                            <a href="{{ route('admin.invoices.pdf', $inv) }}" class="text-muted hover:text-ink flex size-11 items-center justify-center rounded-full" title="Download PDF" aria-label="Download {{ $inv->reference() }} as PDF">
+                                <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.6L6.3 8.4a.75.75 0 1 0-1.1 1.03l4.25 4.5a.75.75 0 0 0 1.1 0l4.25-4.5a.75.75 0 0 0-1.1-1.03l-2.95 2.95v-8.6Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                            </a>
+                        </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-muted px-5 py-8 text-center">{{ $status === 'unpaid' && $search === '' ? 'Nothing unpaid. Everyone is up to date.' : 'No bills match.' }}</td></tr>
+                    <tr><td colspan="7" class="text-muted px-5 py-8 text-center">{{ $status === 'unpaid' && $search === '' ? 'Nothing unpaid. Everyone is up to date.' : 'No bills match.' }}</td></tr>
                 @endforelse
             </tbody>
         </table>

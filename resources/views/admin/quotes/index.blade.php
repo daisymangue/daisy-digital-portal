@@ -1,30 +1,27 @@
 <x-layouts.app title="Quotes">
     <h1 class="h-page">Quotes</h1>
 
-    <div class="mt-6 flex flex-wrap items-end justify-between gap-4">
-        <form method="GET" class="flex flex-wrap items-end gap-3">
-            <div class="w-full sm:w-64">
-                <label for="q" class="label">Search</label>
-                <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Number, title or client" class="field">
-            </div>
-            <div class="w-full sm:w-56">
-                <label for="status" class="label">Status</label>
-                <select id="status" name="status" class="field">
-                    <option value="">All statuses</option>
-                    @foreach (\App\Models\Quote::STATUSES as $key => $label)
-                        <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <button type="submit" class="btn btn-dark">Filter</button>
+    <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <form method="GET" class="flex flex-wrap items-center gap-2" role="search">
+            <label for="status" class="sr-only">Status</label>
+            <select id="status" name="status" class="field w-auto" onchange="this.form.submit()">
+                <option value="">All statuses</option>
+                @foreach (\App\Models\Quote::STATUSES as $key => $label)
+                    <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
+                @endforeach
+            </select>
+            <label for="q" class="sr-only">Search quotes</label>
+            <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Search number, title or client" class="field min-w-0 flex-1 sm:w-64">
+            <button type="submit" class="btn btn-dark">Search</button>
         </form>
 
         @if ($clients->isNotEmpty())
-            <form method="POST" action="{{ route('admin.quotes.store') }}" class="flex flex-wrap items-end gap-3">
+            <form method="POST" action="{{ route('admin.quotes.store') }}" class="flex flex-wrap items-center gap-2">
                 @csrf
                 <div class="w-full sm:w-56">
-                    <label for="client_id" class="label">New quote for</label>
+                    <label for="client_id" class="sr-only">New quote for</label>
                     <select id="client_id" name="client_id" required class="field">
+                        <option value="" disabled selected>New quote for...</option>
                         @foreach ($clients as $c)
                             <option value="{{ $c->id }}">{{ $c->business_name }}</option>
                         @endforeach

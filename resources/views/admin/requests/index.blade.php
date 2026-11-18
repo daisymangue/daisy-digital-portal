@@ -4,23 +4,19 @@
         <a href="{{ route('admin.requests.create') }}" class="btn btn-primary">New request for a client</a>
     </div>
 
-    <form method="GET" class="mt-6 flex flex-wrap items-end gap-3">
-        <div class="w-full sm:w-72">
-            <label for="q" class="label">Search</label>
-            <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Number, client or email" class="field">
-        </div>
-        <div class="w-full sm:w-64">
-            <label for="status" class="label">Status</label>
-            <select id="status" name="status" class="field">
-                <option value="">All statuses</option>
-                @foreach (\App\Models\ServiceRequest::STATUSES as $key => $label)
-                    <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn btn-dark">Filter</button>
+    <form method="GET" class="mt-6 flex flex-wrap items-center gap-2" role="search">
+        <label for="status" class="sr-only">Status</label>
+        <select id="status" name="status" class="field w-auto" onchange="this.form.submit()">
+            <option value="">All statuses</option>
+            @foreach (\App\Models\ServiceRequest::STATUSES as $key => $label)
+                <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
+            @endforeach
+        </select>
+        <label for="q" class="sr-only">Search requests</label>
+        <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Search number, client or email" class="field min-w-0 flex-1 sm:max-w-xs">
+        <button type="submit" class="btn btn-dark">Search</button>
         @if ($search !== '' || $status)
-            <a href="{{ route('admin.requests.index') }}" class="link min-h-11 content-center">Clear</a>
+            <a href="{{ route('admin.requests.index') }}" class="link flex min-h-11 items-center px-1">Clear</a>
         @endif
     </form>
 

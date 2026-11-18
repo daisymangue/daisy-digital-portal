@@ -54,9 +54,9 @@
     <h2 class="h-section mt-10">Your bills</h2>
     <div class="mt-4 space-y-3">
         @forelse ($invoices as $inv)
-            <a href="{{ route('invoices.show', $inv->id) }}" class="card hover:border-line-strong flex flex-wrap items-center justify-between gap-3">
+            <div class="card hover:border-line-strong relative flex flex-wrap items-center justify-between gap-3">
                 <div class="min-w-0">
-                    <p class="font-semibold">{{ $inv->number }}</p>
+                    <a href="{{ route('invoices.show', $inv->id) }}" class="font-semibold after:absolute after:inset-0 after:content-['']">{{ $inv->number }}</a>
                     <p class="text-muted flex items-center gap-1.5 text-sm">
                         @if ($inv->care_plan_id)
                             <svg class="size-4 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-label="Subscription bill" role="img"><path fill-rule="evenodd" d="M15.3 5.2A7 7 0 0 0 3.1 9a.75.75 0 0 0 1.48.24 5.5 5.5 0 0 1 9.6-2.98l-1.7.1a.75.75 0 0 0 .08 1.5l3.5-.2a.75.75 0 0 0 .7-.8l-.2-3.5a.75.75 0 0 0-1.5.08l.1 1.76ZM4.7 14.8A7 7 0 0 0 16.9 11a.75.75 0 0 0-1.48-.24 5.5 5.5 0 0 1-9.6 2.98l1.7-.1a.75.75 0 0 0-.08-1.5l-3.5.2a.75.75 0 0 0-.7.8l.2 3.5a.75.75 0 0 0 1.5-.08l-.1-1.76Z" clip-rule="evenodd"/></svg>
@@ -70,8 +70,11 @@
                         @if ($inv->isOpen())<span class="text-muted"> · due {{ $inv->due_date->format('j M') }}</span>@endif
                     </span>
                     <x-status :status="$inv->effectiveStatus()" :label="$inv->clientStatusLabel()" />
+                    <a href="{{ route('invoices.pdf', $inv->id) }}" class="text-muted hover:text-ink hover:bg-sand relative z-10 -my-2 flex size-11 items-center justify-center rounded-full" title="Download PDF" aria-label="Download {{ $inv->number }} as PDF">
+                        <svg class="size-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.6L6.3 8.4a.75.75 0 1 0-1.1 1.03l4.25 4.5a.75.75 0 0 0 1.1 0l4.25-4.5a.75.75 0 0 0-1.1-1.03l-2.95 2.95v-8.6Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                    </a>
                 </div>
-            </a>
+            </div>
         @empty
             <div class="card text-muted">No bills yet. When we bill you, it appears here and we email you.</div>
         @endforelse

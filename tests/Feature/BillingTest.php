@@ -115,6 +115,13 @@ class BillingTest extends TestCase
         $this->get('/admin/invoices?status=all&kind=project')->assertSee('Logo design')->assertDontSee('Website care, October 2026');
         $this->get('/admin/invoices?status=all&kind=plan')->assertSee('Website care, October 2026')->assertDontSee('Logo design');
         $this->get('/admin/invoices?q=Logo')->assertSee('Logo design');
+
+        // Every bill in the list can be downloaded straight away, by both sides.
+        $bill = Invoice::where('status', '!=', 'draft')->sole();
+        $this->get('/admin/invoices')->assertSee(route('admin.invoices.pdf', $bill), false);
+        $this->get(route('admin.invoices.pdf', $bill))->assertOk();
+        $this->actingAs($this->client)->get('/invoices')->assertSee(route('invoices.pdf', $bill->id), false);
+        $this->get(route('invoices.pdf', $bill->id))->assertOk();
     }
 
     public function test_client_billing_page_shows_subscriptions_and_bills_together(): void

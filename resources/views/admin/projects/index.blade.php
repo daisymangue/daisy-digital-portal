@@ -30,22 +30,18 @@
         </details>
     </div>
 
-    <form method="GET" class="mt-6 flex flex-wrap items-end gap-3">
-        <div class="w-full sm:w-64">
-            <label for="q" class="label">Search</label>
-            <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Number, name or client" class="field">
-        </div>
-        <div class="w-full sm:w-56">
-            <label for="status" class="label">Show</label>
-            <select id="status" name="status" class="field">
-                <option value="open" @selected($status === 'open')>Open projects</option>
-                @foreach (\App\Models\Project::STATUSES as $key => $label)
-                    <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
-                @endforeach
-                <option value="all" @selected($status === 'all')>All</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-dark">Filter</button>
+    <form method="GET" class="mt-6 flex flex-wrap items-center gap-2" role="search">
+        <label for="status" class="sr-only">Show</label>
+        <select id="status" name="status" class="field w-auto" onchange="this.form.submit()">
+            <option value="open" @selected($status === 'open')>Open projects</option>
+            @foreach (\App\Models\Project::STATUSES as $key => $label)
+                <option value="{{ $key }}" @selected($status === $key)>{{ $label }}</option>
+            @endforeach
+            <option value="all" @selected($status === 'all')>All projects</option>
+        </select>
+        <label for="q" class="sr-only">Search projects</label>
+        <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Search number, name or client" class="field min-w-0 flex-1 sm:max-w-xs">
+        <button type="submit" class="btn btn-dark">Search</button>
     </form>
 
     <div class="mt-6 space-y-3">

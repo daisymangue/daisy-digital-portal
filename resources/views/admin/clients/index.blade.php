@@ -4,11 +4,9 @@
         <a href="{{ route('admin.clients.create') }}" class="btn btn-primary">Add a client</a>
     </div>
 
-    <form method="GET" class="mt-6 flex flex-wrap items-end gap-3">
-        <div class="w-full sm:w-80">
-            <label for="q" class="label">Search</label>
-            <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Business, name or email" class="field">
-        </div>
+    <form method="GET" class="mt-6 flex flex-wrap items-center gap-2" role="search">
+        <label for="q" class="sr-only">Search clients</label>
+        <input id="q" name="q" type="search" value="{{ $search }}" placeholder="Search business, name or email" class="field min-w-0 flex-1 sm:max-w-xs">
         @if ($archived)<input type="hidden" name="archived" value="1">@endif
         <button type="submit" class="btn btn-dark">Search</button>
         @if ($archived)
