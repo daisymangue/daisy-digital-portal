@@ -9,12 +9,23 @@
     $loose = $project->milestones->isEmpty() ? ($needs[0] ?? []) : [];
     $checkIcon = '<svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.6l7.3-7.3a1 1 0 0 1 1.4 0Z" clip-rule="evenodd"/></svg>';
 @endphp
-<section class="card p-0 sm:p-0" x-data="{ adding: false }">
+{{-- On a phone only the current step shows; the rest fold away behind "Show all steps". --}}
+<section class="card p-0 sm:p-0" x-data="{ adding: false, all: false }">
     <div class="border-line flex min-h-14 items-center justify-between gap-3 border-b px-5">
-        <h2 class="h-section">Steps</h2>
-        @if ($admin && $project->milestones->isNotEmpty())
-            <button type="button" class="link min-h-11 cursor-pointer text-sm" @click="adding = !adding" x-text="adding ? 'Close' : '+ Add step'">+ Add step</button>
-        @endif
+        <div class="min-w-0">
+            <h2 class="h-section">Steps</h2>
+            @if ($project->milestones->isNotEmpty())
+                <p class="text-muted text-xs lg:hidden">{{ $current ? 'Step '.($project->milestones->search(fn ($m) => $m->id === $current->id) + 1).' of '.$project->milestones->count() : 'All '.$project->milestones->count().' steps done' }}</p>
+            @endif
+        </div>
+        <div class="flex items-center gap-3">
+            @if ($project->milestones->count() > 1)
+                <button type="button" class="link min-h-11 cursor-pointer text-sm lg:hidden" @click="all = !all" :aria-expanded="all.toString()" x-text="all ? 'Show less' : 'Show all {{ $project->milestones->count() }}'">Show all</button>
+            @endif
+            @if ($admin && $project->milestones->isNotEmpty())
+                <button type="button" class="link min-h-11 cursor-pointer text-sm" @click="adding = !adding" x-text="adding ? 'Close' : '+ Add step'">+ Add step</button>
+            @endif
+        </div>
     </div>
 
     @if ($admin)
@@ -65,7 +76,7 @@
                         default => null,
                     };
                 @endphp
-                <li class="border-line flex gap-3 border-b py-4 last:border-b-0" x-data="{ edit: false }" id="step-{{ $m->id }}">
+                <li class="border-line gap-3 border-b py-4 last:border-b-0 {{ $isCurrent || ! $current ? 'flex' : '' }}" @unless ($isCurrent || ! $current) :class="all ? 'flex' : 'hidden lg:flex'" @endunless x-data="{ edit: false }" id="step-{{ $m->id }}">
                     @if ($m->status === 'done')
                         <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-800">{!! $checkIcon !!}<span class="sr-only">Done</span></span>
                     @elseif ($isCurrent)
@@ -188,11 +199,23 @@
     @endif
 
     {{-- Handover: the end of the road --}}
-    @if ($admin)
-        @include('partials.project-handover-admin')
-    @elseif ($project->handover_sent_at)
-        @include('partials.project-handover-client')
-    @endif
+    {{-- The handover stays in view on a phone only while the client still has to confirm it. --}}
+    @php $handoverNeedsYou = ! $admin && $project->handover_sent_at && ! $project->handover_confirmed_at; @endphp
+    <div @unless ($handoverNeedsYou) :class="all ? '' : 'hidden lg:block'" @endunless>
+        @if ($admin)
+            @include('partials.project-handover-admin')
+        @elseif ($project->handover_sent_at)
+            @include('partials.project-handover-client')
+        @endif
+    </div>
 
-    @include('partials.project-changes')
+    <div :class="all ? '' : 'hidden lg:block'">
+        @include('partials.project-changes')
+    </div>
+
+    @if ($project->milestones->count() > 1)
+        <button type="button" x-show="!all" class="border-line text-brand-dark flex min-h-12 w-full cursor-pointer items-center justify-center border-t text-sm font-semibold lg:hidden" @click="all = true">
+            Show all steps{{ $project->changeRequests->isNotEmpty() || ! $admin ? ' and extras' : '' }}
+        </button>
+    @endif
 </section>

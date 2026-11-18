@@ -152,7 +152,7 @@ class ProjectPageTest extends TestCase
 
         $this->actingAs($this->client)->get("/projects/{$project->id}")->assertOk()
             ->assertDontSee('role="tabpanel"', false)->assertSee('chat-files-panel')->assertSee('brief.pdf')
-            ->assertSee('Need something extra?');
+            ->assertSee('Need something extra?')->assertSee('Show all steps')->assertDontSee('aria-label="Project"', false);
         $this->actingAs($this->admin)->get("/admin/projects/{$project->id}")->assertOk()
             ->assertDontSee('panel-details')->assertSee('Handover pack')->assertSee('brief.pdf');
     }
