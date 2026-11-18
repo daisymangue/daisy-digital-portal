@@ -33,7 +33,7 @@ class ClientProjectController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $project = $this->find($request, $id)->load(['milestones', 'checklist.files', 'quote', 'changeRequests.quote', 'changeRequests.files', 'handoverFiles', 'testimonial']);
+        $project = $this->find($request, $id)->load(['milestones', 'updates.user', 'checklist.files', 'quote', 'changeRequests.quote', 'changeRequests.files', 'handoverFiles', 'testimonial']);
 
         return view('client.projects.show', [
             'project' => $project,

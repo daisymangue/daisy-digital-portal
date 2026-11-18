@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Package extends Model
 {
@@ -42,10 +41,5 @@ class Package extends Model
     public function regularPriceLabel(): string
     {
         return Money::label($this->price_cents, false, $this->unit);
-    }
-
-    public function stepSet(): BelongsTo
-    {
-        return $this->belongsTo(StepSet::class);
     }
 }

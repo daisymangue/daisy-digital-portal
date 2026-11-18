@@ -142,39 +142,6 @@ class Project extends Model
         return in_array($this->status, ['completed', 'cancelled'], true);
     }
 
-    /** Adds a step set's steps after any that are already there. */
-    public function applyStepSet(StepSet $set): void
-    {
-        $order = (int) $this->milestones()->max('sort_order');
-        foreach ($set->steps as $step) {
-            $this->milestones()->create(['title' => $step['title'], 'needs_approval' => (bool) ($step['approval'] ?? false), 'sort_order' => ++$order]);
-        }
-        $this->recalculateProgress();
-    }
-
-    /** The first step that is not finished yet, or null when every step is done (or there are none). */
-    public function currentMilestone(): ?ProjectMilestone
-    {
-        return $this->milestones->firstWhere(fn ($m) => $m->status !== 'done');
-    }
-
-    /**
-     * "What we need" items grouped by the step they hold up. Items without a step, or whose step
-     * is finished, go on the current step (or the last step once everything is done).
-     */
-    public function checklistByStep(): array
-    {
-        $current = $this->currentMilestone() ?? $this->milestones->last();
-        $groups = [];
-        foreach ($this->checklist as $item) {
-            $step = $this->milestones->firstWhere('id', $item->milestone_id);
-            $key = $step && ($step->status !== 'done' || $item->status === 'accepted') ? $step->id : ($current?->id ?? 0);
-            $groups[$key][] = $item;
-        }
-
-        return $groups;
-    }
-
     /** Progress follows the milestones once there are any. */
     public function recalculateProgress(): void
     {
@@ -222,10 +189,6 @@ class Project extends Model
             $p->started_by = $by?->id;
             $p->save();
             $p->wasRecentlyCreated = true;
-
-            if ($set = StepSet::forQuote($quote)) {
-                $p->applyStepSet($set);
-            }
 
             return $p;
         });

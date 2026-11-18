@@ -35,7 +35,6 @@ class ProjectMessage extends Model
     {
         return [
             'id' => $this->id,
-            'update' => $this->kind === 'update',
             'body' => $this->body,
             'author' => $this->from_team ? $this->user->name.' · Daisy Digital' : $this->user->name,
             'mine' => $this->from_team === $viewer->isAdmin(),

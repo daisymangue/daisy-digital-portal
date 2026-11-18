@@ -9,11 +9,10 @@ use App\Models\Client;
 use App\Models\Counter;
 use App\Models\Project;
 use App\Models\ProjectChecklistItem;
-use App\Models\ProjectMessage;
 use App\Models\ProjectMilestone;
+use App\Models\ProjectUpdate;
 use App\Models\Quote;
 use App\Models\Setting;
-use App\Models\StepSet;
 use App\Models\Testimonial;
 use App\Notifications\ProjectNotice;
 use App\Support\ProjectWork;
@@ -78,14 +77,13 @@ class ProjectController extends Controller
 
     public function show(Request $request, Project $project)
     {
-        $project->load(['client.users', 'quote', 'serviceRequest', 'milestones', 'checklist.files', 'starter', 'changeRequests.requester', 'changeRequests.files', 'changeRequests.quote', 'handoverFiles', 'testimonial']);
+        $project->load(['client.users', 'quote', 'serviceRequest', 'milestones', 'updates.user', 'checklist.files', 'starter', 'changeRequests.requester', 'changeRequests.files', 'changeRequests.quote', 'handoverFiles', 'testimonial']);
 
         return view('admin.projects.show', [
             'project' => $project,
             'unread' => $project->unreadFor($request->user()),
             'messages' => ProjectWork::feed($project, $request->user()),
             'files' => $project->allFiles(),
-            'stepSets' => StepSet::orderBy('sort_order')->orderBy('name')->get(),
         ]);
     }
 
@@ -137,29 +135,20 @@ class ProjectController extends Controller
     {
         $data = $request->validate(['body' => ['required', 'string', 'min:3', 'max:5000']]);
 
-        // Updates appear in the chat as highlighted cards, so the whole story is in one place.
-        $update = new ProjectMessage(['body' => $data['body']]);
+        $update = new ProjectUpdate($data);
         $update->project_id = $project->id;
         $update->user_id = $request->user()->id;
-        $update->from_team = true;
-        $update->kind = 'update';
         $update->save();
         $project->touch();
 
         AuditLog::record('project.update_posted', $project);
         $project->notifyClient(ProjectNotice::update($project));
 
-        return redirect()->to(route('admin.projects.show', $project).'#chat')->with('status', 'Update posted in the chat. The client has been told.');
+        return back()->with('status', 'Update posted. The client has been told.');
     }
 
     public function addMilestone(Request $request, Project $project)
     {
-        if ($request->filled('step_set_id')) {
-            $project->applyStepSet(StepSet::findOrFail((int) $request->input('step_set_id')));
-
-            return back()->with('status', 'Steps added. Rename or remove any that do not fit.');
-        }
-
         if ($request->boolean('standard')) {
             $start = (int) $project->milestones()->max('sort_order');
             foreach (Project::STANDARD_MILESTONES as $n => [$title, $approval]) {
@@ -232,14 +221,12 @@ class ProjectController extends Controller
         $data = $request->validate([
             'items' => ['required', 'string', 'max:3000'],
             'note' => ['nullable', 'string', 'max:500'],
-            'milestone_id' => ['nullable', 'integer'],
         ], ['items.required' => 'Add at least one thing you need.']);
-        $step = $project->milestones()->find($data['milestone_id'] ?? null);
 
         $titles = collect(preg_split('/\r\n|\r|\n/', $data['items']))->map(fn ($t) => trim($t, " \t-•*"))->filter()->take(20);
         $order = (int) $project->checklist()->max('sort_order');
         foreach ($titles as $title) {
-            $project->checklist()->create(['title' => mb_substr($title, 0, 200), 'note' => $titles->count() === 1 ? ($data['note'] ?? null) : null, 'sort_order' => ++$order, 'milestone_id' => $step?->id]);
+            $project->checklist()->create(['title' => mb_substr($title, 0, 200), 'note' => $titles->count() === 1 ? ($data['note'] ?? null) : null, 'sort_order' => ++$order]);
         }
 
         AuditLog::record('checklist.requested', $project, ['count' => $titles->count()]);

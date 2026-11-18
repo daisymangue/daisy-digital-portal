@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ServiceCategory extends Model
@@ -23,10 +22,5 @@ class ServiceCategory extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(CategoryQuestion::class)->orderBy('sort_order')->orderBy('id');
-    }
-
-    public function stepSet(): BelongsTo
-    {
-        return $this->belongsTo(StepSet::class);
     }
 }

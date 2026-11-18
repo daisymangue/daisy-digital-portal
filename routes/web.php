@@ -81,11 +81,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/', Admin\DashboardController::class)->name('dashboard');
     Route::get('/activity', [Admin\ActivityController::class, 'index'])->name('activity');
 
-    Route::get('/step-sets', [Admin\StepSetController::class, 'index'])->name('step-sets.index');
-    Route::post('/step-sets', [Admin\StepSetController::class, 'store'])->name('step-sets.store');
-    Route::put('/step-sets/links', [Admin\StepSetController::class, 'links'])->name('step-sets.links');
-    Route::put('/step-sets/{stepSet}', [Admin\StepSetController::class, 'update'])->name('step-sets.update');
-    Route::delete('/step-sets/{stepSet}', [Admin\StepSetController::class, 'destroy'])->name('step-sets.destroy');
     Route::get('/projects', [Admin\ProjectController::class, 'index'])->name('projects.index');
     Route::post('/projects', [Admin\ProjectController::class, 'store'])->name('projects.store');
     Route::get('/projects/{project}', [Admin\ProjectController::class, 'show'])->name('projects.show');
