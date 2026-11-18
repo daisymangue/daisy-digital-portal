@@ -25,7 +25,7 @@
     </section>
 
     <h2 class="h-section mt-10">At a glance</h2>
-    <div class="mt-3 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="mt-3 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         @foreach ($stats as $label => $value)
             <div class="card"><p class="text-muted text-sm">{{ $label }}</p><p class="mt-1 text-3xl font-semibold">{{ $value }}</p></div>
         @endforeach

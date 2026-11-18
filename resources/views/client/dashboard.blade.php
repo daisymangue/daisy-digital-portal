@@ -29,10 +29,10 @@
         </div>
     @endforeach
 
-    <div class="mt-8 grid gap-4 sm:grid-cols-3">
+    <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         <div class="card"><p class="text-muted text-sm">Open requests</p><p class="mt-1 text-3xl font-semibold">{{ $openCount }}</p></div>
         <div class="card"><p class="text-muted text-sm">Waiting on you</p><p class="mt-1 text-3xl font-semibold">{{ $waitingCount }}</p></div>
-        <div class="card"><p class="text-muted text-sm">Outstanding balance</p><p class="mt-1 text-3xl font-semibold">{{ \App\Support\Money::format($invoicesDue->sum(fn ($i) => $i->balanceCents())) }}</p></div>
+        <div class="card max-sm:col-span-2"><p class="text-muted text-sm">Outstanding balance</p><p class="mt-1 text-3xl font-semibold">{{ \App\Support\Money::format($invoicesDue->sum(fn ($i) => $i->balanceCents())) }}</p></div>
     </div>
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">

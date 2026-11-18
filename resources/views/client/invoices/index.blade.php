@@ -2,7 +2,7 @@
     <h1 class="h-page">Billing</h1>
     <p class="text-muted mt-1">Your subscriptions and bills in one place.</p>
 
-    <dl class="mt-6 grid gap-3 sm:grid-cols-2 lg:max-w-2xl">
+    <dl class="mt-6 grid grid-cols-2 gap-3 lg:max-w-2xl">
         <div class="card py-4 {{ $overdue ? 'border-red-200 bg-red-50' : '' }}">
             <dt class="text-sm {{ $overdue ? 'text-red-900' : 'text-muted' }}">To pay now</dt>
             <dd class="mt-1 text-2xl font-semibold {{ $overdue ? 'text-red-900' : '' }}">{{ \App\Support\Money::format($outstanding) }}</dd>

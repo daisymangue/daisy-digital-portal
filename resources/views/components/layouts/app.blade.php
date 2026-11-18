@@ -43,22 +43,29 @@
 </head>
 <body>
     <div class="relative min-h-screen lg:flex" x-data="{ open: false }" @keydown.escape.window="open = false">
-        <header class="bg-navy relative z-40 flex items-center justify-between px-5 py-4 lg:hidden">
+        <header class="bg-navy flex items-center justify-between px-5 py-4 lg:hidden">
             <x-logo />
-            <button type="button" class="btn min-h-11 border border-white/30 px-4 text-white" @click="open = !open" :aria-expanded="open.toString()" aria-controls="main-nav" x-text="open ? 'Close' : 'Menu'">Menu</button>
+            <button type="button" class="btn min-h-11 border border-white/30 px-4 text-white" @click="open = true" :aria-expanded="open.toString()" aria-controls="main-nav">Menu</button>
         </header>
 
-        {{-- On a phone the menu drops down over the page instead of filling the screen. --}}
+        {{-- On a phone the menu slides in from the side; the page stays visible, dimmed, and a tap on it closes the menu. --}}
         <div x-show="open" x-cloak x-transition.opacity class="fixed inset-0 z-20 bg-navy/40 lg:hidden" @click="open = false" aria-hidden="true"></div>
 
-        <nav id="main-nav" aria-label="Main" class="bg-navy absolute inset-x-0 top-[4.75rem] z-30 flex-col gap-3 rounded-b-2xl px-3 pb-3 shadow-xl lg:static lg:flex lg:min-h-screen lg:w-60 lg:shrink-0 lg:gap-8 lg:rounded-none lg:px-5 lg:py-7 lg:shadow-none" :class="open ? 'flex' : 'hidden'">
-            <div class="hidden px-3 lg:block">
-                <x-logo />
-                @if ($user->isAdmin())
-                    <span class="bg-sand-dark text-navy mt-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wider">ADMIN</span>
-                @endif
+        <nav id="main-nav" aria-label="Main" x-cloak
+             class="bg-navy fixed inset-y-0 left-0 z-30 w-64 max-w-[78vw] flex-col gap-5 overflow-y-auto px-4 py-5 shadow-xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:flex lg:min-h-screen lg:w-60 lg:max-w-none lg:shrink-0 lg:translate-x-0 lg:gap-8 lg:px-5 lg:py-7 lg:shadow-none"
+             :class="open ? 'flex translate-x-0' : 'flex -translate-x-full max-lg:invisible'">
+            <div class="flex items-start justify-between gap-2 px-3 lg:block">
+                <div>
+                    <x-logo />
+                    @if ($user->isAdmin())
+                        <span class="bg-sand-dark text-navy mt-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wider">ADMIN</span>
+                    @endif
+                </div>
+                <button type="button" class="text-navy-soft -mr-1 flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full hover:text-white lg:hidden" @click="open = false" aria-label="Close menu">
+                    <svg class="size-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+                </button>
             </div>
-            <ul class="grid {{ count($nav) > 8 ? 'grid-cols-3' : 'grid-cols-2' }} gap-1 lg:flex lg:flex-col">
+            <ul class="flex flex-col gap-1">
                 @foreach ($nav as $item)
                     @php
                         [$label, $url, $active] = $item;
@@ -66,7 +73,7 @@
                     @endphp
                     <li>
                         <a href="{{ $url }}" @if ($active) aria-current="page" @endif
-                           class="flex min-h-11 items-center justify-between gap-2 rounded-xl px-3 text-sm lg:text-base {{ $active ? 'bg-white/10 font-medium text-white' : 'text-navy-soft hover:bg-white/5 hover:text-white' }}">
+                           class="flex min-h-11 items-center justify-between gap-2 rounded-xl px-3 {{ $active ? 'bg-white/10 font-medium text-white' : 'text-navy-soft hover:bg-white/5 hover:text-white' }}">
                             <span>{{ $label }}</span>
                             @if ($badge > 0)
                                 <span class="bg-brand rounded-full px-2 py-0.5 text-xs font-semibold text-white">{{ $badge }}<span class="sr-only"> unread {{ $badge === 1 ? 'message' : 'messages' }}</span></span>
@@ -75,12 +82,10 @@
                     </li>
                 @endforeach
             </ul>
-            <div class="flex items-center justify-between gap-3 border-t border-white/10 px-3 pt-2 lg:mt-auto lg:block lg:pt-5">
-                <div class="min-w-0">
-                    <p class="truncate text-sm font-medium text-white">{{ $user->name }}</p>
-                    <p class="text-navy-soft truncate text-sm">{{ $user->isAdmin() ? 'Administrator' : $user->client->business_name }}</p>
-                </div>
-                <form method="POST" action="{{ route('logout') }}" class="shrink-0 lg:mt-3">
+            <div class="mt-auto border-t border-white/10 px-3 pt-5">
+                <p class="truncate text-sm font-medium text-white">{{ $user->name }}</p>
+                <p class="text-navy-soft truncate text-sm">{{ $user->isAdmin() ? 'Administrator' : $user->client->business_name }}</p>
+                <form method="POST" action="{{ route('logout') }}" class="mt-3">
                     @csrf
                     <button type="submit" class="text-navy-soft min-h-11 cursor-pointer underline-offset-2 hover:text-white hover:underline">Sign out</button>
                 </form>
